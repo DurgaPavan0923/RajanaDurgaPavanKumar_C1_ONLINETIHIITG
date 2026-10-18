@@ -1,0 +1,84 @@
+# Master Consolidated Configuration for AquaGuard AI
+# Underwater Environmental Monitoring & Water Potability Assessment
+
+project_name: "AquaGuard AI - Underwater Environmental Monitoring"
+seed: 42
+
+paths:
+  raw_temporal_data: "data/raw/underwater_sensor_stream.csv"
+  raw_tabular_data: "data/raw/water_potability.csv"
+  interim_dir: "data/interim"
+  processed_dir: "data/processed"
+  artifacts_dir: "artifacts"
+  experiments_log: "experiments/experiment_log.csv"
+
+# Track A: Continuous Telemetry Stream (Temporal)
+track_a:
+  timestamp_column: "timestamp"
+  sensor_columns:
+    - "temperature"
+    - "dissolved_oxygen"
+    - "ph"
+    - "conductivity"
+    - "turbidity"
+    - "pressure"
+  target_column: "dissolved_oxygen"
+  forecast_targets:
+    - "dissolved_oxygen"
+    - "temperature"
+    - "ph"
+    - "turbidity"
+  forecast_horizon_steps: 6
+  expected_sampling_interval_seconds: 3600
+  split_boundaries:
+    train_ratio: 0.70
+    val_ratio: 0.15
+    test_ratio: 0.15
+    shuffle: false
+  sensor_ranges:
+    temperature: [-2.0, 45.0]
+    dissolved_oxygen: [0.0, 25.0]
+    ph: [0.0, 14.0]
+    conductivity: [10.0, 2000.0]
+    turbidity: [0.0, 100.0]
+    pressure: [0.0, 500.0]
+  resampling:
+    rule: "1h"
+    interpolation: "time"
+    max_ffill_consecutive: 3
+  features:
+    lags: [1, 2, 3, 6, 12, 24]
+    rolling_windows: [3, 6, 12, 24]
+    include_cyclical: true
+  anomaly:
+    isolation_forest_contamination: 0.02
+    z_score_threshold: 3.5
+
+# Track B: Physicochemical Bulk Potability (Tabular Benchmark)
+track_b:
+  target_column: "Potability"
+  feature_columns:
+    - "ph"
+    - "Hardness"
+    - "Solids"
+    - "Chloramines"
+    - "Sulfate"
+    - "Conductivity"
+    - "Organic_carbon"
+    - "Trihalomethanes"
+    - "Turbidity"
+  split_boundaries:
+    dev_ratio: 0.80
+    test_lockbox_ratio: 0.20
+    stratified: true
+    random_state: 42
+  who_limits:
+    ph: [6.5, 8.5]
+    Hardness: [0.0, 300.0]
+    Solids: [0.0, 1000.0]
+    Chloramines: [0.0, 4.0]
+    Sulfate: [0.0, 250.0]
+    Conductivity: [0.0, 400.0]
+    Organic_carbon: [0.0, 4.0]
+    Trihalomethanes: [0.0, 80.0]
+    Turbidity: [0.0, 5.0]

@@ -1,0 +1,76 @@
+# Track B Configuration: Tabular Water Potability (Kaggle Benchmark)
+track: "B"
+raw_data_path: "data/01_raw/water_potability.csv"
+target_column: "Potability"
+
+split:
+  dev_ratio: 0.80
+  test_lockbox_ratio: 0.20
+  stratified: true
+  random_state: 42
+
+audit:
+  ranges:
+    ph: [0.0, 14.0]
+    Hardness: [20.0, 450.0]
+    Solids: [100.0, 70000.0]
+    Chloramines: [0.0, 20.0]
+    Sulfate: [20.0, 600.0]
+    Conductivity: [50.0, 1200.0]
+    Organic_carbon: [1.0, 40.0]
+    Trihalomethanes: [0.0, 200.0]
+    Turbidity: [0.0, 15.0]
+
+preprocessing:
+  imputation_strategy: "median"  # options: "median", "knn"
+  knn_neighbors: 5
+  scaling_strategy: "robust"     # options: "standard", "robust", "minmax"
+  add_missingness_indicators: true
+  clip_domain_bounds: true
+
+features:
+  generate_ratios: true
+  generate_who_distances: true
+  log_transform_solids: true
+
+anomaly_detection:
+  method: "isolation_forest"     # options: "isolation_forest", "lof", "z_score"
+  contamination: 0.05
+  n_estimators: 150
+  random_state: 42
+
+classification:
+  class_imbalance_handling: "class_weight"  # options: "class_weight", "none"
+  cv_folds: 5
+  primary_metric: "pr_auc"
+  models:
+    - name: "who_baseline"
+      type: "rule_based"
+    - name: "logistic_regression"
+      type: "linear"
+      params:
+        C: 1.0
+        penalty: "l2"
+        solver: "lbfgs"
+        max_iter: 1000
+    - name: "random_forest"
+      type: "ensemble"
+      params:
+        n_estimators: 200
+        max_depth: 8
+        min_samples_leaf: 5
+        random_state: 42
+    - name: "xgboost"
+      type: "gradient_boost"
+      params:
+        n_estimators: 200
+        max_depth: 4
+        learning_rate: 0.05
+        subsample: 0.8
+        colsample_bytree: 0.8
+        scale_pos_weight: 1.56
+        random_state: 42
+
+calibration:
+  method: "sigmoid"  # Platt scaling
+  cv: 5
