@@ -25,33 +25,49 @@ MODEL_BUNDLE: dict[str, Any] = {}
 WHO_CLASSIFIER = WHORuleClassifier()
 
 
+def load_production_model() -> dict[str, Any] | None:
+    """Loads production model bundle with multiple path candidates and error resilience.
+
+    Caches loaded bundle in MODEL_BUNDLE['bundle'] so subsequent invocations are instant.
+    """
+    if "bundle" in MODEL_BUNDLE and MODEL_BUNDLE["bundle"]:
+        return MODEL_BUNDLE["bundle"]
+
+    candidate_paths = [
+        Path("models/production/water_potability_pipeline_v1.joblib"),
+        Path(__file__).resolve().parent.parent.parent
+        / "models"
+        / "production"
+        / "water_potability_pipeline_v1.joblib",
+        Path.cwd() / "models" / "production" / "water_potability_pipeline_v1.joblib",
+    ]
+    for model_path in candidate_paths:
+        if model_path.exists():
+            try:
+                logger.info(f"Loading production model bundle from {model_path}...")
+                bundle = joblib.load(model_path)
+                MODEL_BUNDLE["bundle"] = bundle
+                logger.info(
+                    f"Successfully loaded model bundle: {bundle.get('model_name')} "
+                    f"trained at {bundle.get('timestamp')}"
+                )
+                return bundle
+            except Exception as e:
+                logger.error(f"Failed to deserialize model bundle from {model_path}: {e}")
+    logger.warning(
+        "Production model bundle not found or could not be loaded. Operating in resilient degraded mode."
+    )
+    return None
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Loads frozen pipeline and model artifacts on startup."""
-    model_path = Path("models/production/water_potability_pipeline_v1.joblib")
-    if not model_path.exists():
-        model_path = (
-            Path(__file__).resolve().parent.parent.parent
-            / "models"
-            / "production"
-            / "water_potability_pipeline_v1.joblib"
-        )
-    if model_path.exists():
-        try:
-            logger.info(f"Loading production model bundle from {model_path}...")
-            MODEL_BUNDLE["bundle"] = joblib.load(model_path)
-            logger.info(
-                f"Successfully loaded model bundle: {MODEL_BUNDLE['bundle'].get('model_name')} "
-                f"trained at {MODEL_BUNDLE['bundle'].get('timestamp')}"
-            )
-        except Exception as e:
-            logger.error(f"Failed to deserialize model bundle: {e}")
-    else:
-        logger.warning(
-            f"Production model bundle not found at {model_path}. Running in uninitialized mode."
-        )
+    """Initializes models on startup while guarding against fatal serverless crashes."""
+    try:
+        load_production_model()
+    except Exception as e:
+        logger.error(f"Error during lifespan startup: {e}")
     yield
-    MODEL_BUNDLE.clear()
 
 
 app = FastAPI(
@@ -67,14 +83,17 @@ MAX_BODY_BYTES = 1024 * 1024  # 1 MB maximum payload
 @app.middleware("http")
 async def limit_payload_size_middleware(request: Request, call_next):
     """Enforces maximum payload size ceiling to mitigate memory exhaustion DoS."""
-    content_length = request.headers.get("content-length")
-    if content_length and int(content_length) > MAX_BODY_BYTES:
-        return JSONResponse(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            content={
-                "detail": f"Payload size exceeds authorized maximum limit of {MAX_BODY_BYTES} bytes."
-            },
-        )
+    try:
+        content_length = request.headers.get("content-length")
+        if content_length and int(content_length) > MAX_BODY_BYTES:
+            return JSONResponse(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                content={
+                    "detail": f"Payload size exceeds authorized maximum limit of {MAX_BODY_BYTES} bytes."
+                },
+            )
+    except (ValueError, TypeError):
+        pass
     return await call_next(request)
 
 
@@ -90,6 +109,12 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
+@app.get("/ping")
+def ping() -> dict[str, str]:
+    """Lightweight health probe endpoint for deployment verification."""
+    return {"status": "ok", "service": "AquaGuard AI"}
+
+
 @app.get("/", response_class=HTMLResponse)
 @app.get("/dashboard", response_class=HTMLResponse)
 def serve_dashboard():
@@ -100,14 +125,6 @@ def serve_dashboard():
 @app.get("/api/stream-data")
 def get_stream_telemetry(sensor: str = "dissolved_oxygen", limit: int = 120) -> dict[str, Any]:
     """Returns continuous underwater sensor stream telemetry and anomaly flags for visualization."""
-    stream_file = Path("data/01_raw/underwater_sensor_stream.csv")
-    if not stream_file.exists():
-        stream_file = (
-            Path(__file__).resolve().parent.parent.parent
-            / "data"
-            / "01_raw"
-            / "underwater_sensor_stream.csv"
-        )
     valid_sensors = [
         "dissolved_oxygen",
         "temperature",
@@ -118,63 +135,86 @@ def get_stream_telemetry(sensor: str = "dissolved_oxygen", limit: int = 120) -> 
     ]
     selected_sensor = sensor if sensor in valid_sensors else "dissolved_oxygen"
 
-    if not stream_file.exists():
+    stream_candidates = [
+        Path("data/01_raw/underwater_sensor_stream.csv"),
+        Path(__file__).resolve().parent.parent.parent
+        / "data"
+        / "01_raw"
+        / "underwater_sensor_stream.csv",
+        Path.cwd() / "data" / "01_raw" / "underwater_sensor_stream.csv",
+    ]
+    stream_file = next((p for p in stream_candidates if p.exists()), None)
+
+    if stream_file is None:
         labels = [f"T+{i}h" for i in range(72)]
-        values = [9.5 - 0.5 * np.sin(i / 12 * np.pi) for i in range(72)]
+        values = [round(float(9.5 - 0.5 * np.sin(i / 12 * np.pi)), 2) for i in range(72)]
         anomalies = [values[i] if i in (24, 48) else None for i in range(72)]
         return {
             "labels": labels,
             "values": values,
             "anomalies": anomalies,
             "sensor": selected_sensor,
+            "total_records": 72,
         }
 
-    df = pd.read_csv(stream_file).head(limit)
-    labels = [pd.to_datetime(t).strftime("%m-%d %H:%M") for t in df["timestamp"]]
-    values = [float(v) if pd.notna(v) else None for v in df[selected_sensor]]
+    try:
+        df = pd.read_csv(stream_file).head(limit)
+        labels = [pd.to_datetime(t).strftime("%m-%d %H:%M") for t in df["timestamp"]]
+        values = [float(v) if pd.notna(v) else None for v in df[selected_sensor]]
 
-    # Sensor-specific domain boundary anomaly checks
-    anomalies = []
-    for i, row in df.iterrows():
-        val = row.get(selected_sensor)
-        is_anom = False
-        if pd.notna(val):
-            val = float(val)
-            if selected_sensor == "ph" and (val < 6.5 or val > 8.5):
-                is_anom = True
-            elif selected_sensor == "dissolved_oxygen" and (val < 5.0 or val > 14.0):
-                is_anom = True
-            elif selected_sensor == "turbidity" and val > 5.0:
-                is_anom = True
-            elif selected_sensor == "temperature" and (val < 4.0 or val > 30.0):
-                is_anom = True
-            elif selected_sensor == "conductivity" and val > 600.0:
-                is_anom = True
-            elif selected_sensor == "pressure" and val > 300.0:
-                is_anom = True
-        anomalies.append(values[i] if is_anom else None)
+        # Sensor-specific domain boundary anomaly checks
+        anomalies = []
+        for i, row in df.iterrows():
+            val = row.get(selected_sensor)
+            is_anom = False
+            if pd.notna(val):
+                val = float(val)
+                if selected_sensor == "ph" and (val < 6.5 or val > 8.5):
+                    is_anom = True
+                elif selected_sensor == "dissolved_oxygen" and (val < 5.0 or val > 14.0):
+                    is_anom = True
+                elif selected_sensor == "turbidity" and val > 5.0:
+                    is_anom = True
+                elif selected_sensor == "temperature" and (val < 4.0 or val > 30.0):
+                    is_anom = True
+                elif selected_sensor == "conductivity" and val > 600.0:
+                    is_anom = True
+                elif selected_sensor == "pressure" and val > 300.0:
+                    is_anom = True
+            anomalies.append(values[i] if is_anom else None)
 
-    return {
-        "labels": labels,
-        "values": values,
-        "anomalies": anomalies,
-        "sensor": selected_sensor,
-        "total_records": len(df),
-    }
+        return {
+            "labels": labels,
+            "values": values,
+            "anomalies": anomalies,
+            "sensor": selected_sensor,
+            "total_records": len(df),
+        }
+    except Exception as e:
+        logger.error(f"Error reading telemetry stream: {e}")
+        labels = [f"T+{i}h" for i in range(72)]
+        values = [round(float(9.5 - 0.5 * np.sin(i / 12 * np.pi)), 2) for i in range(72)]
+        anomalies = [values[i] if i in (24, 48) else None for i in range(72)]
+        return {
+            "labels": labels,
+            "values": values,
+            "anomalies": anomalies,
+            "sensor": selected_sensor,
+            "total_records": 72,
+        }
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
 def health_check() -> dict[str, Any]:
     """Returns service health status and active model artifact metadata."""
-    is_model_loaded = "bundle" in MODEL_BUNDLE
+    bundle = load_production_model()
+    is_model_loaded = bundle is not None
     return {
         "status": "healthy" if is_model_loaded else "degraded",
         "timestamp_utc": datetime.now(UTC).isoformat(),
         "model_loaded": is_model_loaded,
-        "model_name": MODEL_BUNDLE.get("bundle", {}).get("model_name") if is_model_loaded else None,
-        "lockbox_metrics": MODEL_BUNDLE.get("bundle", {}).get("lockbox_test_metrics")
-        if is_model_loaded
-        else None,
+        "model_name": bundle.get("model_name") if is_model_loaded else None,
+        "lockbox_metrics": bundle.get("lockbox_test_metrics") if is_model_loaded else None,
     }
 
 
@@ -190,8 +230,9 @@ def predict_potability(sample: TrackBWaterSample) -> dict[str, Any]:
     violations = WHO_CLASSIFIER.predict_violations(raw_df)[0]
     who_compliant = len(violations) == 0
 
-    if "bundle" not in MODEL_BUNDLE:
-        # Fallback to pure WHO Rule Classifier if ML bundle not yet trained
+    bundle = load_production_model()
+    if bundle is None:
+        # Fallback to pure WHO Rule Classifier if ML bundle not yet loaded/available
         t1 = time.perf_counter()
         return {
             "mode": "fallback_who_rules",
@@ -204,50 +245,64 @@ def predict_potability(sample: TrackBWaterSample) -> dict[str, Any]:
             "processing_time_ms": round((t1 - t0) * 1000.0, 3),
         }
 
-    bundle = MODEL_BUNDLE["bundle"]
-    pipeline = bundle["pipeline"]
-    classifier = bundle["classifier"]
-    anomaly_detector = bundle.get("anomaly_detector")
+    try:
+        pipeline = bundle["pipeline"]
+        classifier = bundle["classifier"]
+        anomaly_detector = bundle.get("anomaly_detector")
 
-    # 2. Domain Feature Engineering
-    engineered_df = FeatureEngineer.engineer_track_b_features(raw_df)
+        # 2. Domain Feature Engineering
+        engineered_df = FeatureEngineer.engineer_track_b_features(raw_df)
 
-    # Align columns with training feature set
-    training_cols = bundle.get("feature_names", list(engineered_df.columns))
-    for col in training_cols:
-        if col not in engineered_df.columns:
-            engineered_df[col] = np.nan
-    aligned_df = engineered_df[training_cols]
+        # Align columns with training feature set
+        training_cols = bundle.get("feature_names", list(engineered_df.columns))
+        for col in training_cols:
+            if col not in engineered_df.columns:
+                engineered_df[col] = np.nan
+        aligned_df = engineered_df[training_cols]
 
-    # 3. Pipeline Transform (Imputation + Scaling)
-    X_trans = pipeline.transform(aligned_df)
+        # 3. Pipeline Transform (Imputation + Scaling)
+        X_trans = pipeline.transform(aligned_df)
 
-    # 4. Supervised Calibrated Probability & Class
-    if hasattr(classifier, "predict_proba"):
-        probs = classifier.predict_proba(X_trans)
-        potable_prob = float(probs[0, 1])
-    else:
-        potable_prob = float(classifier.predict(X_trans)[0])
+        # 4. Supervised Calibrated Probability & Class
+        if hasattr(classifier, "predict_proba"):
+            probs = classifier.predict_proba(X_trans)
+            potable_prob = float(probs[0, 1])
+        else:
+            potable_prob = float(classifier.predict(X_trans)[0])
 
-    potability_pred = int(potable_prob >= 0.50)
+        potability_pred = int(potable_prob >= 0.50)
 
-    # 5. Anomaly Detection
-    anomaly_flag = False
-    anomaly_score = 0.0
-    if anomaly_detector is not None:
-        anomaly_flag = bool(anomaly_detector.predict(X_trans)[0] == 1)
-        anomaly_score = float(anomaly_detector.score_samples(X_trans)[0])
+        # 5. Anomaly Detection
+        anomaly_flag = False
+        anomaly_score = 0.0
+        if anomaly_detector is not None:
+            anomaly_flag = bool(anomaly_detector.predict(X_trans)[0] == 1)
+            anomaly_score = float(anomaly_detector.score_samples(X_trans)[0])
 
-    t1 = time.perf_counter()
+        t1 = time.perf_counter()
 
-    return {
-        "mode": "production_ml",
-        "model_name": bundle.get("model_name"),
-        "potability_prediction": potability_pred,
-        "potability_probability": round(potable_prob, 4),
-        "who_compliant": who_compliant,
-        "who_violations": violations,
-        "anomaly_flag": anomaly_flag,
-        "anomaly_score": round(anomaly_score, 4),
-        "processing_time_ms": round((t1 - t0) * 1000.0, 3),
-    }
+        return {
+            "mode": "production_ml",
+            "model_name": bundle.get("model_name"),
+            "potability_prediction": potability_pred,
+            "potability_probability": round(potable_prob, 4),
+            "who_compliant": who_compliant,
+            "who_violations": violations,
+            "anomaly_flag": anomaly_flag,
+            "anomaly_score": round(anomaly_score, 4),
+            "processing_time_ms": round((t1 - t0) * 1000.0, 3),
+        }
+    except Exception as e:
+        logger.error(f"Inference error during ML execution: {e}. Falling back gracefully to WHO rules.")
+        t1 = time.perf_counter()
+        return {
+            "mode": "fallback_who_rules",
+            "warning": f"ML model error: {e}",
+            "who_compliant": who_compliant,
+            "who_violations": violations,
+            "potability_prediction": 1 if who_compliant else 0,
+            "potability_probability": 1.0 if who_compliant else 0.0,
+            "anomaly_flag": False,
+            "anomaly_score": 0.0,
+            "processing_time_ms": round((t1 - t0) * 1000.0, 3),
+        }

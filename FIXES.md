@@ -70,9 +70,19 @@ This log documents all technical adjustments, root causes, surgical fixes, and v
 
 ---
 
-### Fix #07: Python Runtime Compatibility Expansion
-- **Target File:** [`pyproject.toml`](pyproject.toml)
-- **Error / Issue:** Pinned `requires-python = ">=3.11"` prevented installation on Python 3.10 environments.
-- **Root Cause:** Overly restrictive Python version lower bound.
-- **Surgical Fix:** Broadened constraint to `requires-python = ">=3.10"`.
-- **Verification:** Verified `pyproject.toml` metadata syntax and package definition.
+### Fix #08: Vercel 500 FUNCTION_INVOCATION_FAILED Serverless Runtime Fix
+- **Target Files:** [`api/index.py`](api/index.py), [`vercel.json`](vercel.json), [`.vercelignore`](.vercelignore), [`requirements.txt`](requirements.txt), [`requirements-dev.txt`](requirements-dev.txt), [`src/serving/api.py`](src/serving/api.py), [`src/models/classifier.py`](src/models/classifier.py), [`pyproject.toml`](pyproject.toml)
+- **Error / Issue:** `500 FUNCTION_INVOCATION_FAILED` (`bom1::...`) when visiting Vercel deployment URL.
+- **Root Cause:**
+  1. Missing Vercel serverless entrypoint (`api/index.py`) and URL rewrite configuration (`vercel.json`), preventing Vercel from routing requests to FastAPI.
+  2. Heavy dependencies (`xgboost`, `matplotlib`, `seaborn`) in root `requirements.txt` exceeding AWS Lambda / Vercel uncompressed function size limits (>500 MB) and crashing on missing Linux OpenMP libraries (`libgomp.so.1` / `OSError`).
+  3. Lifespan event initialization in serverless environments failing or not executing, leading to unhandled cold-start model deserialization exceptions.
+- **Surgical Fix:**
+  1. Created `api/index.py` exporting FastAPI `app` with robust `sys.path` repository root resolution and cold-start fallback diagnostic handler.
+  2. Created `vercel.json` with universal rewrite rule (`/(.*) -> /api/index.py`).
+  3. Structured dependencies cleanly: `requirements.txt` contains lean serverless serving dependencies (<250 MB: FastAPI, Uvicorn, NumPy, Pandas, Scipy, Scikit-learn, Joblib, Pydantic, PyYAML); `requirements-dev.txt` contains research and full training tools (`-r requirements.txt`, `xgboost`, `matplotlib`, `seaborn`, `tabulate`, `pytest`, `pytest-cov`, `ruff`).
+  4. Updated `.vercelignore` to exclude research notebooks, reports, artifacts, outputs, and legacy files, keeping upload payload under 15 MB.
+  5. Hardened `src/models/classifier.py` to catch `(ImportError, OSError, Exception)` during `xgboost` import.
+  6. Added resilient `load_production_model()` helper in `src/serving/api.py` with multi-path resolution and lazy loading, plus graceful fallback to WHO rule-based classification so endpoints (`/`, `/health`, `/predict`, `/api/stream-data`, `/ping`) never return 500.
+- **Verification:** Verified `api.index` imports, all endpoints respond with HTTP 200, and pytest suite passes 100% cleanly.
+

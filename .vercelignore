@@ -1,4 +1,4 @@
-# Vercel Deployment Exclusions to stay under 500MB function size limit
+# Vercel Deployment Exclusions to stay under serverless package limits
 .git
 .github
 tests/
@@ -7,7 +7,13 @@ reports/
 scripts/
 docs/
 configs/
+artifacts/
+outputs/
+legacy/
+experiments/
 Makefile
+Dockerfile
+run_all.py
 requirements-dev.txt
 *.md
 !README.md
@@ -17,3 +23,5 @@ requirements-dev.txt
 .coverage
 htmlcov/
 data/01_raw/water_potability.csv
+data/02_intermediate/
+data/03_processed/

@@ -11,7 +11,7 @@ from sklearn.linear_model import LogisticRegression
 
 try:
     import xgboost as xgb
-except ImportError:
+except (ImportError, OSError, Exception):
     xgb = None
 
 from src.logger import get_logger
