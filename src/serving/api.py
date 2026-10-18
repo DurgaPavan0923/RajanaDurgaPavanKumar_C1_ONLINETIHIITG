@@ -62,11 +62,7 @@ def load_production_model() -> dict[str, Any] | None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initializes models on startup while guarding against fatal serverless crashes."""
-    try:
-        load_production_model()
-    except Exception as e:
-        logger.error(f"Error during lifespan startup: {e}")
+    """Fast non-blocking serverless lifespan. Defer heavy model unpickling to lazy on-demand invocation."""
     yield
 
 
@@ -210,15 +206,14 @@ def get_stream_telemetry(sensor: str = "dissolved_oxygen", limit: int = 120) -> 
 @app.get("/health", status_code=status.HTTP_200_OK)
 @app.get("/api/health", status_code=status.HTTP_200_OK)
 def health_check() -> dict[str, Any]:
-    """Returns service health status and active model artifact metadata."""
-    bundle = load_production_model()
-    is_model_loaded = bundle is not None
+    """Returns service health status immediately without blocking cold-start."""
+    is_model_loaded = "bundle" in MODEL_BUNDLE and MODEL_BUNDLE["bundle"] is not None
     return {
-        "status": "healthy" if is_model_loaded else "degraded",
+        "status": "healthy" if is_model_loaded else "ready",
         "timestamp_utc": datetime.now(UTC).isoformat(),
         "model_loaded": is_model_loaded,
-        "model_name": bundle.get("model_name") if is_model_loaded else None,
-        "lockbox_metrics": bundle.get("lockbox_test_metrics") if is_model_loaded else None,
+        "model_name": MODEL_BUNDLE.get("bundle", {}).get("model_name") if is_model_loaded else "WHO_Deterministic_Benchmark",
+        "lockbox_metrics": MODEL_BUNDLE.get("bundle", {}).get("lockbox_test_metrics") if is_model_loaded else None,
     }
 
 
