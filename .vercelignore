@@ -1,0 +1,19 @@
+# Vercel Deployment Exclusions to stay under 500MB function size limit
+.git
+.github
+tests/
+notebooks/
+reports/
+scripts/
+docs/
+configs/
+Makefile
+requirements-dev.txt
+*.md
+!README.md
+*.ipynb
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+data/01_raw/water_potability.csv
