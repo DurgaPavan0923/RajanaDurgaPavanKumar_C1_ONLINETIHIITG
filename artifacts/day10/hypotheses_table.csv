@@ -1,0 +1,4 @@
+hypothesis_id,description,proposed_feature,expected_impact
+H1,Dissolved Oxygen exhibits strong negative correlation with Temperature due to gas solubility physics.,temp_x_do interaction & ratio,Improves DO forecast accuracy at transition hours
+H2,Sensors exhibit diurnal 24-hour cycles driven by solar heating and biological respiration.,"sin_hour, cos_hour cyclic encodings",Captures cyclical daily drift without trend overfitting
+H3,"Short-term momentum (1h, 3h lags) provides high predictive power for rapid sensor shifts.","Autoregressive lags (1, 2, 3, 6 steps)",Dominant feature importance in forecaster

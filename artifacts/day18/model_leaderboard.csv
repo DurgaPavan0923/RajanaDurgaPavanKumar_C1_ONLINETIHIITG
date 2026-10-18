@@ -1,0 +1,7 @@
+model_name,task,primary_metric_name,primary_metric_val,rmse,latency_ms,champion_status
+Persistence Baseline,Time-Series Forecasting,MAE,0.6424,0.795,0.05,Baseline
+Multi-Step Ridge,Time-Series Forecasting,MAE,0.2973,0.3802,0.12,Linear Reference
+Multi-Step Random Forest,Time-Series Forecasting,MAE,0.2291,0.3341,1.84,Champion Forecaster
+XGBoost Regressor,Time-Series Forecasting,MAE,0.2153,0.3865,2.1,Advanced Reference
+Z-Score Detector,Anomaly Detection,Detection Rate,0.0114,,0.08,Statistical Baseline
+Isolation Forest,Anomaly Detection,Detection Rate,0.0212,,1.45,Champion Detector

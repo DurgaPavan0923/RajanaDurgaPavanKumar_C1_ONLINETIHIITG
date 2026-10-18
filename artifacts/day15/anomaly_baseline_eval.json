@@ -1,0 +1,17 @@
+{
+  "Z_Score_Baseline": {
+    "detection_rate": 0.0114,
+    "total_anomalies": 7,
+    "score_std": 1.2385
+  },
+  "IQR_Fence_Baseline": {
+    "detection_rate": 0.0229,
+    "total_anomalies": 14,
+    "score_std": 0.0
+  },
+  "Isolation_Forest": {
+    "detection_rate": 0.0212,
+    "total_anomalies": 13,
+    "score_std": 0.0345
+  }
+}

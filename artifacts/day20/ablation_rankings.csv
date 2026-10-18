@@ -1,0 +1,7 @@
+feature,ablated_columns_count,validation_mae,delta_mae
+All DO Lags,6,0.2249,-0.0004
+All Rolling Windows,96,0.2293,0.004
+Diurnal Cyclics,4,0.2179,-0.0074
+Temperature Coupling,2,0.2273,0.002
+Turbidity Sensor,24,0.2192,-0.0061
+pH Sensor,26,0.2361,0.0108

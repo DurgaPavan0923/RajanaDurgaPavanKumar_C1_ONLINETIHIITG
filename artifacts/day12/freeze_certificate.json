@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "certified_date": "2026-08-31",
+  "partitions": {
+    "train": {
+      "path": "data/processed/dataset_v1_train.parquet",
+      "rows": 503,
+      "sha256": "7DADA11F5F5B3500BB0C0E034ABC31D17D66AE0026A0479125ACCD10E5313FD4"
+    },
+    "val": {
+      "path": "data/processed/dataset_v1_val.parquet",
+      "rows": 109,
+      "sha256": "832E443AF886589C7DD13F8D780AFC786CBF26D4D48255A01681F01C5C24EE7C"
+    },
+    "test_lockbox": {
+      "path": "data/processed/dataset_v1_test_lockbox.parquet",
+      "rows": 108,
+      "sha256": "7A463EBFCBFCCF7D9DA3C3460C2757C133A6C4DAF68F221E848728223AFBF777",
+      "status": "QUARANTINED"
+    }
+  },
+  "leakage_checks_passed": true
+}
