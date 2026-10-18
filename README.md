@@ -152,6 +152,7 @@ water_potability/
 ├── .gitignore                     # Production ignore protocol
 ├── .vercelignore                  # Vercel deployment exclusions (< 500 MB optimization)
 ├── Dockerfile                     # Multi-stage production container
+├── LICENSE                        # MIT License (Durga Pavan 2026)
 ├── Makefile                       # Developer automation (setup, build, run-all, test, lint)
 ├── MIGRATION.md                   # Legacy cell-to-day mapping & numerical invariance certificate
 ├── RUN_REPORT.md                  # Complete execution audit and telemetry report
@@ -159,8 +160,9 @@ water_potability/
 ├── run_all.py                     # Sequential 17-notebook runner with dependency checking
 ├── main.py                        # Top-level ASGI entrypoint for Vercel & Uvicorn
 ├── pyproject.toml                 # Package definition & tool configurations
-├── requirements.txt               # Lightweight serverless production dependencies
-└── requirements-dev.txt           # Complete development, research, and CI dependencies
+├── requirements.txt               # Complete runtime & execution dependencies
+├── requirements-dev.txt           # Development, testing, and CI dependencies
+└── requirements-serverless.txt    # Lightweight serverless serving dependencies (< 500 MB)
 ```
 
 ---
@@ -194,7 +196,14 @@ source .venv/bin/activate
 .\.venv\Scripts\Activate.ps1
 
 # 3. Install dependencies
+# For full execution, training, notebooks, and benchmarks:
+pip install -r requirements.txt
+
+# Or for development and testing:
 pip install -r requirements-dev.txt
+
+# Or for lean serverless serving on Vercel (< 500 MB):
+pip install -r requirements-serverless.txt
 ```
 
 ---

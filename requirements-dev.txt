@@ -1,10 +1,5 @@
-# Development, Research, Notebooks & CI Dependencies
+# Development, Testing & CI Dependencies
 -r requirements.txt
-xgboost>=2.0.3
-matplotlib>=3.9.0
-seaborn>=0.13.2
-plotly>=5.22.0
-tabulate>=0.9.0
 pytest>=8.2.2
 pytest-cov>=5.0.0
 ruff>=0.4.8

@@ -46,3 +46,33 @@ This log documents all technical adjustments, root causes, surgical fixes, and v
   assert app.title == "Water Potability & Underwater Environmental Monitoring API"
   ```
 - **Verification:** Verification succeeded with exit code 0 (`outputs/logs/10_main_smoke.log`).
+
+---
+
+### Fix #05: Official MIT License Addition
+- **Target File:** [`LICENSE`](LICENSE)
+- **Error / Issue:** Missing LICENSE file despite MIT license declaration and badge in documentation.
+- **Root Cause:** Initial repository initialization omitted formal license file.
+- **Surgical Fix:** Added standard MIT License file authored for Durga Pavan (2026).
+- **Verification:** Verified file existence and Git tracking.
+
+---
+
+### Fix #06: Complete Runtime Requirements & Clean-Clone Alignment
+- **Target Files:** [`requirements.txt`](requirements.txt), [`requirements-dev.txt`](requirements-dev.txt), [`requirements-serverless.txt`](requirements-serverless.txt)
+- **Error / Issue:** Running `pip install -r requirements.txt` on a clean clone would lack `xgboost` and `matplotlib` needed for CLI training, benchmarking, and notebooks. Also contained unused `plotly`.
+- **Root Cause:** Dependencies were split prematurely between production-serving and dev.
+- **Surgical Fix:**
+  1. Consolidated all pipeline runtime dependencies (`xgboost`, `matplotlib`, `seaborn`, `tabulate`, etc.) directly into `requirements.txt`.
+  2. Created dedicated `requirements-serverless.txt` for Vercel deployments under the 500 MB ceiling.
+  3. Purged unused `plotly` dependency.
+- **Verification:** Verified clean clone installs cleanly and executes all commands without `ModuleNotFoundError`.
+
+---
+
+### Fix #07: Python Runtime Compatibility Expansion
+- **Target File:** [`pyproject.toml`](pyproject.toml)
+- **Error / Issue:** Pinned `requires-python = ">=3.11"` prevented installation on Python 3.10 environments.
+- **Root Cause:** Overly restrictive Python version lower bound.
+- **Surgical Fix:** Broadened constraint to `requires-python = ">=3.10"`.
+- **Verification:** Verified `pyproject.toml` metadata syntax and package definition.
