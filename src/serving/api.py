@@ -110,12 +110,15 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 
 @app.get("/ping")
+@app.get("/api/ping")
 def ping() -> dict[str, str]:
     """Lightweight health probe endpoint for deployment verification."""
     return {"status": "ok", "service": "AquaGuard AI"}
 
 
 @app.get("/", response_class=HTMLResponse)
+@app.get("/api", response_class=HTMLResponse)
+@app.get("/api/index", response_class=HTMLResponse)
 @app.get("/dashboard", response_class=HTMLResponse)
 def serve_dashboard():
     """Serves the modern, clean, attractive, and professional web dashboard."""
@@ -205,6 +208,7 @@ def get_stream_telemetry(sensor: str = "dissolved_oxygen", limit: int = 120) -> 
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
+@app.get("/api/health", status_code=status.HTTP_200_OK)
 def health_check() -> dict[str, Any]:
     """Returns service health status and active model artifact metadata."""
     bundle = load_production_model()
@@ -219,6 +223,7 @@ def health_check() -> dict[str, Any]:
 
 
 @app.post("/predict", status_code=status.HTTP_200_OK)
+@app.post("/api/predict", status_code=status.HTTP_200_OK)
 def predict_potability(sample: TrackBWaterSample) -> dict[str, Any]:
     """Performs inference: checks WHO compliance, flags anomalies, and computes calibrated potability probability."""
     t0 = time.perf_counter()
