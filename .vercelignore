@@ -1,0 +1,27 @@
+# Vercel Deployment Exclusions to stay under serverless package limits
+.git
+.github
+tests/
+notebooks/
+reports/
+scripts/
+docs/
+configs/
+artifacts/
+outputs/
+legacy/
+experiments/
+Makefile
+Dockerfile
+run_all.py
+requirements-dev.txt
+*.md
+!README.md
+*.ipynb
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+data/01_raw/water_potability.csv
+data/02_intermediate/
+data/03_processed/
