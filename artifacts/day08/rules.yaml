@@ -1,0 +1,30 @@
+domain_bounds:
+  conductivity:
+  - 10.0
+  - 2000.0
+  dissolved_oxygen:
+  - 0.0
+  - 25.0
+  ph:
+  - 0.0
+  - 14.0
+  pressure:
+  - 0.0
+  - 500.0
+  temperature:
+  - -2.0
+  - 45.0
+  turbidity:
+  - 0.0
+  - 100.0
+interpolation_method: time
+max_ffill_consecutive: 3
+resample_rule: 1h
+sensor_columns:
+- temperature
+- dissolved_oxygen
+- ph
+- conductivity
+- turbidity
+- pressure
+timestamp_column: timestamp

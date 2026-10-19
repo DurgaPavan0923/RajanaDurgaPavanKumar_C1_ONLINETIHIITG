@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "model_name": "Random_Forest",
+  "potability_prediction": 1,
+  "potability_probability": 0.6871,
+  "who_compliant": false,
+  "who_violations": [
+    "Solids=18500.0 out of [0.0, 1000.0]"
+  ],
+  "anomaly_flag": true,
+  "anomaly_score": 0.5556,
+  "latency_ms": 1094.562
+}

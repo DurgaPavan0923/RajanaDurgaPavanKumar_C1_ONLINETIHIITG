@@ -1,0 +1,33 @@
+# Base Global Configuration
+system:
+  project_name: "water-potability-monitor"
+  random_seed: 42
+  deterministic: true
+  environment: "production"
+
+data:
+  raw_dir: "data/01_raw"
+  processed_dir: "data/02_processed"
+  lockbox_dir: "data/04_lockbox"
+  checksums:
+    track_b:
+      filename: "water_potability.csv"
+      sha256: "904004BDE729BFE3D2E195F46343BCEEAD09E32A0EB95BB8184E7E20E029B2BF"
+    track_a:
+      filename: "underwater_sensor_stream.csv"
+      sha256: "6745f8c26070fe2af4500b934a4f94fd3f182b02fba7f03f7e8b608edefb776b"
+
+routing:
+  timestamp_candidates: ["timestamp", "datetime", "Date", "Time", "ts"]
+  max_sampling_jitter_ratio: 0.20
+  forbidden_pseudo_timestamps: true
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s | %(levelname)-8s | %(name)s:%(lineno)d - %(message)s"
+  log_file: "reports/pipeline.log"
+
+experiment_tracking:
+  csv_log: "reports/experiments_log.csv"
+  mlflow_enabled: false
+  artifact_dir: "models/production"

@@ -1,0 +1,13 @@
+timestamp_utc,track,best_model,cv_pr_auc,lockbox_pr_auc,lockbox_f1,artifact_path
+2026-10-16T10:29:54.728906+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
+2026-10-18T02:27:48.274834+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
+2026-10-18T02:33:42.291971+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
+2026-10-18T03:12:37.202582+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
+2026-10-18T03:33:34.894219+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
+2026-10-18T04:20:13.858478+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
+2026-10-18T17:08:43.374604+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
+2026-10-18T17:21:39.316965+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
+2026-10-19T05:01:18.680270+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
+2026-10-19T05:06:12.763038+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
+2026-10-19T05:11:15.256089+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
+2026-10-19T05:15:30.486322+00:00,B,XGBoost,0.5793,0.5951,0.4127,models\production\water_potability_pipeline_v1.joblib
