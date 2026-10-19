@@ -1,7 +1,7 @@
 {
   "artifact": "artifacts\\day22\\production_bundle.joblib",
   "model_architecture": "Platt-Calibrated Random Forest + Isolation Forest",
-  "sha256_seal": "EBFAA12A3F9D192B360B30B38464CDC85A7412ADA34038E11C3A366D3B73FC18",
-  "frozen_timestamp_utc": "2026-10-18T17:34:45.924650+00:00",
+  "sha256_seal": "F3C6DCEC161B086B3D3B1321376229C44ED069EBED25DC38D7B154AF26AB4554",
+  "frozen_timestamp_utc": "2026-10-19T12:21:54.916713+00:00",
   "serving_footprint_mb": 10.87
 }

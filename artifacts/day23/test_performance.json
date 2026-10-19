@@ -7,6 +7,6 @@
   "brier_score": 0.2159,
   "roc_auc": 0.6659,
   "pr_auc": 0.5943,
-  "inference_time_ms_per_sample": 2.849,
+  "inference_time_ms_per_sample": 2.364,
   "lockbox_sample_count": 656
 }

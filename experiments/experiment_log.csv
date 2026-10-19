@@ -11,3 +11,7 @@ timestamp_utc,track,model_name,hyperparameters,cv_metric_name,cv_metric_val,val_
 2026-10-18T17:33:04.757027+00:00,A,RandomForestForecaster,"n_est=100, depth=6",val_mae,0.2291,0.3341
 2026-10-18T17:33:15.355154+00:00,A,RandomForestForecaster,"n_est=150, depth=8",val_mae,0.2272,0.3388
 2026-10-18T17:33:31.380174+00:00,A,RandomForestForecaster,"n_est=200, depth=8",val_mae,0.2253,0.3331
+2026-10-19T12:15:21.110932+00:00,A,RandomForestForecaster,"n_est=50, depth=4",val_mae,0.2669,0.3691
+2026-10-19T12:15:34.093476+00:00,A,RandomForestForecaster,"n_est=100, depth=6",val_mae,0.2291,0.3341
+2026-10-19T12:15:52.637298+00:00,A,RandomForestForecaster,"n_est=150, depth=8",val_mae,0.2272,0.3388
+2026-10-19T12:16:21.066755+00:00,A,RandomForestForecaster,"n_est=200, depth=8",val_mae,0.2253,0.3331
