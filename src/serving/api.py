@@ -107,6 +107,37 @@ def serve_dashboard():
     return HTMLResponse(content=HTML_DASHBOARD, status_code=200)
 
 
+_CACHED_STREAM_DF: pd.DataFrame | None = None
+SENSOR_BOUNDS: dict[str, tuple[float | None, float | None]] = {
+    "ph": (6.5, 8.5),
+    "dissolved_oxygen": (5.0, 14.0),
+    "turbidity": (None, 5.0),
+    "temperature": (4.0, 30.0),
+    "conductivity": (None, 600.0),
+    "pressure": (None, 300.0),
+}
+
+
+def get_stream_dataframe() -> pd.DataFrame | None:
+    """Returns cached in-memory stream telemetry DataFrame to eliminate repetitive disk I/O."""
+    global _CACHED_STREAM_DF
+    if _CACHED_STREAM_DF is not None:
+        return _CACHED_STREAM_DF
+
+    stream_candidates = [
+        Path("data/01_raw/underwater_sensor_stream.csv"),
+        Path(__file__).resolve().parent.parent.parent
+        / "data"
+        / "01_raw"
+        / "underwater_sensor_stream.csv",
+        Path.cwd() / "data" / "01_raw" / "underwater_sensor_stream.csv",
+    ]
+    stream_file = next((p for p in stream_candidates if p.exists()), None)
+    if stream_file is not None:
+        _CACHED_STREAM_DF = pd.read_csv(stream_file)
+    return _CACHED_STREAM_DF
+
+
 @app.get("/api/stream-data")
 def get_stream_telemetry(sensor: str = "dissolved_oxygen", limit: int = 120) -> dict[str, Any]:
     """Returns continuous underwater sensor stream telemetry and anomaly flags for visualization."""
@@ -119,18 +150,9 @@ def get_stream_telemetry(sensor: str = "dissolved_oxygen", limit: int = 120) -> 
         "pressure",
     ]
     selected_sensor = sensor if sensor in valid_sensors else "dissolved_oxygen"
+    df_raw = get_stream_dataframe()
 
-    stream_candidates = [
-        Path("data/01_raw/underwater_sensor_stream.csv"),
-        Path(__file__).resolve().parent.parent.parent
-        / "data"
-        / "01_raw"
-        / "underwater_sensor_stream.csv",
-        Path.cwd() / "data" / "01_raw" / "underwater_sensor_stream.csv",
-    ]
-    stream_file = next((p for p in stream_candidates if p.exists()), None)
-
-    if stream_file is None:
+    if df_raw is None:
         labels = [f"T+{i}h" for i in range(72)]
         values = [round(float(9.5 - 0.5 * np.sin(i / 12 * np.pi)), 2) for i in range(72)]
         anomalies = [values[i] if i in (24, 48) else None for i in range(72)]
@@ -143,30 +165,16 @@ def get_stream_telemetry(sensor: str = "dissolved_oxygen", limit: int = 120) -> 
         }
 
     try:
-        df = pd.read_csv(stream_file).head(limit)
+        df = df_raw.head(limit)
         labels = [pd.to_datetime(t).strftime("%m-%d %H:%M") for t in df["timestamp"]]
-        values = [float(v) if pd.notna(v) else None for v in df[selected_sensor]]
+        vals = df[selected_sensor].to_numpy(dtype=float)
+        values = [round(float(v), 2) if np.isfinite(v) else None for v in vals]
 
-        # Sensor-specific domain boundary anomaly checks
-        anomalies = []
-        for i, row in df.iterrows():
-            val = row.get(selected_sensor)
-            is_anom = False
-            if pd.notna(val):
-                val = float(val)
-                if selected_sensor == "ph" and (val < 6.5 or val > 8.5):
-                    is_anom = True
-                elif selected_sensor == "dissolved_oxygen" and (val < 5.0 or val > 14.0):
-                    is_anom = True
-                elif selected_sensor == "turbidity" and val > 5.0:
-                    is_anom = True
-                elif selected_sensor == "temperature" and (val < 4.0 or val > 30.0):
-                    is_anom = True
-                elif selected_sensor == "conductivity" and val > 600.0:
-                    is_anom = True
-                elif selected_sensor == "pressure" and val > 300.0:
-                    is_anom = True
-            anomalies.append(values[i] if is_anom else None)
+        low, high = SENSOR_BOUNDS.get(selected_sensor, (None, None))
+        anomalies = [
+            v if (v is not None and ((low is not None and v < low) or (high is not None and v > high))) else None
+            for v in values
+        ]
 
         return {
             "labels": labels,

@@ -41,7 +41,6 @@ HTML_DASHBOARD = """<!DOCTYPE html>
         radial-gradient(circle at 15% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
         radial-gradient(circle at 85% 75%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
         radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.04) 0%, transparent 60%);
-      background-attachment: fixed;
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
@@ -1307,13 +1306,34 @@ HTML_DASHBOARD = """<!DOCTYPE html>
       });
     }
 
+    function getPayloadFromDOM() {
+      return {
+        ph: parseFloat(document.getElementById('num-ph').value) || 7.0,
+        Hardness: parseFloat(document.getElementById('num-hardness').value) || 150.0,
+        Solids: parseFloat(document.getElementById('num-solids').value) || 10000.0,
+        Chloramines: parseFloat(document.getElementById('num-chloramines').value) || 5.0,
+        Sulfate: parseFloat(document.getElementById('num-sulfate').value) || 250.0,
+        Conductivity: parseFloat(document.getElementById('num-conductivity').value) || 350.0,
+        Organic_carbon: parseFloat(document.getElementById('num-carbon').value) || 10.0,
+        Trihalomethanes: parseFloat(document.getElementById('num-thm').value) || 50.0,
+        Turbidity: parseFloat(document.getElementById('num-turbidity').value) || 3.0
+      };
+    }
+
+    function updateRadarFromDOM() {
+      const p = getPayloadFromDOM();
+      updateRadarChart(p);
+    }
+
     function syncInput(param, val) {
       document.getElementById('num-' + param).value = val;
+      updateRadarFromDOM();
       debouncedPrediction();
     }
 
     function syncSlider(param, val) {
       document.getElementById('inp-' + param).value = val;
+      updateRadarFromDOM();
       debouncedPrediction();
     }
 
@@ -1331,6 +1351,7 @@ HTML_DASHBOARD = """<!DOCTYPE html>
       };
       setFormValues(p);
       showToast('Randomized telemetry values');
+      updateRadarFromDOM();
       runPrediction();
     }
 
@@ -1349,40 +1370,40 @@ HTML_DASHBOARD = """<!DOCTYPE html>
       };
       setFormValues(safe);
       showToast('Applied optimal WHO chemical remediation');
+      updateRadarFromDOM();
       runPrediction();
     }
 
     let predictTimer = null;
+    let predictAbortController = null;
+
     function debouncedPrediction() {
       clearTimeout(predictTimer);
-      predictTimer = setTimeout(runPrediction, 80);
+      predictTimer = setTimeout(runPrediction, 250);
     }
 
-    // Real-Time Prediction Call
+    // Real-Time Prediction Call with in-flight abort
     async function runPrediction() {
-      const payload = {
-        ph: parseFloat(document.getElementById('num-ph').value) || 7.0,
-        Hardness: parseFloat(document.getElementById('num-hardness').value) || 150.0,
-        Solids: parseFloat(document.getElementById('num-solids').value) || 10000.0,
-        Chloramines: parseFloat(document.getElementById('num-chloramines').value) || 5.0,
-        Sulfate: parseFloat(document.getElementById('num-sulfate').value) || 250.0,
-        Conductivity: parseFloat(document.getElementById('num-conductivity').value) || 350.0,
-        Organic_carbon: parseFloat(document.getElementById('num-carbon').value) || 10.0,
-        Trihalomethanes: parseFloat(document.getElementById('num-thm').value) || 50.0,
-        Turbidity: parseFloat(document.getElementById('num-turbidity').value) || 3.0
-      };
+      if (predictAbortController) {
+        predictAbortController.abort();
+      }
+      predictAbortController = new AbortController();
+
+      const payload = getPayloadFromDOM();
 
       try {
         const response = await fetch('/predict', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: predictAbortController.signal
         });
 
-        if (!response.ok) throw new Error('Inference request failed');
+        if (!response.ok) return;
         const data = await response.json();
         renderPredictionResults(data, payload);
       } catch (err) {
+        if (err.name === 'AbortError') return;
         console.error('API Error:', err);
       }
     }
@@ -1532,7 +1553,7 @@ HTML_DASHBOARD = """<!DOCTYPE html>
       ];
 
       radarChartInstance.data.datasets[1].data = norm;
-      radarChartInstance.update();
+      radarChartInstance.update('none');
     }
 
     function copyCurlSnippet() {
@@ -1596,7 +1617,12 @@ HTML_DASHBOARD = """<!DOCTYPE html>
       }
 
       if (streamChartInstance) {
-        streamChartInstance.destroy();
+        streamChartInstance.data.labels = data.labels;
+        streamChartInstance.data.datasets[0].label = sensor.replace('_', ' ').toUpperCase() + ' Telemetry';
+        streamChartInstance.data.datasets[0].data = data.values;
+        streamChartInstance.data.datasets[1].data = data.anomalies;
+        streamChartInstance.update('none');
+        return;
       }
 
       streamChartInstance = new Chart(ctx, {
