@@ -1,10 +1,13 @@
 """Production FastAPI Inference Endpoint with Input Validation and WHO Compliance Checking."""
 
 import time
+import traceback
 from contextlib import asynccontextmanager
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+UTC = timezone.utc
 
 import joblib
 import numpy as np
@@ -73,34 +76,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-MAX_BODY_BYTES = 1024 * 1024  # 1 MB maximum payload
-
-
-@app.middleware("http")
-async def limit_payload_size_middleware(request: Request, call_next):
-    """Enforces maximum payload size ceiling to mitigate memory exhaustion DoS."""
-    try:
-        content_length = request.headers.get("content-length")
-        if content_length and int(content_length) > MAX_BODY_BYTES:
-            return JSONResponse(
-                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                content={
-                    "detail": f"Payload size exceeds authorized maximum limit of {MAX_BODY_BYTES} bytes."
-                },
-            )
-    except (ValueError, TypeError):
-        pass
-    return await call_next(request)
-
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled exception during request {request.url.path}: {exc}")
+    traceback.print_exc()
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
             "detail": "Internal server error encountered during telemetry inference.",
             "error": str(exc),
+            "traceback": traceback.format_exc(),
         },
     )
 

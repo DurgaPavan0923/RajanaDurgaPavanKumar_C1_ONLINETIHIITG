@@ -11,6 +11,8 @@ if str(ROOT_DIR) not in sys.path:
 try:
     from src.serving.api import app
 except Exception as e:
+    import traceback
+    traceback.print_exc()
     # Diagnostic fallback app in case of fatal import errors during cold-start
     from fastapi import FastAPI
     from fastapi.responses import JSONResponse
