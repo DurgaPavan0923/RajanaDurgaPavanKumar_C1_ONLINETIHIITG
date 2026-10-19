@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
@@ -161,7 +162,14 @@ def plot_predicted_vs_actual(
     steps = np.arange(len(yt))
 
     ax.plot(steps, yt, label="Actual Observed", color="#34495e", linewidth=1.5)
-    ax.plot(steps, yp, label=f"Forecast (T+{lead_step}h)", color="#e67e22", linestyle="--", linewidth=1.5)
+    ax.plot(
+        steps,
+        yp,
+        label=f"Forecast (T+{lead_step}h)",
+        color="#e67e22",
+        linestyle="--",
+        linewidth=1.5,
+    )
 
     ax.set_title(f"{title} ({sensor_name})", fontsize=12, fontweight="bold")
     ax.set_xlabel("Time Step")
@@ -202,7 +210,9 @@ def plot_pr_and_calibration(
     axes[1].legend(loc="best")
     axes[1].grid(True, linestyle="--", alpha=0.5)
 
-    fig.suptitle(f"Model Diagnostic Validation: {model_name}", fontsize=13, fontweight="bold", y=1.02)
+    fig.suptitle(
+        f"Model Diagnostic Validation: {model_name}", fontsize=13, fontweight="bold", y=1.02
+    )
     _save_or_show(fig, save_path)
 
 
@@ -219,6 +229,8 @@ def plot_ablation_tornado(
     ax.barh(sorted_df["feature"], sorted_df[metric_col], color=colors, edgecolor="black")
     ax.axvline(0, color="black", linestyle="--", linewidth=1)
     ax.set_xlabel(f"Sensitivity Impact ({metric_col})", fontweight="bold")
-    ax.set_title("Feature & Sensor Ablation Sensitivity Ranking (LOFO)", fontsize=12, fontweight="bold")
+    ax.set_title(
+        "Feature & Sensor Ablation Sensitivity Ranking (LOFO)", fontsize=12, fontweight="bold"
+    )
     ax.grid(True, linestyle="--", alpha=0.5)
     _save_or_show(fig, save_path)

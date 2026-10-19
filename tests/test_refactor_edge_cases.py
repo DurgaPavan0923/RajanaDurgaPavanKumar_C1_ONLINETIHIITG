@@ -24,7 +24,6 @@ from src.features.stream import (
     engineer_stream_features,
     generate_causal_lags,
     generate_cross_sensor_features,
-    generate_cyclical_time_features,
     generate_rolling_features,
 )
 from src.forecasting import PersistenceForecaster
@@ -35,7 +34,6 @@ from src.preprocessing import (
     audit_sensor_quality,
     clean_and_resample_stream,
     detect_temporal_gaps_and_drift,
-    temporal_walk_forward_split,
 )
 
 
@@ -76,15 +74,17 @@ def test_empty_metrics_input():
 def test_all_nan_sensor_handling():
     """All-NaN sensor column should be audited as 100% missing without failing pipeline."""
     dates = pd.date_range("2026-08-20 00:00", periods=24, freq="h")
-    df = pd.DataFrame({
-        "timestamp": dates,
-        "temperature": np.full(24, np.nan),
-        "dissolved_oxygen": np.full(24, 7.5),
-        "ph": np.full(24, 7.2),
-        "conductivity": np.full(24, 400.0),
-        "turbidity": np.full(24, 2.0),
-        "pressure": np.full(24, 1.0),
-    })
+    df = pd.DataFrame(
+        {
+            "timestamp": dates,
+            "temperature": np.full(24, np.nan),
+            "dissolved_oxygen": np.full(24, 7.5),
+            "ph": np.full(24, 7.2),
+            "conductivity": np.full(24, 400.0),
+            "turbidity": np.full(24, 2.0),
+            "pressure": np.full(24, 1.0),
+        }
+    )
 
     audit = audit_sensor_quality(df, ranges={"temperature": (0.0, 40.0)}, timestamp_col="timestamp")
     temp_row = audit[audit["sensor"] == "temperature"].iloc[0]
@@ -121,10 +121,12 @@ def test_constant_sensor_handling():
 # -----------------------------------------------------------------------------
 def test_out_of_range_sensor_values():
     """Values violating environmental domain boundaries should be audited and strictly clipped."""
-    df = pd.DataFrame({
-        "ph": [-10.0, 0.0, 6.5, 7.0, 8.5, 14.0, 50.0],
-        "dissolved_oxygen": [-5.0, 0.0, 5.0, 8.0, 15.0, 20.0, 100.0],
-    })
+    df = pd.DataFrame(
+        {
+            "ph": [-10.0, 0.0, 6.5, 7.0, 8.5, 14.0, 50.0],
+            "dissolved_oxygen": [-5.0, 0.0, 5.0, 8.0, 15.0, 20.0, 100.0],
+        }
+    )
 
     bounds = {"ph": (0.0, 14.0), "dissolved_oxygen": (0.0, 20.0)}
     clipper = DomainBoundsClipper(bounds=bounds)
@@ -148,12 +150,16 @@ def test_out_of_range_sensor_values():
 # -----------------------------------------------------------------------------
 def test_duplicate_timestamps_handling():
     """Duplicate timestamps should be flagged by drift audit and regularized by resampling."""
-    ts = pd.to_datetime(["2026-08-20 00:00", "2026-08-20 00:00", "2026-08-20 01:00", "2026-08-20 02:00"])
-    df = pd.DataFrame({
-        "timestamp": ts,
-        "temperature": [15.0, 15.5, 16.0, 16.5],
-        "dissolved_oxygen": [8.0, 8.2, 7.9, 7.8],
-    })
+    ts = pd.to_datetime(
+        ["2026-08-20 00:00", "2026-08-20 00:00", "2026-08-20 01:00", "2026-08-20 02:00"]
+    )
+    df = pd.DataFrame(
+        {
+            "timestamp": ts,
+            "temperature": [15.0, 15.5, 16.0, 16.5],
+            "dissolved_oxygen": [8.0, 8.2, 7.9, 7.8],
+        }
+    )
 
     audit = detect_temporal_gaps_and_drift(df, timestamp_col="timestamp")
     assert audit["total_records"] == 4
@@ -172,26 +178,34 @@ def test_duplicate_timestamps_handling():
 # -----------------------------------------------------------------------------
 def test_irregular_sampling_and_gap_detection():
     """Irregular telemetry intervals should be diagnosed and interpolated onto hourly grid."""
-    ts = pd.to_datetime([
-        "2026-08-20 00:00",
-        "2026-08-20 00:15",  # 15 min jitter
-        "2026-08-20 02:00",  # missing 01:00
-        "2026-08-20 03:00",
-    ])
-    df = pd.DataFrame({
-        "timestamp": ts,
-        "temperature": [15.0, 15.2, 16.0, 16.5],
-        "dissolved_oxygen": [8.0, 8.1, 7.8, 7.5],
-    })
+    ts = pd.to_datetime(
+        [
+            "2026-08-20 00:00",
+            "2026-08-20 00:15",  # 15 min jitter
+            "2026-08-20 02:00",  # missing 01:00
+            "2026-08-20 03:00",
+        ]
+    )
+    df = pd.DataFrame(
+        {
+            "timestamp": ts,
+            "temperature": [15.0, 15.2, 16.0, 16.5],
+            "dissolved_oxygen": [8.0, 8.1, 7.8, 7.5],
+        }
+    )
 
-    audit = detect_temporal_gaps_and_drift(df, timestamp_col="timestamp", expected_interval_seconds=3600)
+    audit = detect_temporal_gaps_and_drift(
+        df, timestamp_col="timestamp", expected_interval_seconds=3600
+    )
     assert audit["sampling_jitter_ratio"] > 0.0
 
     resampled = clean_and_resample_stream(df, timestamp_col="timestamp", freq="1h")
     assert len(resampled) == 4
     # Missing 01:00 interpolated linearly
     assert pd.Timestamp("2026-08-20 01:00") in resampled["timestamp"].values
-    val_01 = resampled.loc[resampled["timestamp"] == pd.Timestamp("2026-08-20 01:00"), "temperature"].values[0]
+    val_01 = resampled.loc[
+        resampled["timestamp"] == pd.Timestamp("2026-08-20 01:00"), "temperature"
+    ].values[0]
     assert 15.0 < val_01 < 16.0
 
 
@@ -235,7 +249,9 @@ def test_temporal_leakage_assertion():
 
     # Chronologically valid partitions should pass cleanly
     dates_val_valid = pd.date_range("2026-08-23", periods=20, freq="h")
-    df_val_valid = pd.DataFrame({"timestamp": dates_val_valid, "val": range(20)}, index=range(50, 70))
+    df_val_valid = pd.DataFrame(
+        {"timestamp": dates_val_valid, "val": range(20)}, index=range(50, 70)
+    )
     df_test_valid = pd.DataFrame({"timestamp": dates_test, "val": range(20)}, index=range(70, 90))
     res = assert_no_leakage(df_train, df_val_valid, df_test_valid, timestamp_col="timestamp")
     assert res["no_train_val_overlap"] is True
@@ -313,15 +329,17 @@ def test_stream_and_tabular_feature_pipelines():
     """Validates end-to-end Track A streaming and Track B tabular feature engineering pipelines."""
     # Track A
     dates = pd.date_range("2026-08-20 00:00", periods=50, freq="h")
-    df_stream = pd.DataFrame({
-        "timestamp": dates,
-        "temperature": np.linspace(15, 25, 50),
-        "dissolved_oxygen": np.linspace(9, 6, 50),
-        "ph": np.linspace(7.1, 7.8, 50),
-        "conductivity": np.linspace(350, 420, 50),
-        "turbidity": np.linspace(1.5, 3.2, 50),
-        "pressure": np.linspace(1.0, 1.1, 50),
-    })
+    df_stream = pd.DataFrame(
+        {
+            "timestamp": dates,
+            "temperature": np.linspace(15, 25, 50),
+            "dissolved_oxygen": np.linspace(9, 6, 50),
+            "ph": np.linspace(7.1, 7.8, 50),
+            "conductivity": np.linspace(350, 420, 50),
+            "turbidity": np.linspace(1.5, 3.2, 50),
+            "pressure": np.linspace(1.0, 1.1, 50),
+        }
+    )
 
     fe_stream = engineer_stream_features(df_stream)
     assert len(fe_stream) == 50
@@ -329,17 +347,19 @@ def test_stream_and_tabular_feature_pipelines():
     assert not fe_stream.isna().any().any()
 
     # Track B
-    df_tab = pd.DataFrame({
-        "ph": [7.2, 6.1, 8.9],
-        "Hardness": [200.0, 150.0, 220.0],
-        "Solids": [20000.0, 18000.0, 25000.0],
-        "Chloramines": [7.0, 3.5, 4.5],
-        "Sulfate": [300.0, 250.0, 320.0],
-        "Conductivity": [400.0, 380.0, 420.0],
-        "Organic_carbon": [15.0, 12.0, 18.0],
-        "Trihalomethanes": [60.0, 50.0, 75.0],
-        "Turbidity": [4.0, 2.5, 5.5],
-    })
+    df_tab = pd.DataFrame(
+        {
+            "ph": [7.2, 6.1, 8.9],
+            "Hardness": [200.0, 150.0, 220.0],
+            "Solids": [20000.0, 18000.0, 25000.0],
+            "Chloramines": [7.0, 3.5, 4.5],
+            "Sulfate": [300.0, 250.0, 320.0],
+            "Conductivity": [400.0, 380.0, 420.0],
+            "Organic_carbon": [15.0, 12.0, 18.0],
+            "Trihalomethanes": [60.0, 50.0, 75.0],
+            "Turbidity": [4.0, 2.5, 5.5],
+        }
+    )
     from src.features.stream import engineer_tabular_features
 
     fe_tab = engineer_tabular_features(df_tab)
@@ -354,7 +374,11 @@ def test_stream_and_tabular_feature_pipelines():
 # -----------------------------------------------------------------------------
 def test_all_forecaster_implementations():
     """Validates fit and multi-step predict contracts across all forecaster models."""
-    from src.forecasting import LinearRegressionForecaster, RandomForestForecaster, XGBoostForecaster
+    from src.forecasting import (
+        LinearRegressionForecaster,
+        RandomForestForecaster,
+        XGBoostForecaster,
+    )
 
     X = np.random.RandomState(42).randn(40, 10)
     Y = np.random.RandomState(42).randn(40, 6)
@@ -450,11 +474,13 @@ def test_headless_plotting_suite(tmp_path):
     )
 
     dates = pd.date_range("2026-08-20", periods=30, freq="h")
-    df = pd.DataFrame({
-        "timestamp": dates,
-        "temperature": np.sin(np.linspace(0, 5, 30)) + 15,
-        "dissolved_oxygen": np.cos(np.linspace(0, 5, 30)) + 8,
-    })
+    df = pd.DataFrame(
+        {
+            "timestamp": dates,
+            "temperature": np.sin(np.linspace(0, 5, 30)) + 15,
+            "dissolved_oxygen": np.cos(np.linspace(0, 5, 30)) + 8,
+        }
+    )
 
     # Sensor streams
     p1 = tmp_path / "streams.png"
@@ -495,4 +521,3 @@ def test_headless_plotting_suite(tmp_path):
     probs = np.array([[0.8, 0.2], [0.3, 0.7]] * 5)
     plot_pr_and_calibration(y_binary, probs, save_path=p7)
     assert p7.exists() and p7.stat().st_size > 0
-
