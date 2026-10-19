@@ -86,3 +86,21 @@ This log documents all technical adjustments, root causes, surgical fixes, and v
   6. Added resilient `load_production_model()` helper in `src/serving/api.py` with multi-path resolution and lazy loading, plus graceful fallback to WHO rule-based classification so endpoints (`/`, `/health`, `/predict`, `/api/stream-data`, `/ping`) never return 500.
 - **Verification:** Verified `api.index` imports, all endpoints respond with HTTP 200, and pytest suite passes 100% cleanly.
 
+---
+
+### Fix #09: Vercel "Internal Server Error" (ASGI Stream & Cold-Start Timeout)
+- **Target Files:** [`src/serving/api.py`](src/serving/api.py), [`vercel.json`](vercel.json), [`.python-version`](.python-version), [`api/index.py`](api/index.py)
+- **Error / Issue:** `"Internal Server Error"` when opening the deployed web link on Vercel.
+- **Root Cause:**
+  1. FastAPI's `@app.middleware("http")` uses `BaseHTTPMiddleware`, which intercepts ASGI request streams and causes unhandled exceptions in Vercel's serverless Python adapter that bypass standard exception handlers.
+  2. Heavy model deserialization (1,000 decision trees) during startup caused cold-start execution timeouts.
+  3. Missing `.python-version` file allowed runtime mismatch with dependencies.
+  4. Rewrite destination in `vercel.json` required matching Vercel's `/api` function mapping.
+- **Surgical Fix:**
+  1. Removed `BaseHTTPMiddleware` / `limit_payload_size_middleware` (Vercel natively enforces edge payload limits of 4.5 MB).
+  2. Made `lifespan` and `health_check` completely non-blocking, deferring heavy model unpickling strictly to on-demand `/predict` calls.
+  3. Created `.python-version` explicitly pinning Python `3.12`.
+  4. Configured `vercel.json` with destination `/api` and `maxDuration: 60`.
+- **Verification:** Local import and test invocation verified; endpoints return HTTP 200 immediately.
+
+
