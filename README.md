@@ -1,5 +1,6 @@
 # 🌊 Water Potability & Underwater Environmental Monitoring (AquaGuard AI)
 
+[![Live Demo](https://img.shields.io/badge/demo-live%20on%20vercel-0070f3.svg)](https://water-potability-vert.vercel.app/)
 [![CI](https://github.com/DurgaPavan0923/water_potability/actions/workflows/ci.yml/badge.svg)](https://github.com/DurgaPavan0923/water_potability/actions/workflows/ci.yml)
 [![Tests: 59 Passed](https://img.shields.io/badge/tests-59%20passed-brightgreen.svg)](tests/)
 [![Internship Schedule](https://img.shields.io/badge/internship%20schedule-28%20days-orange.svg)](#10-28-day-internship-schedule--day-wise-notebook-pipeline)
@@ -10,6 +11,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A production-grade, reproducible Machine Learning and Environmental Telemetry system for **Water Potability Classification**, **WHO Compliance Auditing**, and **Underwater Sensor Stream Anomaly Detection & Forecasting**.
+
+> 🚀 **Live Deployment:** [https://water-potability-vert.vercel.app/](https://water-potability-vert.vercel.app/) — Fully interactive web dashboard with real-time inference, 9-parameter radar charts, continuous stream simulation, and WHO compliance diagnostics.
 
 ---
 
@@ -71,7 +74,9 @@ flowchart TD
 
 ## 2. Interactive Web Dashboard (AquaGuard AI)
 
-The production service includes a clean, attractive, and responsive web dashboard accessible directly at `http://127.0.0.1:8000/`:
+The production service includes a clean, attractive, and responsive web dashboard accessible directly at:
+- **Live Cloud Dashboard:** [https://water-potability-vert.vercel.app/](https://water-potability-vert.vercel.app/)
+- **Local Development:** `http://127.0.0.1:8000/`
 
 - **Real-Time Calibrated Inference:** Instant probabilistic classification with confidence bars and safety risk levels (Safe, Caution, Critical).
 - **Automated WHO Compliance Audit:** Identifies exact physicochemical parameter violations against World Health Organization drinking water standards.
@@ -87,6 +92,8 @@ The production service includes a clean, attractive, and responsive web dashboar
 ```
 water_potability/
 ├── .github/workflows/ci.yml       # GitHub Actions CI: Ruff lint, Pytest 59/59, Checksum verification
+├── api/
+│   └── index.py                   # Vercel Serverless ASGI entrypoint with path resolution
 ├── artifacts/                     # Versioned per-day experiment outputs, models, & reports
 │   ├── day07/ ... day26/          # Frozen rules, splits, features, scalers, models, metrics
 ├── configs/
@@ -150,7 +157,7 @@ water_potability/
 │   └── utils.py                   # Common system helpers & seed setters
 ├── tests/                         # 59 unit, integration, leakage, and edge-case tests
 ├── .gitignore                     # Production ignore protocol
-├── .vercelignore                  # Vercel deployment exclusions (< 500 MB optimization)
+├── .vercelignore                  # Vercel deployment exclusions (< 250 MB optimization)
 ├── Dockerfile                     # Multi-stage production container
 ├── LICENSE                        # MIT License (Durga Pavan 2026)
 ├── Makefile                       # Developer automation (setup, build, run-all, test, lint)
@@ -158,11 +165,10 @@ water_potability/
 ├── RUN_REPORT.md                  # Complete execution audit and telemetry report
 ├── FIXES.md                       # Root-cause fixes and resolution log
 ├── run_all.py                     # Sequential 17-notebook runner with dependency checking
-├── main.py                        # Top-level ASGI entrypoint for Vercel & Uvicorn
+├── main.py                        # Top-level ASGI entrypoint for Uvicorn
 ├── pyproject.toml                 # Package definition & tool configurations
-├── requirements.txt               # Complete runtime & execution dependencies
-├── requirements-dev.txt           # Development, testing, and CI dependencies
-└── requirements-serverless.txt    # Lightweight serverless serving dependencies (< 500 MB)
+├── requirements.txt               # Lightweight runtime & serverless dependencies (< 250 MB)
+└── requirements-dev.txt           # Development, training, plotting, and test suite dependencies
 ```
 
 ---
@@ -173,9 +179,9 @@ Models were evaluated across **5-Fold Stratified Cross-Validation** on the Dev s
 
 | Model Candidate | Validation PR-AUC | Lockbox PR-AUC | Lockbox ROC-AUC | Lockbox F1 | Brier Score | Deployment Footprint |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **XGBoost (Platt Calibrated)** 🏆 | **0.5793** | **0.5951** | **0.6689** | **0.4127** | **0.2154** | **~440 MB** (Production Default) |
-| **Random Forest (Platt Calibrated)** | 0.5788 | 0.5943 | 0.6659 | 0.3458 | 0.2159 | ~440 MB |
-| **Logistic Regression (Calibrated)** | 0.4674 | 0.5120 | 0.5402 | 0.2810 | 0.2371 | < 400 MB |
+| **Random Forest (Platt Calibrated)** 🏆 | **0.5788** | **0.5943** | **0.6659** | **0.3458** | **0.2159** | **~250 MB** (Production Default) |
+| **XGBoost (Platt Calibrated)** | 0.5793 | 0.5951 | 0.6689 | 0.4127 | 0.2154 | ~440 MB (Research Suite) |
+| **Logistic Regression (Calibrated)** | 0.4674 | 0.5120 | 0.5402 | 0.2810 | 0.2371 | < 200 MB |
 | **WHO Rule Baseline** | 0.3902 | 0.3902 | 0.5000 | 0.0000 | N/A | Negligible (Rule-Based) |
 
 ---
@@ -196,14 +202,11 @@ source .venv/bin/activate
 .\.venv\Scripts\Activate.ps1
 
 # 3. Install dependencies
-# For full execution, training, notebooks, and benchmarks:
+# For lightweight serverless serving & inference:
 pip install -r requirements.txt
 
-# Or for development and testing:
+# Or for full development, training, notebooks, and tests:
 pip install -r requirements-dev.txt
-
-# Or for lean serverless serving on Vercel (< 500 MB):
-pip install -r requirements-serverless.txt
 ```
 
 ---
@@ -213,7 +216,7 @@ pip install -r requirements-serverless.txt
 Every component has been verified end-to-end with full output capture in [`RUN_REPORT.md`](RUN_REPORT.md):
 
 ```bash
-# Step 0: Verify Python syntax and compilation across all 49 source files
+# Step 0: Verify Python syntax and compilation across all source files
 python -m py_compile $(git ls-files "*.py")
 
 # Step 1: Re-generate all 17 day notebooks from template generator
@@ -252,20 +255,31 @@ python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 
 ## 7. REST API Reference
 
-### Start Serving Server
+### Endpoints Overview
+The API is deployed and live at `https://water-potability-vert.vercel.app/` (or locally at `http://127.0.0.1:8000`):
+
+| Endpoint | Method | Response Type | Description |
+| :--- | :---: | :---: | :--- |
+| `/` | `GET` | `text/html` | Interactive AquaGuard AI Web Dashboard |
+| `/ping` | `GET` | `application/json` | Lightweight deployment health probe (`{"status":"ok","service":"AquaGuard AI"}`) |
+| `/api/stream-data` | `GET` | `application/json` | Continuous underwater telemetry stream with anomaly flags |
+| `/predict` | `POST` | `application/json` | Calibrated water potability prediction, WHO audit, and anomaly scoring |
+
+### Start Local Server
 ```bash
 python -m uvicorn main:app --host 127.0.0.1 --port 8000
 ```
-- **Web Dashboard:** `http://127.0.0.1:8000/`
-- **Interactive Swagger Docs:** `http://127.0.0.1:8000/docs`
-- **Health Endpoint:** `http://127.0.0.1:8000/health`
 
-#### `POST /predict`
-Executes real-time inference: checks WHO compliance violations, flags multi-sensor anomalies, and outputs calibrated potability probability.
-
-**Sample Request:**
+### Live Cloud Testing Examples
 ```bash
-curl -X POST "http://127.0.0.1:8000/predict" \
+# 1. Health Probe
+curl -i https://water-potability-vert.vercel.app/ping
+
+# 2. Continuous Sensor Telemetry Stream (e.g., pH sensor, latest 5 records)
+curl -i "https://water-potability-vert.vercel.app/api/stream-data?sensor=ph&limit=5"
+
+# 3. Real-Time Physicochemical Inference
+curl -i -X POST "https://water-potability-vert.vercel.app/predict" \
      -H "Content-Type: application/json" \
      -d '{
        "ph": 7.35,
@@ -280,11 +294,11 @@ curl -X POST "http://127.0.0.1:8000/predict" \
      }'
 ```
 
-**Sample Response:**
+**Sample Prediction Response:**
 ```json
 {
   "mode": "production_ml",
-  "model_name": "XGBoost",
+  "model_name": "Random_Forest",
   "potability_prediction": 1,
   "potability_probability": 0.6382,
   "who_compliant": true,
@@ -299,14 +313,34 @@ curl -X POST "http://127.0.0.1:8000/predict" \
 
 ## 8. Vercel Serverless Deployment Guide
 
-This repository is optimized for immediate, zero-configuration deployment to **Vercel Serverless Functions**:
+This repository is optimized for seamless, automated deployment to **Vercel Serverless Functions**:
 
-1. **Serverless Entrypoint:** [`api/index.py`](api/index.py) configures the project root on `sys.path` and exports the FastAPI ASGI `app` instance with diagnostic cold-start fallback.
-2. **Universal Routing:** [`vercel.json`](vercel.json) rewrites all incoming traffic (`/(.*) -> /api/index.py`) so `/`, `/dashboard`, `/docs`, `/health`, `/predict`, `/api/stream-data`, and `/ping` route directly to FastAPI.
-3. **Optimized Package Size (< 250 MB):** Root [`requirements.txt`](requirements.txt) contains only lightweight serving dependencies (`fastapi`, `uvicorn`, `pydantic`, `pyyaml`, `numpy`, `pandas`, `scipy`, `scikit-learn`, `joblib`), preventing function size blowouts and runtime OpenMP linkage crashes.
-4. **Research Dependencies:** Full model training, notebook execution, and plotting packages (`xgboost`, `matplotlib`, `seaborn`, `tabulate`, `pytest`) are maintained in [`requirements-dev.txt`](requirements-dev.txt).
-5. **Deployment Exclusions:** [`.vercelignore`](.vercelignore) strips out test suites, research notebooks, legacy runs, outputs, and raw artifacts, keeping the deployed function bundle under **15 MB**.
-6. **Graceful Fault Tolerance:** `src/serving/api.py` includes resilient multi-path model loading (`load_production_model`) and automatic fallback to WHO drinking water regulatory rules, guaranteeing HTTP 200 uptime without 500 FUNCTION_INVOCATION_FAILED errors.
+1. **Live Production URL:** [https://water-potability-vert.vercel.app/](https://water-potability-vert.vercel.app/)
+2. **Universal Multi-Route Rewriting (`vercel.json`):**
+   ```json
+   {
+     "$schema": "https://openapi.vercel.sh/vercel.json",
+     "rewrites": [
+       {
+         "source": "/(.*)",
+         "destination": "/api/index.py?__orig_path=/$1"
+       }
+     ]
+   }
+   ```
+   Routes all incoming requests dynamically to `api/index.py` while preserving the exact client request path via query parameter.
+3. **ASGI Serverless Bridge (`api/index.py`):**
+   - Automatically extracts and normalizes the target path from `__orig_path`, stripping internal rewrite artifacts before invoking FastAPI.
+   - Includes full cold-start error diagnostic tracing to immediately detect and report any environment or initialization anomalies.
+4. **Decoupled Serverless Dependencies (< 250 MB):**
+   - Production dependencies in [`requirements.txt`](requirements.txt) include only essential inference libraries (`fastapi`, `uvicorn`, `pydantic`, `pyyaml`, `numpy`, `pandas`, `scipy`, `scikit-learn`, `joblib`), keeping the deployment safely beneath AWS Lambda's 250 MB uncompressed limit.
+   - Heavy plotting and training packages (`matplotlib`, `seaborn`, `xgboost`, `pytest`) are decoupled into [`requirements-dev.txt`](requirements-dev.txt).
+5. **Headless Module Isolation:**
+   - [`src/__init__.py`](src/__init__.py) and [`src/plotting.py`](src/plotting.py) guard graphical imports with safe fallback blocks (`try...except (ImportError, Exception): plotting = None`). The headless serverless environment boots with zero missing-library crashes.
+6. **Deployment Exclusions (`.vercelignore`):**
+   - Strips out test suites, research notebooks, legacy runs, outputs, and raw caches, maintaining an ultra-compact function bundle (~15 MB).
+7. **Resilient Production Fallback:**
+   - `src/serving/api.py` lazily unpickles the production model bundle and automatically falls back to deterministic WHO drinking water regulatory compliance rules if required, guaranteeing continuous 200 OK uptime.
 
 ---
 
