@@ -11,7 +11,7 @@ from sklearn.multioutput import MultiOutputRegressor
 
 try:
     import xgboost as xgb
-except ImportError:
+except (ImportError, OSError, Exception):
     xgb = None
 
 from src.utils import get_logger

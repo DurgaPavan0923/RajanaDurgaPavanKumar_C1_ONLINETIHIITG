@@ -101,6 +101,7 @@ def ping() -> dict[str, str]:
 @app.get("/", response_class=HTMLResponse)
 @app.get("/api", response_class=HTMLResponse)
 @app.get("/api/index", response_class=HTMLResponse)
+@app.get("/api/index.py", response_class=HTMLResponse)
 @app.get("/dashboard", response_class=HTMLResponse)
 def serve_dashboard():
     """Serves the modern, clean, attractive, and professional web dashboard."""
@@ -138,6 +139,7 @@ def get_stream_dataframe() -> pd.DataFrame | None:
     return _CACHED_STREAM_DF
 
 
+@app.get("/stream-data")
 @app.get("/api/stream-data")
 def get_stream_telemetry(sensor: str = "dissolved_oxygen", limit: int = 120) -> dict[str, Any]:
     """Returns continuous underwater sensor stream telemetry and anomaly flags for visualization."""

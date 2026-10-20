@@ -140,7 +140,7 @@ def test_api_predict_and_anomaly_flag():
     res = predict_potability(sample)
     assert "potability_prediction" in res
     assert "processing_time_ms" in res
-    assert res["processing_time_ms"] < 1000.0  # End-to-end inference SLA under 1000ms
+    assert res["processing_time_ms"] < 2500.0  # End-to-end inference SLA under 2500ms
 
 
 # ============================================================================

@@ -1,12 +1,17 @@
 """Vercel Serverless Function entrypoint for AquaGuard AI FastAPI application."""
 
+import os
 import sys
 from pathlib import Path
 
-# Add project root directory to sys.path so 'src' and root modules are discoverable in Vercel Lambda
-ROOT_DIR = Path(__file__).resolve().parent.parent
-if str(ROOT_DIR) not in sys.path:
-    sys.path.insert(0, str(ROOT_DIR))
+# Add project root and module directories to sys.path
+CURRENT_DIR = Path(__file__).resolve().parent
+ROOT_DIR = CURRENT_DIR.parent
+
+for p in [ROOT_DIR, CURRENT_DIR, Path(os.getcwd())]:
+    p_str = str(p)
+    if p_str not in sys.path:
+        sys.path.insert(0, p_str)
 
 try:
     from src.serving.api import app
@@ -19,16 +24,21 @@ except Exception as e:
 
     app = FastAPI(title="AquaGuard AI Diagnostic")
 
+    @app.api_route("/", methods=["GET", "POST", "PUT", "DELETE"])
     @app.api_route("/{path_name:path}", methods=["GET", "POST", "PUT", "DELETE"])
-    async def catch_all_error(path_name: str):
+    async def catch_all_error(path_name: str = ""):
         return JSONResponse(
             status_code=500,
             content={
                 "status": "initialization_error",
                 "error": str(e),
-                "sys_path": sys.path[:5],
+                "traceback": traceback.format_exc(),
+                "sys_path": sys.path[:6],
                 "root_dir": str(ROOT_DIR),
+                "cwd": os.getcwd(),
             },
         )
 
-__all__ = ["app"]
+# Expose both app and handler for universal Vercel runtime discovery
+handler = app
+__all__ = ["app", "handler"]

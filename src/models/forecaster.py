@@ -10,7 +10,7 @@ from sklearn.linear_model import Ridge
 
 try:
     import xgboost as xgb
-except ImportError:
+except (ImportError, OSError, Exception):
     xgb = None
 
 from src.logger import get_logger
