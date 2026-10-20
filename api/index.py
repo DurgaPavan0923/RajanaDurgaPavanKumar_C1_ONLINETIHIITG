@@ -25,7 +25,7 @@ except BaseException as e:
 
 
 async def app(scope, receive, send):
-    """Universal ASGI handler with full error diagnostics for serverless runtime."""
+    """Universal ASGI handler with path resolution and diagnostics."""
     if _init_error is not None:
         if scope.get("type") == "http":
             body = (
@@ -47,6 +47,21 @@ async def app(scope, receive, send):
             )
             await send({"type": "http.response.body", "body": body})
         return
+
+    if scope.get("type") == "http":
+        headers = dict(scope.get("headers", []))
+        # Restore original client URL path if rewritten by Vercel
+        for h in [b"x-matched-path", b"x-forwarded-uri", b"x-envoy-original-path", b"x-invoke-path"]:
+            if h in headers:
+                orig = headers[h].decode("utf-8").split("?")[0]
+                if orig and orig not in ("/api/index.py", "/api/index"):
+                    scope["path"] = orig
+                    scope["raw_path"] = orig.encode("utf-8")
+                    break
+        else:
+            if scope.get("path") in ("/api/index.py", "/api/index"):
+                scope["path"] = "/"
+                scope["raw_path"] = b"/"
 
     try:
         await fastapi_app(scope, receive, send)
