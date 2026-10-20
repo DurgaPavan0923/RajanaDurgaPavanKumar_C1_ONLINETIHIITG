@@ -17,7 +17,7 @@ for p in [ROOT_DIR, CURRENT_DIR, Path(os.getcwd())]:
 
 try:
     from src.serving.api import app
-except Exception as e:
+except BaseException as e:
     _init_error = traceback.format_exc()
 
     async def fallback_asgi_app(scope, receive, send):
