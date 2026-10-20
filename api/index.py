@@ -1,7 +1,9 @@
 """Vercel Serverless Function entrypoint for AquaGuard AI FastAPI application."""
 
+import json
 import os
 import sys
+import traceback
 from pathlib import Path
 
 # Add project root and module directories to sys.path
@@ -16,29 +18,41 @@ for p in [ROOT_DIR, CURRENT_DIR, Path(os.getcwd())]:
 try:
     from src.serving.api import app
 except Exception as e:
-    import traceback
-    traceback.print_exc()
-    # Diagnostic fallback app in case of fatal import errors during cold-start
-    from fastapi import FastAPI
-    from fastapi.responses import JSONResponse
+    _init_error = traceback.format_exc()
 
-    app = FastAPI(title="AquaGuard AI Diagnostic")
+    async def fallback_asgi_app(scope, receive, send):
+        if scope["type"] == "http":
+            body = json.dumps(
+                {
+                    "status": "initialization_error",
+                    "error": str(e),
+                    "traceback": _init_error,
+                    "sys_path": sys.path[:10],
+                    "root_dir": str(ROOT_DIR),
+                    "cwd": os.getcwd(),
+                    "files_in_root": os.listdir(ROOT_DIR) if ROOT_DIR.exists() else [],
+                    "files_in_current": os.listdir(CURRENT_DIR) if CURRENT_DIR.exists() else [],
+                },
+                indent=2,
+            ).encode("utf-8")
+            await send(
+                {
+                    "type": "http.response.start",
+                    "status": 500,
+                    "headers": [
+                        [b"content-type", b"application/json"],
+                        [b"content-length", str(len(body)).encode("utf-8")],
+                    ],
+                }
+            )
+            await send(
+                {
+                    "type": "http.response.body",
+                    "body": body,
+                }
+            )
 
-    @app.api_route("/", methods=["GET", "POST", "PUT", "DELETE"])
-    @app.api_route("/{path_name:path}", methods=["GET", "POST", "PUT", "DELETE"])
-    async def catch_all_error(path_name: str = ""):
-        return JSONResponse(
-            status_code=500,
-            content={
-                "status": "initialization_error",
-                "error": str(e),
-                "traceback": traceback.format_exc(),
-                "sys_path": sys.path[:6],
-                "root_dir": str(ROOT_DIR),
-                "cwd": os.getcwd(),
-            },
-        )
+    app = fallback_asgi_app
 
-# Expose both app and handler for universal Vercel runtime discovery
 handler = app
 __all__ = ["app", "handler"]
