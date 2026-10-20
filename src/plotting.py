@@ -2,12 +2,8 @@
 
 from pathlib import Path
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from sklearn.calibration import calibration_curve
 from sklearn.metrics import precision_recall_curve
 
@@ -15,10 +11,18 @@ from src.utils import ensure_dir, get_logger
 
 logger = get_logger("Plotting")
 
-# Set global clean aesthetic
-sns.set_theme(style="whitegrid", font="sans-serif")
-plt.rcParams["font.size"] = 10
-plt.rcParams["figure.autolayout"] = True
+try:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    sns.set_theme(style="whitegrid", font="sans-serif")
+    plt.rcParams["font.size"] = 10
+    plt.rcParams["figure.autolayout"] = True
+except (ImportError, Exception):
+    matplotlib = None
+    plt = None
+    sns = None
 
 
 def _save_or_show(fig: plt.Figure, save_path: str | Path | None = None) -> None:
