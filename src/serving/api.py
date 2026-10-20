@@ -73,7 +73,7 @@ app = FastAPI(
     title="Water Potability & Underwater Environmental Monitoring API",
     description="Production REST endpoint for calibrated water potability classification and anomaly detection.",
     version="1.0.0",
-    lifespan=lifespan,
+    debug=True,
 )
 
 

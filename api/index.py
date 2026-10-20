@@ -15,44 +15,62 @@ for p in [ROOT_DIR, CURRENT_DIR, Path(os.getcwd())]:
     if p_str not in sys.path:
         sys.path.insert(0, p_str)
 
+_init_error = None
 try:
-    from src.serving.api import app
+    from src.serving.api import app as fastapi_app
+    fastapi_app.debug = True
 except BaseException as e:
     _init_error = traceback.format_exc()
+    fastapi_app = None
 
-    async def fallback_asgi_app(scope, receive, send):
-        if scope["type"] == "http":
-            body = json.dumps(
-                {
-                    "status": "initialization_error",
-                    "error": str(e),
-                    "traceback": _init_error,
-                    "sys_path": sys.path[:10],
-                    "root_dir": str(ROOT_DIR),
-                    "cwd": os.getcwd(),
-                    "files_in_root": os.listdir(ROOT_DIR) if ROOT_DIR.exists() else [],
-                    "files_in_current": os.listdir(CURRENT_DIR) if CURRENT_DIR.exists() else [],
-                },
-                indent=2,
+
+async def app(scope, receive, send):
+    """Universal ASGI handler with full error diagnostics for serverless runtime."""
+    if _init_error is not None:
+        if scope.get("type") == "http":
+            body = (
+                f"AquaGuard AI - Cold Start Initialization Error\n\n"
+                f"Traceback:\n{_init_error}\n\n"
+                f"sys.path: {sys.path[:6]}\n"
+                f"ROOT_DIR: {ROOT_DIR}\n"
+                f"CWD: {os.getcwd()}\n"
             ).encode("utf-8")
             await send(
                 {
                     "type": "http.response.start",
                     "status": 500,
                     "headers": [
-                        [b"content-type", b"application/json"],
+                        [b"content-type", b"text/plain; charset=utf-8"],
                         [b"content-length", str(len(body)).encode("utf-8")],
                     ],
                 }
             )
+            await send({"type": "http.response.body", "body": body})
+        return
+
+    try:
+        await fastapi_app(scope, receive, send)
+    except BaseException as exc:
+        tb = traceback.format_exc()
+        if scope.get("type") == "http":
+            body = (
+                f"AquaGuard AI - Runtime Invocation Error: {exc}\n\n"
+                f"Traceback:\n{tb}\n"
+            ).encode("utf-8")
             await send(
                 {
-                    "type": "http.response.body",
-                    "body": body,
+                    "type": "http.response.start",
+                    "status": 500,
+                    "headers": [
+                        [b"content-type", b"text/plain; charset=utf-8"],
+                        [b"content-length", str(len(body)).encode("utf-8")],
+                    ],
                 }
             )
+            await send({"type": "http.response.body", "body": body})
+        else:
+            raise exc
 
-    app = fallback_asgi_app
 
 handler = app
 __all__ = ["app", "handler"]
