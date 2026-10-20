@@ -5,6 +5,7 @@ import os
 import sys
 import traceback
 from pathlib import Path
+from urllib.parse import parse_qs, urlencode
 
 # Add project root and module directories to sys.path
 CURRENT_DIR = Path(__file__).resolve().parent
@@ -49,19 +50,25 @@ async def app(scope, receive, send):
         return
 
     if scope.get("type") == "http":
-        headers = dict(scope.get("headers", []))
-        # Restore original client URL path if rewritten by Vercel
-        for h in [b"x-matched-path", b"x-forwarded-uri", b"x-envoy-original-path", b"x-invoke-path"]:
-            if h in headers:
-                orig = headers[h].decode("utf-8").split("?")[0]
-                if orig and orig not in ("/api/index.py", "/api/index"):
-                    scope["path"] = orig
-                    scope["raw_path"] = orig.encode("utf-8")
-                    break
-        else:
-            if scope.get("path") in ("/api/index.py", "/api/index"):
-                scope["path"] = "/"
-                scope["raw_path"] = b"/"
+        # 1. Resolve path from query string parameter injected by Vercel rewrite
+        qs = scope.get("query_string", b"").decode("utf-8")
+        if "__orig_path=" in qs:
+            params = parse_qs(qs, keep_blank_values=True)
+            if "__orig_path" in params and params["__orig_path"]:
+                orig = params.pop("__orig_path")[0]
+                if not orig.startswith("/"):
+                    orig = "/" + orig
+                while "//" in orig:
+                    orig = orig.replace("//", "/")
+                scope["path"] = orig
+                scope["raw_path"] = orig.encode("utf-8")
+                remaining_qs = urlencode([(k, v) for k, vals in params.items() for v in vals])
+                scope["query_string"] = remaining_qs.encode("utf-8")
+
+        # 2. Fallback to matched path headers or root if path is /api/index.py
+        if scope.get("path") in ("/api/index.py", "/api/index"):
+            scope["path"] = "/"
+            scope["raw_path"] = b"/"
 
     try:
         await fastapi_app(scope, receive, send)
