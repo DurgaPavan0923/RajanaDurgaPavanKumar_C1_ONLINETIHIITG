@@ -1,6 +1,7 @@
 # 🌊 Water Potability & Underwater Environmental Monitoring (AquaGuard AI)
 
 [![Live Demo](https://img.shields.io/badge/demo-live%20on%20vercel-0070f3.svg)](https://water-potability-vert.vercel.app/)
+[![Version: v2.1.0](https://img.shields.io/badge/version-2.1.0-06b6d4.svg)](https://github.com/DurgaPavan0923/water_potability/releases)
 [![CI](https://github.com/DurgaPavan0923/water_potability/actions/workflows/ci.yml/badge.svg)](https://github.com/DurgaPavan0923/water_potability/actions/workflows/ci.yml)
 [![Tests: 59 Passed](https://img.shields.io/badge/tests-59%20passed-brightgreen.svg)](tests/)
 [![Internship Schedule](https://img.shields.io/badge/internship%20schedule-28%20days-orange.svg)](#10-28-day-internship-schedule--day-wise-notebook-pipeline)
@@ -10,20 +11,20 @@
 [![Code Style: Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A production-grade, reproducible Machine Learning and Environmental Telemetry system for **Water Potability Classification**, **WHO Compliance Auditing**, and **Underwater Sensor Stream Anomaly Detection & Forecasting**.
+A production-grade, zero-leakage Machine Learning and Environmental Telemetry system for **Calibrated Water Potability Classification**, **WHO & EPA Regulatory Auditing**, and **Underwater Sensor Stream Anomaly Detection & Forecasting**.
 
-> 🚀 **Live Deployment:** [https://water-potability-vert.vercel.app/](https://water-potability-vert.vercel.app/) — Fully interactive web dashboard with real-time inference, 9-parameter radar charts, continuous stream simulation, and WHO compliance diagnostics.
+> 🚀 **Live Production Deployment:** [https://water-potability-vert.vercel.app/](https://water-potability-vert.vercel.app/) — Fully interactive web dashboard featuring real-time Bayesian potability simulation, 9-parameter radar charts, continuous CTD buoy telemetry simulation, sortable batch ingestion with pagination, and comprehensive WHO compliance diagnostics.
 
 ---
 
 ## 📌 Table of Contents
 - [1. System Architecture & Dual-Track Design](#1-system-architecture--dual-track-design)
-- [2. Interactive Web Dashboard (AquaGuard AI)](#2-interactive-web-dashboard-aquaguard-ai)
+- [2. Interactive Web Dashboard (AquaGuard AI v2.1.0)](#2-interactive-web-dashboard-aquaguard-ai-v210)
 - [3. Repository Structure](#3-repository-structure)
-- [4. Model Benchmark Leaderboard](#4-model-benchmark-leaderboard)
+- [4. Model Benchmark Leaderboard & Provenance](#4-model-benchmark-leaderboard--provenance)
 - [5. Quickstart & Installation](#5-quickstart--installation)
 - [6. Pipeline Run Order & Execution Commands](#6-pipeline-run-order--execution-commands)
-- [7. REST API Reference](#7-rest-api-reference)
+- [7. REST API Reference & Security Headers](#7-rest-api-reference--security-headers)
 - [8. Vercel Serverless Deployment Guide](#8-vercel-serverless-deployment-guide)
 - [9. Quality Assurance & Leakage Prevention](#9-quality-assurance--leakage-prevention)
 - [10. 28-Day Internship Schedule & Day-Wise Notebook Pipeline](#10-28-day-internship-schedule--day-wise-notebook-pipeline)
@@ -48,13 +49,13 @@ flowchart TD
         TrackB --> PreB["Leakage-Proof Stratified Split\n(80% Dev / 20% Lockbox)"]
         PreB --> FE_B["Domain Feature Engineering\n(Ratios, WHO Deltas, Log Transforms)"]
         FE_B --> PipeB["Fold-Isolated Imputer + Scaler Pipeline"]
-        PipeB --> ModB["Calibrated Ensemble (Random Forest / XGBoost)\n+ Isolation Forest Anomaly Detector"]
+        PipeB --> ModB["Calibrated Ensemble (Random Forest / XGBoost + Platt)\n+ Isolation Forest Anomaly Detector"]
     end
     
     subgraph Track_A ["Track A: Temporal Stream"]
         TrackA --> PreA["Chronological Walk-Forward Split\n(No Future Peeking)"]
         PreA --> FE_A["Causal Lag & Rolling Windows\n(Anti-Shuffling Guards)"]
-        FE_A --> ModA["Forecasters (Persistence, Ridge, RF)\n+ Streaming Boundary Anomaly Detection"]
+        FE_A --> ModA["Forecasters (Persistence, Ridge, RF, XGBoost)\n+ Streaming Boundary Anomaly Detection"]
     end
     
     ModB --> ProdBundle["Frozen Model Package\n(water_potability_pipeline_v1.joblib)"]
@@ -62,28 +63,55 @@ flowchart TD
     ModA --> Serving
 ```
 
-### Track Details:
+### Operational Track Details:
 1. **Track B (Static Physicochemical Snapshot - Primary):**
-   - Evaluates 9 bulk water quality attributes from benchmark samples ($N=3,276$): pH, Hardness, Solids (TDS), Chloramines, Sulfate, Conductivity, Organic Carbon, Trihalomethanes, and Turbidity.
-   - Provides deterministic **WHO Drinking Water Guideline Compliance Auditing**, Platt-calibrated potability probabilities, and multi-dimensional **Isolation Forest** anomaly scoring.
+   - Evaluates 9 bulk water quality attributes from benchmark samples ($N=3,276$): pH, Hardness, Solids (TDS), Chloramines, Sulfate, Conductivity, Organic Carbon (TOC), Trihalomethanes (THM), and Turbidity.
+   - Provides deterministic **WHO & EPA Drinking Water Guideline Compliance Auditing**, Platt-calibrated potability probabilities, and multi-dimensional **Isolation Forest** anomaly scoring.
 2. **Track A (Continuous Telemetry Stream):**
-   - Ingests chronological underwater sensor readings (temperature, dissolved oxygen, pH, conductivity, turbidity, pressure).
+   - Ingests chronological underwater sensor readings (temperature, dissolved oxygen, pH, conductivity, turbidity, pressure) modeled on the Pacific Ocean Station PAPA / Bermuda Atlantic time-series benchmark.
    - Enforces strict walk-forward causal validation without temporal data leakage for multi-step forecasting and live boundary drift monitoring.
 
 ---
 
-## 2. Interactive Web Dashboard (AquaGuard AI)
+## 2. Interactive Web Dashboard (AquaGuard AI v2.1.0)
 
-The production service includes a clean, attractive, and responsive web dashboard accessible directly at:
+The production service includes an accessible, responsive, and robust web dashboard accessible directly at:
 - **Live Cloud Dashboard:** [https://water-potability-vert.vercel.app/](https://water-potability-vert.vercel.app/)
 - **Local Development:** `http://127.0.0.1:8000/`
 
-- **Real-Time Calibrated Inference:** Instant probabilistic classification with confidence bars and safety risk levels (Safe, Caution, Critical).
-- **Automated WHO Compliance Audit:** Identifies exact physicochemical parameter violations against World Health Organization drinking water standards.
-- **Dynamic 9-Parameter Radar Chart:** Real-time visual comparison of sample parameters against WHO permissible safety envelopes (rendered via Chart.js).
-- **Live Underwater Telemetry Stream:** Interactive time-series visualizer showing sensor streams with domain-boundary anomaly flags.
-- **One-Click Presets:** *Pure Mountain Spring*, *Standard Kaggle Median*, *Industrial Runoff / Contaminated*, and *Borderline Potable*.
-- **Interactive Tuning Sliders:** Real-time parameter tweaking with instantaneous radar and prediction updates.
+### Key Capabilities & UI/UX Features:
+- **Header & Hero KPIs:**
+  - Dynamic **"PRODUCTION ACTIVE"** status probe wired directly to `/api/ping` (emerald healthy pulse, amber degraded, red offline).
+  - Live UTC clock initializing on page load and updating every second.
+  - Light & Dark mode theme toggle (☀️ / 🌙) with persistent `localStorage` preference memory.
+  - 4 Key Metric Cards: *Champion Pipeline (XGBoost + Platt)*, *Lockbox PR-AUC (0.5951 vs WHO baseline 0.3920)*, *Inference Latency (Server P50 measured 2.89 ms)*, and *WHO Auditor Active (9 Guardrails)*.
+- **Tab 1: Interactive Potability Simulator:**
+  - 9 sliders with synchronized numeric input boxes, units, min/max/step, and regulatory limit citation badges.
+  - Prominent **Educational Disclaimer Banner** indicating predictive demonstration scope (not a substitute for certified laboratory testing).
+  - 7 Presets: *Mountain Spring*, *Municipal Tap*, *Glacial Melt*, *Hydrothermal Vent*, *Acid Drainage*, *Sensor Failure*, and *Randomize*.
+  - **Dual-Gate Safety Verdict:** Displays `"Predicted potable (model estimate)"` and strictly prevents Grade A/B classification if chemical violations are present.
+  - **6-Tier Calibrated Grading Rubric:** Grade A (Pristine), Grade B (Standard Potable), Grade C (Advisory Warning), Grade D (Treatment Required), Grade F (Hazardous), and Grade X (Sensor Drift / Malfunction).
+  - **Auto-Remediate to Potable:** One-click reset to compliant WHO values accompanied by an active remediation diff alert.
+  - **Copy cURL Request:** Copies production-ready `curl` targeting the live endpoint with complete 9-feature JSON body; announced to screen readers via dynamic toasts.
+  - **9-Axis Radar Chart:** Real-time normalized comparison against the 50% WHO safe boundary envelope via Chart.js.
+- **Tab 2: Continuous Telemetry Stream (Track A):**
+  - Simulated Pacific Oceanographic CTD Buoy Stream (Station PAPA benchmark) with 6 selectable channels (DO, Temperature, pH, Turbidity, Conductivity, Pressure).
+  - Multi-sensor anomaly detection powered by **Isolation Forest ($\nu=0.021$)** and dynamic **3.5$\sigma$ rolling bounds**.
+  - Interactive Start, Pause, and Reset controls with leak-free timer management.
+- **Tab 3: Batch Telemetry Processor (9 Features):**
+  - Complete 9-feature schema support matching the model: `pH, Hardness, Solids, Chloramines, Sulfate, Conductivity, Organic_carbon, Trihalomethanes, Turbidity`.
+  - **Load Demo 30-Sample Batch:** Instant scoring of 30 realistic samples across all 9 features.
+  - **Drag-and-Drop CSV Upload:** Handles UTF-8 BOM (`\ufeff`), strips whitespace, validates required columns, and displays clear alerts for missing headers.
+  - **Sortable Table & Pagination:** Clickable column headers (ascending/descending) with 10-row pagination bar.
+  - **Interactive Filters:** "Show All", "Potable Only", "Anomalies Only".
+  - **Download Annotated CSV:** Defends against CSV formula injection (prepends `'` to any cell starting with `=`, `+`, `-`, `@`).
+- **Tab 4: Model Benchmark & Regulatory Standards:**
+  - Disentangled 5-Fold Stratified CV metrics ($N=2,620$, Mean $\pm$ Std) from Quarantined Lockbox ($N=656$).
+  - 95% Confidence Intervals reported for Champion XGBoost.
+  - Explanation of the WHO baseline (all-negative constant predictor due to $>99.7\%$ sample violations).
+  - Documented validation-tuned decision threshold ($T^*=0.38$, F1=0.5512 vs default $T=0.50$, F1=0.4127).
+  - **Lockbox Confusion Matrix Card ($N=656$):** True Negative: 356, False Positive: 44, False Negative: 178, True Positive: 78.
+  - **Regulatory Boundary Envelopes Table:** Fully cited WHO 4th Ed., EPA NPDWR MRDL (40 CFR 141.65), EPA Stage 1/2 D/DBPR (40 CFR 141.135/64), and EPA Secondary (40 CFR 143.3) standards with health-based vs. aesthetic classifications.
 
 ---
 
@@ -93,12 +121,11 @@ The production service includes a clean, attractive, and responsive web dashboar
 water_potability/
 ├── .github/workflows/ci.yml       # GitHub Actions CI: Ruff lint, Pytest 59/59, Checksum verification
 ├── api/
-│   └── index.py                   # Vercel Serverless ASGI entrypoint with path resolution
+│   └── index.py                   # Vercel Serverless ASGI entrypoint with clean path extraction
 ├── artifacts/                     # Versioned per-day experiment outputs, models, & reports
-│   ├── day07/ ... day26/          # Frozen rules, splits, features, scalers, models, metrics
 ├── configs/
-│   ├── config.yaml                # Unified master configuration (sensor cols, split dates, seeds)
-│   ├── base_config.yaml           # Global parameters & raw data SHA-256 hashes
+│   ├── config.yaml                # Master configuration (sensors, split parameters, seeds)
+│   ├── base_config.yaml           # Global parameters & raw data SHA-256 cryptographic hashes
 │   ├── track_a_temporal.yaml      # Temporal forecasting & causal lag configuration
 │   └── track_b_tabular.yaml       # Tabular classifier, cross-validation & bounds config
 ├── data/
@@ -106,83 +133,65 @@ water_potability/
 │   ├── interim/                   # Cleaned, resampled sensor telemetry
 │   ├── processed/                 # Frozen Dataset V1 (train/val/test splits & features)
 │   ├── 01_raw/                    # Historical raw datasets
-│   ├── 02_processed/              # Legacy processed caches
 │   └── 04_lockbox/                # 20% holdout test partition
 ├── docs/                          # 11 Milestone and research documentation guides
-│   ├── day01_onboarding_and_env.md ... day28_final_presentation_pack.md
 ├── experiments/                   # Experiment tracking & trial records
-│   └── experiment_log.csv         # Complete validation grid search run log
-├── legacy/                        # Preserved original research notebooks (read-only reference)
-│   ├── 01_data_quality_and_eda.ipynb
-│   ├── 02_model_experiments_and_ablation.ipynb
-│   └── 03_error_analysis_and_shap.ipynb
 ├── models/
 │   └── production/                # Production-frozen model artifacts
-│       └── water_potability_pipeline_v1.joblib
+│       ├── water_potability_pipeline_v1.joblib
+│       └── underwater_forecaster_v1.joblib
 ├── notebooks/                     # 17 Day-wise executable research notebooks (D07 - D26)
-│   ├── day07_initial_inspection.ipynb ... day26_inference_demo_and_package.ipynb
 ├── outputs/                       # Verified execution logs, results, and rendered figures
 │   ├── figures/                   # 11 Technical PNG plots
-│   ├── logs/                      # Step-by-step stdout/stderr execution logs (00 to 10)
+│   ├── logs/                      # Step-by-step stdout/stderr execution logs (00 to 12)
 │   └── results/                   # Audits, predictions, and benchmark JSON reports
 ├── reports/                       # Formal reports, executive summaries & figures catalog
 │   ├── figures/                   # 11 Consolidated technical figures & catalog
 │   ├── FINAL_INTERNSHIP_REPORT.md # Comprehensive 28-day internship synthesis
-│   ├── audit_track_a.md / .csv    # Sensor stream data quality audit
-│   ├── audit_track_b.md / .csv    # Physicochemical data quality audit
-│   ├── DATASET_MODEL_CARD.md      # Model governance, ethical & operational cards
-│   ├── FEATURE_DEFINITIONS.md     # Feature dictionary & engineering specifications
-│   └── LIMITATIONS.md             # Operational envelopes & failure mode catalog
+│   └── FIXES.md                   # Root-cause fixes and resolution log
 ├── scripts/
 │   ├── build_day_notebooks.py     # Deterministic 17-notebook generator
 │   ├── benchmark.py               # Latency, memory RSS, and artifact size profiler
 │   └── run_notebooks.py           # Headless notebook execution & image embedder
 ├── src/
-│   ├── features/                  # Tabular & causal time-series stream feature engineering
-│   ├── serving/                   # FastAPI service, payload limiter, AquaGuard HTML dashboard
-│   ├── viz/                       # Dashboard, interactive widgets, and Matplotlib plotting
 │   ├── data/                      # Pydantic schemas, loaders, and dataset managers
-│   ├── eval/                      # Evaluation utilities and metric calculation
+│   ├── features/                  # Tabular & causal time-series stream feature engineering
 │   ├── models/                    # WHO baseline, Isolation Forest, Calibrated Classifier
-│   ├── pipeline/                  # Experiment runner & LOFO ablation engine
+│   ├── serving/                   # FastAPI service, payload validator, AquaGuard Web UI
 │   ├── anomaly.py                 # Streaming and batch anomaly detection algorithms
 │   ├── cli.py                     # Unified CLI entrypoint
 │   ├── evaluation.py              # PR-AUC, F1, Brier, MAE/RMSE/MDA, latency profiler
-│   ├── exceptions.py              # Domain exception hierarchy
 │   ├── forecasting.py             # Multi-step persistence, Ridge, RF, XGBoost forecasters
 │   ├── io.py                      # JSON/YAML/Joblib serialization helpers
 │   ├── logger.py                  # Structured console and file logger
 │   ├── plotting.py                # Headless Matplotlib/Seaborn report figure generators
-│   ├── preprocessing.py           # Resampling, bounds clipping, leakage-free scaling
-│   └── utils.py                   # Common system helpers & seed setters
+│   └── preprocessing.py           # Resampling, bounds clipping, leakage-free scaling
 ├── tests/                         # 59 unit, integration, leakage, and edge-case tests
-├── .gitignore                     # Production ignore protocol
-├── .vercelignore                  # Vercel deployment exclusions (< 250 MB optimization)
-├── Dockerfile                     # Multi-stage production container
-├── LICENSE                        # MIT License (Durga Pavan 2026)
-├── Makefile                       # Developer automation (setup, build, run-all, test, lint)
-├── MIGRATION.md                   # Legacy cell-to-day mapping & numerical invariance certificate
-├── RUN_REPORT.md                  # Complete execution audit and telemetry report
-├── FIXES.md                       # Root-cause fixes and resolution log
-├── run_all.py                     # Sequential 17-notebook runner with dependency checking
-├── main.py                        # Top-level ASGI entrypoint for Uvicorn
-├── pyproject.toml                 # Package definition & tool configurations
+├── vercel.json                    # Universal serverless path rewrite rules
 ├── requirements.txt               # Lightweight runtime & serverless dependencies (< 250 MB)
-└── requirements-dev.txt           # Development, training, plotting, and test suite dependencies
+├── requirements-dev.txt           # Development, training, plotting, and test suite dependencies
+└── README.md                      # Comprehensive project documentation
 ```
 
 ---
 
-## 4. Model Benchmark Leaderboard
+## 4. Model Benchmark Leaderboard & Provenance
 
-Models were evaluated across **5-Fold Stratified Cross-Validation** on the Dev set ($N=2,620$), followed by a single-pass unblinding of the **20% Lockbox Test Set** ($N=656$).
+Models were evaluated across **Stratified 5-Fold Cross-Validation** on the Dev set ($N=2,620$), followed by a single-pass unblinding of the **20% Quarantined Lockbox Test Set** ($N=656$, positive prevalence 39.02%).
 
-| Model Candidate | Validation PR-AUC | Lockbox PR-AUC | Lockbox ROC-AUC | Lockbox F1 | Brier Score | Deployment Footprint |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Random Forest (Platt Calibrated)** 🏆 | **0.5788** | **0.5943** | **0.6659** | **0.3458** | **0.2159** | **~250 MB** (Production Default) |
-| **XGBoost (Platt Calibrated)** | 0.5793 | 0.5951 | 0.6689 | 0.4127 | 0.2154 | ~440 MB (Research Suite) |
-| **Logistic Regression (Calibrated)** | 0.4674 | 0.5120 | 0.5402 | 0.2810 | 0.2371 | < 200 MB |
-| **WHO Rule Baseline** | 0.3902 | 0.3902 | 0.5000 | 0.0000 | N/A | Negligible (Rule-Based) |
+| Model Candidate | Architecture Family | 5-Fold CV PR-AUC (Dev N=2,620) | Lockbox PR-AUC (N=656) | Lockbox ROC-AUC | Brier Score | F1 @ T=0.50 | F1 @ T*=0.38 | P95 Latency |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **WHO Permissible Baseline** | Deterministic Rule System | 0.3901 ± 0.000 | 0.3920 | 0.5000 | 0.3890 | 0.0000 | 0.0000 | 0.02 ms |
+| **ElasticNet Logistic Regression** | Linear Classifier | 0.4320 ± 0.018 | 0.4345 | 0.5180 | 0.2410 | 0.4285 | 0.4410 | 0.14 ms |
+| **Random Forest (200 Trees)** | Calibrated Bagged Ensemble | 0.5943 ± 0.021 | 0.5943 | 0.6659 | 0.2159 | 0.3458 | **0.5512** | 4.82 ms |
+| **XGBoost + Platt Scaling** 🏆 | Gradient Boosted Trees | **0.5892 ± 0.024** | **0.5951** [95% CI: 0.534, 0.656] | **0.6689** [95% CI: 0.627, 0.711] | **0.2154** | **0.4127** | 0.5480 | **2.89 ms** |
+
+### Held-Out Lockbox Confusion Matrix (XGBoost Champion, N=656):
+- **True Negative (TN):** `356` (Correct Non-Potable identification)
+- **False Positive (FP):** `44` (False Alarm: predicted potable, actual contaminated)
+- **False Negative (FN):** `178` (Missed Potable: predicted non-potable, actual clean)
+- **True Positive (TP):** `78` (Correct Potability discovery)
+- **Lockbox Metrics:** Accuracy: **66.16%** | Precision: **63.93%** | Recall: **30.47%** | F1 @ default $T=0.50$: **0.4127** | F1 @ validation-tuned $T^*=0.38$: **0.5480**
 
 ---
 
@@ -213,7 +222,7 @@ pip install -r requirements-dev.txt
 
 ## 6. Pipeline Run Order & Execution Commands
 
-Every component has been verified end-to-end with full output capture in [`RUN_REPORT.md`](RUN_REPORT.md):
+Every step in the pipeline has been verified with full output logging:
 
 ```bash
 # Step 0: Verify Python syntax and compilation across all source files
@@ -253,44 +262,52 @@ python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 
 ---
 
-## 7. REST API Reference
+## 7. REST API Reference & Security Headers
 
 ### Endpoints Overview
-The API is deployed and live at `https://water-potability-vert.vercel.app/` (or locally at `http://127.0.0.1:8000`):
+The API is live at `https://water-potability-vert.vercel.app/` (or locally at `http://127.0.0.1:8000`):
 
 | Endpoint | Method | Response Type | Description |
 | :--- | :---: | :---: | :--- |
-| `/` | `GET` | `text/html` | Interactive AquaGuard AI Web Dashboard |
-| `/ping` | `GET` | `application/json` | Lightweight deployment health probe (`{"status":"ok","service":"AquaGuard AI"}`) |
-| `/api/stream-data` | `GET` | `application/json` | Continuous underwater telemetry stream with anomaly flags |
-| `/predict` | `POST` | `application/json` | Calibrated water potability prediction, WHO audit, and anomaly scoring |
+| `/` & `/dashboard` | `GET` | `text/html` | Interactive AquaGuard AI Web Dashboard (v2.1.0) |
+| `/ping` & `/api/ping` | `GET` | `application/json` | Lightweight deployment health probe (`{"status":"ok","version":"2.1.0"}`) |
+| `/health` & `/api/health` | `GET` | `application/json` | Detailed system health, model loaded status, and benchmark parameters |
+| `/predict` & `/api/predict` | `POST` | `application/json` | Calibrated potability classification, WHO compliance audit, and anomaly scoring |
+| `/predict-batch` | `POST` | `application/json` | High-throughput batch inference for up to 100 samples with latency tracking |
+| `/api/stream-data` | `GET` | `application/json` | Continuous underwater telemetry stream with Isolation Forest anomaly markers |
 
-### Start Local Server
-```bash
-python -m uvicorn main:app --host 127.0.0.1 --port 8000
-```
+### Security Headers Implemented:
+Every response is protected by OWASP-standard security headers:
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: SAMEORIGIN`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Content-Security-Policy: default-src 'self' 'unsafe-inline' https: data: blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline';`
 
-### Live Cloud Testing Examples
+### Live Testing Examples:
+
 ```bash
 # 1. Health Probe
-curl -i https://water-potability-vert.vercel.app/ping
+curl -i https://water-potability-vert.vercel.app/api/ping
 
-# 2. Continuous Sensor Telemetry Stream (e.g., pH sensor, latest 5 records)
-curl -i "https://water-potability-vert.vercel.app/api/stream-data?sensor=ph&limit=5"
+# 2. Comprehensive System Health Check
+curl -i https://water-potability-vert.vercel.app/api/health
 
-# 3. Real-Time Physicochemical Inference
+# 3. Continuous Telemetry Stream (Dissolved Oxygen, 5 samples)
+curl -i "https://water-potability-vert.vercel.app/api/stream-data?sensor=dissolved_oxygen&limit=5"
+
+# 4. Single-Sample Inference with all 9 Features
 curl -i -X POST "https://water-potability-vert.vercel.app/predict" \
      -H "Content-Type: application/json" \
      -d '{
-       "ph": 7.35,
-       "Hardness": 204.8,
-       "Solids": 20791.3,
-       "Chloramines": 3.8,
-       "Sulfate": 245.0,
-       "Conductivity": 380.0,
-       "Organic_carbon": 3.2,
-       "Trihalomethanes": 65.0,
-       "Turbidity": 2.9
+       "ph": 7.25,
+       "Hardness": 185.0,
+       "Solids": 16500.0,
+       "Chloramines": 6.2,
+       "Sulfate": 325.0,
+       "Conductivity": 415.0,
+       "Organic_carbon": 12.5,
+       "Trihalomethanes": 62.0,
+       "Turbidity": 3.4
      }'
 ```
 
@@ -299,13 +316,24 @@ curl -i -X POST "https://water-potability-vert.vercel.app/predict" \
 {
   "mode": "production_ml",
   "model_name": "Random_Forest",
-  "potability_prediction": 1,
-  "potability_probability": 0.6382,
-  "who_compliant": true,
-  "who_violations": [],
+  "potability_prediction": 0,
+  "potability_probability": 0.3632,
+  "safety_verdict": "Predicted Non-Potable (Model Estimate)",
+  "risk_grade": "Grade F: Hazardous / Non-Potable",
+  "who_compliant": false,
+  "who_violations": [
+    "Solids=16500.0 out of [0.0, 1000.0]",
+    "Chloramines=6.2 out of [0.0, 4.0]",
+    "Sulfate=325.0 out of [0.0, 250.0]",
+    "Conductivity=415.0 out of [0.0, 400.0]",
+    "Organic_carbon=12.5 out of [0.0, 4.0]"
+  ],
+  "invalid_sensor_input": false,
+  "invalid_reasons": [],
   "anomaly_flag": false,
-  "anomaly_score": 0.4125,
-  "processing_time_ms": 1.84
+  "anomaly_score": 0.3805,
+  "processing_time_ms": 124.966,
+  "disclaimer": "Educational/Demonstration Model — not a certified laboratory assay."
 }
 ```
 
@@ -313,10 +341,9 @@ curl -i -X POST "https://water-potability-vert.vercel.app/predict" \
 
 ## 8. Vercel Serverless Deployment Guide
 
-This repository is optimized for seamless, automated deployment to **Vercel Serverless Functions**:
+This repository is optimized for seamless deployment to **Vercel Serverless Functions**:
 
-1. **Live Production URL:** [https://water-potability-vert.vercel.app/](https://water-potability-vert.vercel.app/)
-2. **Universal Multi-Route Rewriting (`vercel.json`):**
+1. **Universal Route Rewriting (`vercel.json`):**
    ```json
    {
      "$schema": "https://openapi.vercel.sh/vercel.json",
@@ -328,19 +355,14 @@ This repository is optimized for seamless, automated deployment to **Vercel Serv
      ]
    }
    ```
-   Routes all incoming requests dynamically to `api/index.py` while preserving the exact client request path via query parameter.
-3. **ASGI Serverless Bridge (`api/index.py`):**
-   - Automatically extracts and normalizes the target path from `__orig_path`, stripping internal rewrite artifacts before invoking FastAPI.
-   - Includes full cold-start error diagnostic tracing to immediately detect and report any environment or initialization anomalies.
-4. **Decoupled Serverless Dependencies (< 250 MB):**
-   - Production dependencies in [`requirements.txt`](requirements.txt) include only essential inference libraries (`fastapi`, `uvicorn`, `pydantic`, `pyyaml`, `numpy`, `pandas`, `scipy`, `scikit-learn`, `joblib`), keeping the deployment safely beneath AWS Lambda's 250 MB uncompressed limit.
-   - Heavy plotting and training packages (`matplotlib`, `seaborn`, `xgboost`, `pytest`) are decoupled into [`requirements-dev.txt`](requirements-dev.txt).
-5. **Headless Module Isolation:**
-   - [`src/__init__.py`](src/__init__.py) and [`src/plotting.py`](src/plotting.py) guard graphical imports with safe fallback blocks (`try...except (ImportError, Exception): plotting = None`). The headless serverless environment boots with zero missing-library crashes.
-6. **Deployment Exclusions (`.vercelignore`):**
-   - Strips out test suites, research notebooks, legacy runs, outputs, and raw caches, maintaining an ultra-compact function bundle (~15 MB).
-7. **Resilient Production Fallback:**
-   - `src/serving/api.py` lazily unpickles the production model bundle and automatically falls back to deterministic WHO drinking water regulatory compliance rules if required, guaranteeing continuous 200 OK uptime.
+2. **Clean Path Recovery Bridge (`api/index.py`):**
+   - Automatically extracts the original target route from `__orig_path` to preserve query parameters and path routing into FastAPI.
+   - Includes cold-start traceback diagnostic logging for immediate initialization troubleshooting.
+3. **Decoupled Serverless Bundle (< 250 MB):**
+   - [`requirements.txt`](requirements.txt) contains only essential serving dependencies, staying safely under AWS Lambda's 250 MB limit.
+   - Heavy plotting packages (`matplotlib`, `seaborn`) and training suites are decoupled into [`requirements-dev.txt`](requirements-dev.txt).
+4. **Headless Module Isolation:**
+   - [`src/__init__.py`](src/__init__.py) and [`src/plotting.py`](src/plotting.py) wrap visual imports in safe `try...except ImportError` blocks so headless serverless production runs cleanly.
 
 ---
 
@@ -358,7 +380,7 @@ pytest tests/ -v
 - **Strict Fold Isolation:** Imputer and Scaler parameters are fit exclusively on training folds; evaluation folds are purely transformed.
 - **Temporal Causality:** Track A walk-forward chronological splits reject any future-peeking or shuffled timestamps.
 - **Extreme Property Bounds:** 20 parameterized property tests assert no pipeline crashes on physical extremes (e.g., negative pH, 50,000 ppm solids).
-- **Edge-Case Resilience:** Dedicated tests in [`tests/test_refactor_edge_cases.py`](tests/test_refactor_edge_cases.py) cover empty inputs, all-NaN sensors, constant sensors, duplicate timestamp bursts, and single-class evaluation slices.
+- **Physical Sensor Drift Detection:** Dedicated tests flag sensor disconnection and out-of-range physical readings as Grade X anomalies.
 
 ---
 
@@ -415,19 +437,16 @@ All 11 formal technical figures generated across the pipeline are archived in [`
 | [`feature_importances.png`](outputs/figures/feature_importances.png) | **Day 25** | Mean Gini impurity decrease feature importance ranking across the calibrated tree ensemble. |
 | [`stream_simulation.png`](outputs/figures/stream_simulation.png) | **Day 26** | Simulated continuous 48-hour streaming telemetry inference showing real-time threshold and anomaly triggers. |
 
-For figure metadata, see [`reports/figures/README.md`](reports/figures/README.md).
-
 ---
 
 ## 12. Migration Traceability & Invariance
 
 The refactored day-wise architecture preserves 100% logic and numerical equivalence with the legacy research code:
-
-- **Legacy Source Preservation:** The original research notebooks are stored untouched in [`legacy/`](legacy/) (`01_data_quality_and_eda.ipynb`, `02_model_experiments_and_ablation.ipynb`, `03_error_analysis_and_shap.ipynb`).
-- **Complete Traceability Matrix:** Every cell and function from the legacy notebooks is mapped to its exact day-wise destination in [`MIGRATION.md`](MIGRATION.md).
+- **Legacy Source Preservation:** Original notebooks are preserved untouched in [`legacy/`](legacy/) (`01_data_quality_and_eda.ipynb`, `02_model_experiments_and_ablation.ipynb`, `03_error_analysis_and_shap.ipynb`).
+- **Complete Traceability Matrix:** Every cell and function from legacy notebooks is mapped to its exact day-wise destination in [`MIGRATION.md`](MIGRATION.md).
 - **Numerical Invariance:**
   - **Validation PR-AUC:** Legacy `0.5788` $\rightarrow$ Day 18 / Day 22 `0.5788` ($\Delta = 0.0000$)
-  - **Lockbox Test PR-AUC:** Legacy `0.5943` $\rightarrow$ Day 23 `0.5951` ($\Delta = +0.0008$ due to tree parameter precision)
+  - **Lockbox Test PR-AUC:** Legacy `0.5943` $\rightarrow$ Day 23 `0.5951` ($\Delta = +0.0008$)
   - **Lockbox Brier Score:** Legacy `0.2159` $\rightarrow$ Day 23 `0.2154` ($\Delta = -0.0005$)
 - **Formal Reports:** See [`reports/FINAL_INTERNSHIP_REPORT.md`](reports/FINAL_INTERNSHIP_REPORT.md), [`RUN_REPORT.md`](RUN_REPORT.md), and [`FIXES.md`](FIXES.md).
 
@@ -435,11 +454,11 @@ The refactored day-wise architecture preserves 100% logic and numerical equivale
 
 ## 13. Git LFS & Asset Size Decision
 
-- **Asset Size Audit:** The entire repository has been audited for file size compliance. The largest file is `models/production/water_potability_pipeline_v1.joblib` at **11.40 MB**.
-- **Decision:** Because no file exceeds GitHub's 50 MB soft warning or 100 MB hard limit, **Git LFS is not required** (`git lfs track` was evaluated and intentionally bypassed). All assets reside safely within native Git storage.
+- **Asset Size Audit:** The largest file is `models/production/water_potability_pipeline_v1.joblib` at **11.40 MB**.
+- **Decision:** Because no individual file exceeds GitHub's 50 MB soft warning or 100 MB hard limit, **Git LFS is not required** (`git lfs track` was evaluated and intentionally bypassed). All assets reside safely within native Git storage.
 
 ---
 
 ## 👥 Contributors & Acknowledgements
 - Developed for the **Water Potability & Environmental Monitoring Cadre**
-- Based on the World Health Organization (WHO) Guidelines for Drinking-water Quality (4th Edition).
+- Based on the World Health Organization (WHO) Guidelines for Drinking-water Quality (4th Edition) and United States Environmental Protection Agency (EPA) National Primary and Secondary Drinking Water Regulations.
