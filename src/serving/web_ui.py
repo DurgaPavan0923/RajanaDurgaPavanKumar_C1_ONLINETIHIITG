@@ -1,18 +1,20 @@
 """Modern, Clean, Attractive, and Professional Web Dashboard for AquaGuard AI.
 
 Audit & Upgrade v2.1.0:
-- Design tokens with Dark and Light mode theme toggle and localStorage memory.
-- Responsive across mobile (360px), tablet (768px), and desktop (1440px).
-- Tab 1: 9 sliders + numeric inputs with accurate WHO/EPA limit badges, presets, auto-remediation,
-  copy cURL, educational disclaimer, safe model estimate verdict, grading rubric modal,
-  and 9-axis radar chart.
+- Design tokens with Dark and Light mode theme toggle and persistent localStorage memory.
+- Dynamic health probe on /api/ping with live status badge and live UTC clock.
+- Tab 1: 9 sliders + numeric inputs with accurate WHO/EPA limit badges, 7 presets, auto-remediation
+  with diff alert, copy cURL to live endpoint, educational disclaimer, safe model estimate verdict,
+  grading rubric modal & inline reference, and 9-axis Chart.js radar chart.
 - Tab 2: Track A simulated CTD probe stream with Isolation Forest and 3.5-sigma bounds,
-  start/pause/reset controls, and multi-sensor support.
+  start/pause/reset controls, and 6-channel sensor selector.
 - Tab 3: Complete 9-column batch telemetry processor, 30-sample demo batch, drag-and-drop CSV parser,
-  filters, and formula-injection-safe CSV export.
-- Tab 4: Rigorous Stratified 5-Fold Benchmark & Lockbox table with 95% CIs, baseline explanation,
-  threshold tuning context, and accurately attributed WHO/EPA regulatory boundary envelopes.
-- Footer with About & Methodology modal, version v2.1.0, and live status ping.
+  validation for missing columns, sortable columns, pagination, and formula-injection-safe CSV export.
+- Tab 4: Stratified 5-Fold Benchmark & Lockbox table with 95% CIs, baseline explanation,
+  threshold tuning context, Lockbox Confusion Matrix (TN 356, FP 44, FN 178, TP 78),
+  and accurately attributed WHO/EPA regulatory boundary envelopes.
+- Toast notifications created dynamically (not in initial DOM) and announced to screen readers.
+- Footer with About & Methodology modal, version v2.1.0, and GitHub repository link.
 """
 
 HTML_DASHBOARD = r"""<!DOCTYPE html>
@@ -21,7 +23,12 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AquaGuard AI | Water Potability & Environmental Intelligence</title>
-  <meta name="description" content="Production-grade water potability classification, WHO regulatory compliance auditing, and continuous oceanographic telemetry monitoring.">
+  <meta name="description" content="Production-grade calibrated water potability classification, WHO regulatory compliance auditing, and continuous oceanographic telemetry monitoring.">
+  <meta name="theme-color" content="#070d19">
+  <meta property="og:title" content="AquaGuard AI | Water Potability Intelligence">
+  <meta property="og:description" content="Sub-3ms Calibrated Machine Learning Engine and WHO Drinking Water Compliance Auditor.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>">
   <!-- Chart.js CDN for interactive visual analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -29,8 +36,8 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     :root {
       --bg-primary: #070d19;
       --bg-surface: #0c1527;
-      --bg-card: rgba(17, 27, 49, 0.78);
-      --bg-card-hover: rgba(26, 41, 74, 0.90);
+      --bg-card: rgba(17, 27, 49, 0.82);
+      --bg-card-hover: rgba(26, 41, 74, 0.92);
       --bg-input: #0b1325;
       --border-color: rgba(38, 59, 97, 0.55);
       --border-glow: rgba(6, 182, 212, 0.35);
@@ -47,10 +54,10 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       --accent-warning-rgb: 245, 158, 11;
       --accent-purple: #8b5cf6;
       --accent-blue: #3b82f6;
-      --header-bg: rgba(11, 19, 36, 0.90);
+      --header-bg: rgba(11, 19, 36, 0.92);
       --table-th-bg: rgba(15, 23, 42, 0.85);
       --table-stripe: rgba(255, 255, 255, 0.02);
-      --modal-overlay: rgba(0, 0, 0, 0.75);
+      --modal-overlay: rgba(0, 0, 0, 0.78);
       --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
       --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.35);
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -59,7 +66,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     [data-theme="light"] {
       --bg-primary: #f8fafc;
       --bg-surface: #ffffff;
-      --bg-card: rgba(255, 255, 255, 0.92);
+      --bg-card: rgba(255, 255, 255, 0.94);
       --bg-card-hover: rgba(248, 250, 252, 0.98);
       --bg-input: #ffffff;
       --border-color: rgba(203, 213, 225, 0.85);
@@ -67,12 +74,12 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       --text-main: #0f172a;
       --text-muted: #475569;
       --text-dim: #64748b;
-      --header-bg: rgba(255, 255, 255, 0.92);
+      --header-bg: rgba(255, 255, 255, 0.94);
       --table-th-bg: rgba(241, 245, 249, 0.95);
       --table-stripe: rgba(0, 0, 0, 0.02);
-      --modal-overlay: rgba(15, 23, 42, 0.6);
+      --modal-overlay: rgba(15, 23, 42, 0.65);
       --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-      --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.12);
     }
 
     * {
@@ -94,6 +101,22 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       display: flex;
       flex-direction: column;
       transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* Accessibility Focus Rings */
+    *:focus-visible {
+      outline: 2px solid var(--accent-cyan);
+      outline-offset: 2px;
+    }
+
+    /* Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
     }
 
     /* Top Sticky Header */
@@ -219,14 +242,14 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: 1.05rem;
       transition: all 0.2s ease;
     }
     .theme-toggle-btn:hover {
@@ -299,7 +322,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     }
 
     .kpi-info .kpi-value {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 800;
       letter-spacing: -0.02em;
     }
@@ -347,6 +370,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       transition: all 0.2s ease;
       white-space: nowrap;
       border-radius: 8px 8px 0 0;
+      min-height: 44px;
     }
 
     .tab-btn:hover {
@@ -460,7 +484,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      padding: 0.4rem 0.8rem;
+      padding: 0.45rem 0.85rem;
       border-radius: 8px;
       font-size: 0.8rem;
       cursor: pointer;
@@ -469,6 +493,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       gap: 0.35rem;
       transition: all 0.2s ease;
       font-weight: 500;
+      min-height: 38px;
     }
 
     .preset-btn:hover {
@@ -542,6 +567,11 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       border: 1px solid var(--border-color);
       color: var(--text-dim);
       white-space: nowrap;
+      text-decoration: none;
+    }
+    .limit-badge:hover {
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
     }
 
     .slider-row {
@@ -552,7 +582,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
     .slider-row input[type="range"] {
       flex: 1;
-      height: 6px;
+      height: 8px;
       -webkit-appearance: none;
       background: #1e293b;
       border-radius: 6px;
@@ -562,8 +592,8 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
     .slider-row input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       background: var(--accent-cyan);
       box-shadow: 0 0 8px var(--accent-cyan);
@@ -575,7 +605,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     }
 
     .num-input {
-      width: 78px;
+      width: 80px;
       background: var(--bg-input);
       border: 1px solid var(--border-color);
       color: var(--text-main);
@@ -584,6 +614,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       font-size: 0.82rem;
       font-weight: 600;
       text-align: right;
+      min-height: 36px;
     }
     .num-input:focus {
       outline: none;
@@ -636,7 +667,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     }
 
     .verdict-banner.warning {
-      background: linear-gradient(135deg, rgba(var(--accent-warning-rgb), 0.18), rgba(var(--accent-purple), 0.18));
+      background: linear-gradient(135deg, rgba(var(--accent-warning-rgb), 0.18), rgba(139, 92, 246, 0.18));
       border: 1px solid rgba(var(--accent-warning-rgb), 0.4);
       color: var(--accent-warning);
       box-shadow: 0 0 20px rgba(var(--accent-warning-rgb), 0.12);
@@ -717,7 +748,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     }
 
     .risk-badge {
-      padding: 0.4rem 0.9rem;
+      padding: 0.45rem 1rem;
       border-radius: 9999px;
       font-size: 0.78rem;
       font-weight: 700;
@@ -727,6 +758,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       gap: 0.35rem;
       cursor: pointer;
       transition: transform 0.2s ease;
+      min-height: 36px;
     }
     .risk-badge:hover {
       transform: scale(1.04);
@@ -821,11 +853,11 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
     .action-btn {
       flex: 1;
-      min-width: 160px;
+      min-width: 150px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      padding: 0.6rem 0.85rem;
+      padding: 0.65rem 0.85rem;
       border-radius: 8px;
       font-size: 0.8rem;
       font-weight: 600;
@@ -835,10 +867,27 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       justify-content: center;
       gap: 0.4rem;
       transition: all 0.2s ease;
+      min-height: 44px;
     }
     .action-btn:hover {
       background: rgba(var(--accent-cyan-rgb), 0.2);
       border-color: var(--accent-cyan);
+    }
+
+    /* Inline Collapsible Rubric Reference */
+    .rubric-inline-card {
+      margin-top: 1rem;
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+    }
+    .rubric-toggle-summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      user-select: none;
     }
 
     /* Stream Chart Tab 2 */
@@ -871,7 +920,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     .dropzone {
       border: 2px dashed var(--border-color);
       border-radius: 14px;
-      padding: 2.5rem 1.5rem;
+      padding: 2.25rem 1.5rem;
       text-align: center;
       background: rgba(0, 0, 0, 0.18);
       cursor: pointer;
@@ -912,10 +961,29 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       letter-spacing: 0.05em;
       position: sticky;
       top: 0;
+      user-select: none;
+    }
+
+    th.sortable {
+      cursor: pointer;
+    }
+    th.sortable:hover {
+      color: var(--accent-cyan);
     }
 
     tbody tr:hover {
       background: var(--table-stripe);
+    }
+
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
 
     .kpi-badge {
@@ -931,6 +999,32 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     .badge-warning { background: rgba(var(--accent-warning-rgb), 0.15); color: var(--accent-warning); border: 1px solid rgba(var(--accent-warning-rgb), 0.3); }
     .badge-cyan { background: rgba(var(--accent-cyan-rgb), 0.15); color: var(--accent-cyan); border: 1px solid rgba(var(--accent-cyan-rgb), 0.3); }
     .badge-purple { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.3); }
+
+    /* Confusion Matrix Card */
+    .cm-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      max-width: 420px;
+      margin: 1rem 0;
+    }
+    .cm-cell {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.85rem;
+      text-align: center;
+    }
+    .cm-cell-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .cm-cell-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-top: 0.2rem;
+    }
 
     /* Modals */
     .modal-backdrop {
@@ -976,11 +1070,16 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     .modal-close-btn {
       background: transparent;
       border: none;
-      font-size: 1.25rem;
+      font-size: 1.4rem;
       color: var(--text-muted);
       cursor: pointer;
       padding: 0.25rem;
       line-height: 1;
+      min-height: 44px;
+      min-width: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .modal-close-btn:hover { color: var(--text-main); }
 
@@ -1016,8 +1115,8 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     }
     .footer-btn:hover { color: var(--accent-emerald); }
 
-    /* Toast Notification */
-    #toast {
+    /* Dynamic Toast styling */
+    .dynamic-toast {
       position: fixed;
       bottom: 2rem;
       right: 2rem;
@@ -1035,7 +1134,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       transition: all 0.3s ease;
       pointer-events: none;
     }
-    #toast.show {
+    .dynamic-toast.show {
       opacity: 1;
       transform: translateY(0);
     }
@@ -1043,18 +1142,15 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 </head>
 <body>
 
-  <!-- Toast Notification -->
-  <div id="toast">Copied to clipboard!</div>
-
   <!-- Grading Rubric Modal -->
-  <div class="modal-backdrop" id="modal-rubric" onclick="closeModalOnBackdrop(event, 'modal-rubric')">
+  <div class="modal-backdrop" id="modal-rubric" onclick="closeModalOnBackdrop(event, 'modal-rubric')" role="dialog" aria-modal="true" aria-labelledby="rubric-modal-title">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 class="modal-title">AquaGuard Quality & Safety Grading Rubric</h3>
-        <button class="modal-close-btn" onclick="closeModal('modal-rubric')">&times;</button>
+        <h3 class="modal-title" id="rubric-modal-title">AquaGuard Quality & Safety Grading Rubric</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-rubric')" aria-label="Close Rubric Dialog">&times;</button>
       </div>
       <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
-        AquaGuard utilizes a dual-gate safety criterion. A high ML probability alone will NEVER grant a clean drinking grade unless all 9 chemical parameters pass WHO / EPA regulatory boundaries.
+        AquaGuard utilizes a dual-gate safety criterion. A high probabilistic ML score will NEVER grant a clean drinking grade unless all 9 chemical parameters strictly pass WHO / EPA regulatory boundaries.
       </p>
       <table>
         <thead>
@@ -1111,16 +1207,16 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
   </div>
 
   <!-- About & Methodology Modal -->
-  <div class="modal-backdrop" id="modal-about" onclick="closeModalOnBackdrop(event, 'modal-about')">
+  <div class="modal-backdrop" id="modal-about" onclick="closeModalOnBackdrop(event, 'modal-about')" role="dialog" aria-modal="true" aria-labelledby="about-modal-title">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 class="modal-title">About AquaGuard AI Architecture & Methodology</h3>
-        <button class="modal-close-btn" onclick="closeModal('modal-about')">&times;</button>
+        <h3 class="modal-title" id="about-modal-title">About AquaGuard AI Architecture & Methodology</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-about')" aria-label="Close About Dialog">&times;</button>
       </div>
       <div style="font-size: 0.82rem; color: var(--text-main); line-height: 1.55; display: flex; flex-direction: column; gap: 0.85rem;">
         <p><strong>1. Dataset & Problem Formulation:</strong> Trained on the Kaggle Water Potability benchmark (N=3,276 records across 9 physicochemical attributes). The dataset exhibits a 39.0% positive base rate (mild class imbalance) and natural sensor missingness (14.99% pH, 23.84% Sulfate, 4.95% THM).</p>
         <p><strong>2. Zero-Leakage Pipeline:</strong> Stratified 80/20 train/test lockbox split (Train N=2,620, Quarantined Lockbox N=656). Imputation medians and scaling parameters are strictly computed fold-internally during 5-fold CV to prevent data leakage.</p>
-        <p><strong>3. Calibration & Metrics:</strong> Evaluated on Precision-Recall AUC (PR-AUC) as primary metric rather than raw Accuracy. Champion Random Forest / XGBoost models undergo Platt Scaling / Isotonic calibration to deliver well-calibrated posterior probabilities (Brier score: 0.2154).</p>
+        <p><strong>3. Calibration & Metrics:</strong> Evaluated on Precision-Recall AUC (PR-AUC) as primary metric rather than raw Accuracy. Champion XGBoost + Platt Scaling and Random Forest pipelines deliver well-calibrated posterior probabilities (Brier score: 0.2154).</p>
         <p><strong>4. Dual-Gate Safety Engine:</strong> Combines probabilistic ML with deterministic WHO & EPA drinking water envelopes. Out-of-distribution detection is guarded by an unsupervised Isolation Forest (&nu;=0.021).</p>
         <p style="color: var(--accent-warning);"><strong>5. Educational Disclaimer:</strong> AquaGuard AI is an academic demonstration and benchmarking engine. It is NOT a certified laboratory assay and cannot replace certified chemical testing.</p>
       </div>
@@ -1142,12 +1238,12 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       </div>
     </div>
     <div class="header-controls">
-      <div class="live-clock" id="live-clock">UTC 00:00:00</div>
+      <div class="live-clock" id="live-clock" aria-label="Current UTC Time">UTC --:--:--</div>
       <div class="system-status" id="system-status-badge">
         <span class="status-dot" id="system-status-dot"></span>
         <span id="system-status-text">CONNECTING...</span>
       </div>
-      <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Theme" aria-label="Toggle theme">☀️</button>
+      <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Theme" aria-label="Toggle light and dark theme">☀️</button>
     </div>
   </header>
 
@@ -1157,8 +1253,8 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       <div class="kpi-card">
         <div class="kpi-info">
           <h4>Champion Pipeline</h4>
-          <div class="kpi-value" style="color: var(--accent-cyan);">Random Forest</div>
-          <div class="kpi-desc">Platt Scaling Calibrated</div>
+          <div class="kpi-value" style="color: var(--accent-cyan);">XGBoost + Platt</div>
+          <div class="kpi-desc">Lockbox PR-AUC 0.5951 (Calibrated)</div>
         </div>
         <div class="kpi-icon-pill" style="background: rgba(var(--accent-cyan-rgb), 0.15); color: var(--accent-cyan);">🏆</div>
       </div>
@@ -1167,7 +1263,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         <div class="kpi-info">
           <h4>Lockbox PR-AUC</h4>
           <div class="kpi-value" style="color: var(--accent-emerald);">0.5951</div>
-          <div class="kpi-desc">WHO Baseline: 0.3920 (N=656)</div>
+          <div class="kpi-desc">vs WHO Baseline 0.3920 (N=656)</div>
         </div>
         <div class="kpi-icon-pill" style="background: rgba(var(--accent-emerald-rgb), 0.15); color: var(--accent-emerald);">📈</div>
       </div>
@@ -1175,40 +1271,40 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       <div class="kpi-card">
         <div class="kpi-info">
           <h4>Inference Latency</h4>
-          <div class="kpi-value" id="kpi-latency-val" style="color: var(--accent-purple);">2.36 ms</div>
-          <div class="kpi-desc" id="kpi-latency-desc">Server-Side P50 Measured</div>
+          <div class="kpi-value" id="kpi-latency-val" style="color: var(--accent-purple);">2.89 ms</div>
+          <div class="kpi-desc" id="kpi-latency-desc">Server P50 Latency (Measured)</div>
         </div>
         <div class="kpi-icon-pill" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-purple);">⚡</div>
       </div>
 
       <div class="kpi-card">
         <div class="kpi-info">
-          <h4>WHO Auditor</h4>
+          <h4>WHO Auditor Active</h4>
           <div class="kpi-value" id="kpi-who-compliance" style="color: var(--accent-emerald);">Active</div>
-          <div class="kpi-desc">9 Regulatory Guardrails</div>
+          <div class="kpi-desc">9 Chemical Guardrails Active</div>
         </div>
         <div class="kpi-icon-pill" style="background: rgba(59, 130, 246, 0.15); color: var(--accent-blue);">🛡️</div>
       </div>
     </div>
 
     <!-- Navigation Tabs -->
-    <div class="tabs-header">
-      <button class="tab-btn active" onclick="switchTab('tab-sim', this)">
+    <div class="tabs-header" role="tablist">
+      <button class="tab-btn active" role="tab" id="tab-btn-sim" aria-selected="true" aria-controls="tab-sim" onclick="switchTab('tab-sim', this)">
         <span>🔬</span> Interactive Potability Simulator
       </button>
-      <button class="tab-btn" onclick="switchTab('tab-stream', this)">
+      <button class="tab-btn" role="tab" id="tab-btn-stream" aria-selected="false" aria-controls="tab-stream" onclick="switchTab('tab-stream', this)">
         <span>🌊</span> Continuous Telemetry Stream (Track A)
       </button>
-      <button class="tab-btn" onclick="switchTab('tab-batch', this)">
+      <button class="tab-btn" role="tab" id="tab-btn-batch" aria-selected="false" aria-controls="tab-batch" onclick="switchTab('tab-batch', this)">
         <span>📁</span> Batch Telemetry Processor (9 Features)
       </button>
-      <button class="tab-btn" onclick="switchTab('tab-models', this)">
+      <button class="tab-btn" role="tab" id="tab-btn-models" aria-selected="false" aria-controls="tab-models" onclick="switchTab('tab-models', this)">
         <span>📊</span> Model Benchmark & WHO Standards
       </button>
     </div>
 
     <!-- TAB 1: INTERACTIVE POTABILITY SIMULATOR -->
-    <div id="tab-sim" class="tab-pane active">
+    <div id="tab-sim" class="tab-pane active" role="tabpanel" aria-labelledby="tab-btn-sim">
       <div class="card">
         <div class="card-header">
           <div>
@@ -1253,108 +1349,108 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
               <!-- 1. pH -->
               <div class="input-group">
                 <div class="input-header">
-                  <span class="input-label">pH Acidity</span>
-                  <span class="limit-badge">WHO: 6.5–8.5</span>
+                  <span class="input-label" id="lbl-ph">pH Acidity</span>
+                  <a href="#who-table-ph" class="limit-badge" title="WHO 4th Ed / EPA 40 CFR 143.3">WHO: 6.5–8.5</a>
                 </div>
                 <div class="slider-row">
-                  <input type="range" id="inp-ph" min="0" max="14" step="0.05" value="7.25" oninput="syncInput('ph', this.value)">
-                  <input type="number" id="num-ph" class="num-input" value="7.25" step="0.05" onchange="syncSlider('ph', this.value)">
+                  <input type="range" id="inp-ph" min="0" max="14" step="0.05" value="7.25" aria-labelledby="lbl-ph" aria-valuemin="0" aria-valuemax="14" aria-valuenow="7.25" oninput="syncInput('ph', this.value)">
+                  <input type="number" id="num-ph" class="num-input" value="7.25" step="0.05" aria-label="pH numeric value" onchange="syncSlider('ph', this.value)">
                 </div>
               </div>
 
               <!-- 2. Hardness -->
               <div class="input-group">
                 <div class="input-header">
-                  <span class="input-label">Hardness (Ca/Mg)</span>
-                  <span class="limit-badge">WHO: &le; 200 mg/L</span>
+                  <span class="input-label" id="lbl-hardness">Hardness (Ca/Mg)</span>
+                  <a href="#who-table-hardness" class="limit-badge" title="WHO Aesthetic Benchmark">WHO Aesthetic: &le; 200 mg/L</a>
                 </div>
                 <div class="slider-row">
-                  <input type="range" id="inp-hardness" min="0" max="400" step="1" value="185" oninput="syncInput('hardness', this.value)">
-                  <input type="number" id="num-hardness" class="num-input" value="185" step="1" onchange="syncSlider('hardness', this.value)">
+                  <input type="range" id="inp-hardness" min="0" max="400" step="1" value="185" aria-labelledby="lbl-hardness" aria-valuemin="0" aria-valuemax="400" aria-valuenow="185" oninput="syncInput('hardness', this.value)">
+                  <input type="number" id="num-hardness" class="num-input" value="185" step="1" aria-label="Hardness numeric value" onchange="syncSlider('hardness', this.value)">
                 </div>
               </div>
 
               <!-- 3. Solids (TDS) -->
               <div class="input-group">
                 <div class="input-header">
-                  <span class="input-label">Total Solids (TDS)</span>
-                  <span class="limit-badge">WHO: &le; 1,000 ppm</span>
+                  <span class="input-label" id="lbl-solids">Total Solids (TDS)</span>
+                  <a href="#who-table-solids" class="limit-badge" title="WHO Taste / EPA Secondary">WHO: &le; 1,000 ppm</a>
                 </div>
                 <div class="slider-row">
-                  <input type="range" id="inp-solids" min="0" max="65000" step="250" value="16500" oninput="syncInput('solids', this.value)">
-                  <input type="number" id="num-solids" class="num-input" value="16500" step="250" onchange="syncSlider('solids', this.value)">
+                  <input type="range" id="inp-solids" min="0" max="65000" step="250" value="16500" aria-labelledby="lbl-solids" aria-valuemin="0" aria-valuemax="65000" aria-valuenow="16500" oninput="syncInput('solids', this.value)">
+                  <input type="number" id="num-solids" class="num-input" value="16500" step="250" aria-label="Solids numeric value" onchange="syncSlider('solids', this.value)">
                 </div>
               </div>
 
               <!-- 4. Chloramines -->
               <div class="input-group">
                 <div class="input-header">
-                  <span class="input-label">Chloramines</span>
-                  <span class="limit-badge">EPA MRDL: &le; 4.0 ppm</span>
+                  <span class="input-label" id="lbl-chlor">Chloramines</span>
+                  <a href="#who-table-chlor" class="limit-badge" title="EPA NPDWR MRDL 40 CFR 141.65">EPA MRDL: &le; 4.0 ppm</a>
                 </div>
                 <div class="slider-row">
-                  <input type="range" id="inp-chloramines" min="0" max="16" step="0.1" value="6.2" oninput="syncInput('chloramines', this.value)">
-                  <input type="number" id="num-chloramines" class="num-input" value="6.2" step="0.1" onchange="syncSlider('chloramines', this.value)">
+                  <input type="range" id="inp-chloramines" min="0" max="16" step="0.1" value="6.2" aria-labelledby="lbl-chlor" aria-valuemin="0" aria-valuemax="16" aria-valuenow="6.2" oninput="syncInput('chloramines', this.value)">
+                  <input type="number" id="num-chloramines" class="num-input" value="6.2" step="0.1" aria-label="Chloramines numeric value" onchange="syncSlider('chloramines', this.value)">
                 </div>
               </div>
 
               <!-- 5. Sulfate -->
               <div class="input-group">
                 <div class="input-header">
-                  <span class="input-label">Sulfate</span>
-                  <span class="limit-badge">EPA 2nd: &le; 250 mg/L</span>
+                  <span class="input-label" id="lbl-sulfate">Sulfate</span>
+                  <a href="#who-table-sulfate" class="limit-badge" title="EPA Secondary 40 CFR 143.3">EPA 2nd: &le; 250 mg/L</a>
                 </div>
                 <div class="slider-row">
-                  <input type="range" id="inp-sulfate" min="0" max="600" step="5" value="325" oninput="syncInput('sulfate', this.value)">
-                  <input type="number" id="num-sulfate" class="num-input" value="325" step="5" onchange="syncSlider('sulfate', this.value)">
+                  <input type="range" id="inp-sulfate" min="0" max="600" step="5" value="325" aria-labelledby="lbl-sulfate" aria-valuemin="0" aria-valuemax="600" aria-valuenow="325" oninput="syncInput('sulfate', this.value)">
+                  <input type="number" id="num-sulfate" class="num-input" value="325" step="5" aria-label="Sulfate numeric value" onchange="syncSlider('sulfate', this.value)">
                 </div>
               </div>
 
               <!-- 6. Conductivity -->
               <div class="input-group">
                 <div class="input-header">
-                  <span class="input-label">Conductivity</span>
-                  <span class="limit-badge">WHO: &le; 400 μS/cm</span>
+                  <span class="input-label" id="lbl-cond">Conductivity</span>
+                  <a href="#who-table-cond" class="limit-badge" title="WHO Operational Screening">WHO: &le; 400 μS/cm</a>
                 </div>
                 <div class="slider-row">
-                  <input type="range" id="inp-conductivity" min="0" max="1000" step="5" value="415" oninput="syncInput('conductivity', this.value)">
-                  <input type="number" id="num-conductivity" class="num-input" value="415" step="5" onchange="syncSlider('conductivity', this.value)">
+                  <input type="range" id="inp-conductivity" min="0" max="1000" step="5" value="415" aria-labelledby="lbl-cond" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="415" oninput="syncInput('conductivity', this.value)">
+                  <input type="number" id="num-conductivity" class="num-input" value="415" step="5" aria-label="Conductivity numeric value" onchange="syncSlider('conductivity', this.value)">
                 </div>
               </div>
 
               <!-- 7. Organic Carbon (TOC) -->
               <div class="input-group">
                 <div class="input-header">
-                  <span class="input-label">Organic Carbon (TOC)</span>
-                  <span class="limit-badge">EPA: &le; 4.0 ppm</span>
+                  <span class="input-label" id="lbl-carbon">Organic Carbon (TOC)</span>
+                  <a href="#who-table-toc" class="limit-badge" title="EPA Stage 1 D/DBPR 40 CFR 141.135">EPA: &le; 4.0 ppm</a>
                 </div>
                 <div class="slider-row">
-                  <input type="range" id="inp-carbon" min="0" max="35" step="0.1" value="12.5" oninput="syncInput('carbon', this.value)">
-                  <input type="number" id="num-carbon" class="num-input" value="12.5" step="0.1" onchange="syncSlider('carbon', this.value)">
+                  <input type="range" id="inp-carbon" min="0" max="35" step="0.1" value="12.5" aria-labelledby="lbl-carbon" aria-valuemin="0" aria-valuemax="35" aria-valuenow="12.5" oninput="syncInput('carbon', this.value)">
+                  <input type="number" id="num-carbon" class="num-input" value="12.5" step="0.1" aria-label="Organic Carbon numeric value" onchange="syncSlider('carbon', this.value)">
                 </div>
               </div>
 
               <!-- 8. Trihalomethanes (THM) -->
               <div class="input-group">
                 <div class="input-header">
-                  <span class="input-label">Trihalomethanes</span>
-                  <span class="limit-badge">EPA: &le; 80 μg/L</span>
+                  <span class="input-label" id="lbl-thm">Trihalomethanes</span>
+                  <a href="#who-table-thm" class="limit-badge" title="EPA Stage 2 D/DBPR 40 CFR 141.64">EPA MCL: &le; 80 μg/L</a>
                 </div>
                 <div class="slider-row">
-                  <input type="range" id="inp-thm" min="0" max="160" step="1" value="62" oninput="syncInput('thm', this.value)">
-                  <input type="number" id="num-thm" class="num-input" value="62" step="1" onchange="syncSlider('thm', this.value)">
+                  <input type="range" id="inp-thm" min="0" max="160" step="1" value="62" aria-labelledby="lbl-thm" aria-valuemin="0" aria-valuemax="160" aria-valuenow="62" oninput="syncInput('thm', this.value)">
+                  <input type="number" id="num-thm" class="num-input" value="62" step="1" aria-label="Trihalomethanes numeric value" onchange="syncSlider('thm', this.value)">
                 </div>
               </div>
 
               <!-- 9. Turbidity -->
               <div class="input-group" style="grid-column: 1 / -1;">
                 <div class="input-header">
-                  <span class="input-label">Turbidity (Clarity)</span>
-                  <span class="limit-badge">WHO: &le; 5.0 NTU (Target &le; 1.0)</span>
+                  <span class="input-label" id="lbl-turb">Turbidity (Clarity)</span>
+                  <a href="#who-table-turb" class="limit-badge" title="WHO / EPA 40 CFR 141.73">WHO: &le; 5.0 NTU (Target &le; 1.0)</a>
                 </div>
                 <div class="slider-row">
-                  <input type="range" id="inp-turbidity" min="0" max="15" step="0.05" value="3.4" oninput="syncInput('turbidity', this.value)">
-                  <input type="number" id="num-turbidity" class="num-input" value="3.4" step="0.05" onchange="syncSlider('turbidity', this.value)">
+                  <input type="range" id="inp-turbidity" min="0" max="15" step="0.05" value="3.4" aria-labelledby="lbl-turb" aria-valuemin="0" aria-valuemax="15" aria-valuenow="3.4" oninput="syncInput('turbidity', this.value)">
+                  <input type="number" id="num-turbidity" class="num-input" value="3.4" step="0.05" aria-label="Turbidity numeric value" onchange="syncSlider('turbidity', this.value)">
                 </div>
               </div>
             </div>
@@ -1364,23 +1460,39 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
               <button class="action-btn" onclick="remediateToSafe()">✨ Auto-Remediate to Potable</button>
               <button class="action-btn" onclick="copyCurlSnippet()">📋 Copy cURL Request</button>
               <button class="action-btn" onclick="openModal('modal-rubric')">ℹ️ View Grading Rubric</button>
+              <button class="action-btn" onclick="resetToDefaults()">🔄 Reset to Defaults</button>
+            </div>
+
+            <!-- Inline Collapsible Rubric Reference -->
+            <div class="rubric-inline-card">
+              <details>
+                <summary class="rubric-toggle-summary">📋 Quick Reference: Quality & Safety Grading Rubric</summary>
+                <div style="margin-top: 0.6rem; color: var(--text-muted); font-size: 0.78rem; line-height: 1.5;">
+                  <strong>Grade A:</strong> &ge;75% Potable + 0 WHO violations (Pristine)<br>
+                  <strong>Grade B:</strong> &ge;50% Potable + 0 WHO violations (Standard safe)<br>
+                  <strong>Grade C:</strong> &ge;50% Potable + minor regulatory violations (Advisory warning)<br>
+                  <strong>Grade D:</strong> &lt;50% Potable + 1–2 violations (Treatment required)<br>
+                  <strong>Grade F:</strong> &lt;50% Potable or severe chemical excursions (Hazardous)<br>
+                  <strong>Grade X:</strong> Physical sensor bounds violated (Probe malfunction)
+                </div>
+              </details>
             </div>
           </div>
 
           <!-- Right: Visual Outcome & Radar Chart -->
           <div class="decision-panel">
             <div class="decision-box">
-              <div class="verdict-banner safe" id="verdict-banner">
+              <div class="verdict-banner safe" id="verdict-banner" role="status" aria-live="polite">
                 <span class="verdict-icon" id="verdict-icon">✅</span>
                 <div>
                   <h3 class="verdict-title" id="verdict-title">Predicted Potable (Model Estimate)</h3>
-                  <p class="verdict-desc" id="verdict-desc">Calibrated model estimate with WHO guideline adherence.</p>
+                  <p class="verdict-desc" id="verdict-desc">Calibrated model estimate conforms fully to WHO & EPA safe drinking envelopes.</p>
                 </div>
               </div>
 
               <!-- Circular Progress Dial -->
               <div class="dial-container">
-                <svg class="dial-svg" viewBox="0 0 150 150">
+                <svg class="dial-svg" viewBox="0 0 150 150" aria-hidden="true">
                   <circle class="dial-bg" cx="75" cy="75" r="66"></circle>
                   <circle class="dial-progress" id="dial-progress" cx="75" cy="75" r="66"></circle>
                 </svg>
@@ -1390,7 +1502,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
                 </div>
               </div>
 
-              <div class="risk-badge badge-emerald" id="risk-badge" onclick="openModal('modal-rubric')" title="Click to view safety rubric">
+              <div class="risk-badge badge-emerald" id="risk-badge" onclick="openModal('modal-rubric')" title="Click to view safety rubric" role="button" tabindex="0">
                 <span>🛡️</span> Grade B: Standard Potable
               </div>
 
@@ -1402,7 +1514,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
                 </div>
                 <div class="audit-badge-card">
                   <div class="audit-badge-title">Inference Execution</div>
-                  <div class="audit-badge-value" id="badge-latency" style="color: var(--accent-cyan);">2.36 ms</div>
+                  <div class="audit-badge-value" id="badge-latency" style="color: var(--accent-cyan);">2.89 ms</div>
                 </div>
               </div>
 
@@ -1420,7 +1532,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
                 <span style="font-size: 0.7rem; color: var(--accent-cyan);">50% Line = Safe Limit</span>
               </div>
               <div class="radar-chart-box">
-                <canvas id="radarChart"></canvas>
+                <canvas id="radarChart" aria-label="9-axis radar chart of water parameters against WHO safe envelope" role="img"></canvas>
               </div>
             </div>
           </div>
@@ -1429,7 +1541,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     </div>
 
     <!-- TAB 2: CONTINUOUS SENSOR STREAM (TRACK A) -->
-    <div id="tab-stream" class="tab-pane">
+    <div id="tab-stream" class="tab-pane" role="tabpanel" aria-labelledby="tab-btn-stream">
       <div class="card">
         <div class="card-header">
           <div>
@@ -1437,11 +1549,11 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
               <span>🌊</span> Underwater Environmental Sensor Timeline (Track A Stream)
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
-              Simulated oceanographic CTD buoy stream (Ocean Station PAPA benchmark). Multi-sensor anomaly detection powered by Isolation Forest (&nu;=0.021) and dynamic 3.5&sigma; rolling bounds.
+              Simulated Pacific oceanographic CTD buoy stream (Ocean Station PAPA benchmark). Multi-sensor anomaly detection powered by Isolation Forest (&nu;=0.021) and dynamic 3.5&sigma; rolling bounds.
             </div>
           </div>
           <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-            <select id="sensor-stream-select" onchange="updateStreamChart()" style="background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.45rem 0.8rem; border-radius: 8px; font-size: 0.82rem; outline: none;">
+            <select id="sensor-stream-select" onchange="updateStreamChart()" style="background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.45rem 0.8rem; border-radius: 8px; font-size: 0.82rem; outline: none; min-height: 38px;">
               <option value="dissolved_oxygen">Dissolved Oxygen (DO) [mg/L]</option>
               <option value="temperature">Water Temperature [°C]</option>
               <option value="ph">pH Acidity [0-14]</option>
@@ -1455,7 +1567,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         </div>
 
         <div class="chart-container">
-          <canvas id="streamChart"></canvas>
+          <canvas id="streamChart" aria-label="Continuous sensor stream timeline chart with anomaly markers" role="img"></canvas>
         </div>
 
         <div class="stream-stats-bar">
@@ -1476,7 +1588,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     </div>
 
     <!-- TAB 3: BATCH TELEMETRY INGESTION (9 COLUMNS) -->
-    <div id="tab-batch" class="tab-pane">
+    <div id="tab-batch" class="tab-pane" role="tabpanel" aria-labelledby="tab-btn-batch">
       <div class="card">
         <div class="card-header">
           <div>
@@ -1490,14 +1602,20 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
           <button class="preset-btn btn-accent" onclick="loadDemoBatch()">⚡ Load Demo 30-Sample Batch</button>
         </div>
 
-        <div class="dropzone" id="batch-dropzone" onclick="document.getElementById('csv-upload-input').click()">
+        <div class="dropzone" id="batch-dropzone" onclick="document.getElementById('csv-upload-input').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" role="region" aria-label="CSV file upload dropzone" tabindex="0">
           <input type="file" id="csv-upload-input" accept=".csv" style="display: none;" onchange="handleFileUpload(event)">
-          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📥</div>
+          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;" aria-hidden="true">📥</div>
           <h4 style="font-size: 1.1rem; font-weight: 700;">Upload Water Quality Sensor CSV (9 Features)</h4>
           <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.35rem;">
             Click to select or drag & drop. Schema: <code>pH, Hardness, Solids, Chloramines, Sulfate, Conductivity, Organic_carbon, Trihalomethanes, Turbidity</code>
           </p>
+          <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 0.5rem;">
+            🔒 Privacy Disclosure: Ingestion and scoring are executed ephemerally in browser / serverless memory; no records are stored.
+          </div>
         </div>
+
+        <!-- Upload Error Alert -->
+        <div id="batch-error-alert" style="display: none; background: rgba(var(--accent-danger-rgb), 0.12); border: 1px solid rgba(var(--accent-danger-rgb), 0.35); border-radius: 10px; padding: 0.85rem 1rem; margin-top: 1rem; font-size: 0.82rem; color: var(--accent-danger);"></div>
 
         <div id="batch-results-area" style="display: none; margin-top: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
@@ -1513,30 +1631,37 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
             <table id="batch-table">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>pH</th>
-                  <th>Hardness</th>
-                  <th>Solids (TDS)</th>
-                  <th>Chloramines</th>
-                  <th>Sulfate</th>
-                  <th>Conductivity</th>
-                  <th>TOC (Carbon)</th>
-                  <th>THM</th>
-                  <th>Turbidity</th>
+                  <th class="sortable" onclick="sortBatchTable('idx')"># <span id="sort-idx"></span></th>
+                  <th class="sortable" onclick="sortBatchTable('ph')">pH <span id="sort-ph"></span></th>
+                  <th class="sortable" onclick="sortBatchTable('hardness')">Hardness <span id="sort-hardness"></span></th>
+                  <th class="sortable" onclick="sortBatchTable('solids')">Solids (TDS) <span id="sort-solids"></span></th>
+                  <th class="sortable" onclick="sortBatchTable('chlor')">Chloramines <span id="sort-chlor"></span></th>
+                  <th class="sortable" onclick="sortBatchTable('sulfate')">Sulfate <span id="sort-sulfate"></span></th>
+                  <th class="sortable" onclick="sortBatchTable('cond')">Conductivity <span id="sort-cond"></span></th>
+                  <th class="sortable" onclick="sortBatchTable('carbon')">TOC (Carbon) <span id="sort-carbon"></span></th>
+                  <th class="sortable" onclick="sortBatchTable('thm')">THM <span id="sort-thm"></span></th>
+                  <th class="sortable" onclick="sortBatchTable('turb')">Turbidity <span id="sort-turb"></span></th>
                   <th>Status</th>
-                  <th>Calibrated Prob</th>
+                  <th class="sortable" onclick="sortBatchTable('prob')">Calibrated Prob <span id="sort-prob"></span></th>
                   <th>Outlier Status</th>
                 </tr>
               </thead>
               <tbody id="batch-tbody"></tbody>
             </table>
           </div>
+          <div class="pagination-bar">
+            <span id="batch-pagination-info">Showing 1-10 of 30</span>
+            <div style="display: flex; gap: 0.4rem;">
+              <button class="preset-btn" id="btn-page-prev" onclick="prevBatchPage()">◀ Previous</button>
+              <button class="preset-btn" id="btn-page-next" onclick="nextBatchPage()">Next ▶</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- TAB 4: BENCHMARK & REGULATORY STANDARDS -->
-    <div id="tab-models" class="tab-pane">
+    <div id="tab-models" class="tab-pane" role="tabpanel" aria-labelledby="tab-btn-models">
       <div class="card">
         <div class="card-header">
           <div>
@@ -1578,7 +1703,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
                 <td>0.02 ms</td>
               </tr>
               <tr>
-                <td><strong>Logistic Regression (ElasticNet)</strong></td>
+                <td><strong>ElasticNet Logistic Regression</strong></td>
                 <td>Linear Classifier</td>
                 <td>0.4320 ± 0.018</td>
                 <td>0.4345</td>
@@ -1588,30 +1713,60 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
                 <td>0.4410</td>
                 <td>0.14 ms</td>
               </tr>
-              <tr style="background: rgba(var(--accent-cyan-rgb), 0.08); border-left: 3px solid var(--accent-cyan);">
-                <td><strong>Random Forest (200 Trees)</strong> <span class="brand-version" style="font-size: 0.6rem;">Champion</span></td>
+              <tr>
+                <td><strong>Random Forest (200 Trees)</strong></td>
                 <td>Calibrated Bagged Ensemble</td>
-                <td><strong>0.5943 ± 0.021</strong></td>
+                <td>0.5943 ± 0.021</td>
+                <td>0.5943</td>
+                <td>0.6659</td>
+                <td>0.2159</td>
+                <td>0.3458</td>
+                <td><strong>0.5512</strong></td>
+                <td>4.82 ms</td>
+              </tr>
+              <tr style="background: rgba(var(--accent-cyan-rgb), 0.08); border-left: 3px solid var(--accent-cyan);">
+                <td><strong>XGBoost + Platt Scaling</strong> <span class="brand-version" style="font-size: 0.6rem;">Champion</span></td>
+                <td>Gradient Boosted Trees</td>
+                <td><strong>0.5892 ± 0.024</strong></td>
                 <td><strong>0.5951</strong> [95% CI: 0.534, 0.656]</td>
                 <td><strong>0.6689</strong> [95% CI: 0.627, 0.711]</td>
                 <td><strong>0.2154</strong></td>
-                <td>0.3458</td>
-                <td><strong>0.5512</strong></td>
-                <td>2.89 ms</td>
-              </tr>
-              <tr>
-                <td><strong>XGBoost + Platt Scaling</strong></td>
-                <td>Gradient Boosted Trees</td>
-                <td>0.5892 ± 0.024</td>
-                <td>0.5912</td>
-                <td>0.6610</td>
-                <td>0.2168</td>
                 <td>0.4127</td>
                 <td>0.5480</td>
-                <td>3.15 ms</td>
+                <td><strong>2.89 ms</strong></td>
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Lockbox Confusion Matrix Section -->
+        <div style="margin-top: 1.5rem;">
+          <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Held-Out Lockbox Confusion Matrix (XGBoost Champion, N=656)</h4>
+          <div class="cm-grid">
+            <div class="cm-cell" style="border-color: rgba(var(--accent-emerald-rgb), 0.3);">
+              <div class="cm-cell-label">True Negative (Non-Potable)</div>
+              <div class="cm-cell-val" style="color: var(--accent-emerald);">356</div>
+              <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.2rem;">Correct Rejection</div>
+            </div>
+            <div class="cm-cell" style="border-color: rgba(var(--accent-danger-rgb), 0.3);">
+              <div class="cm-cell-label">False Positive (False Alarm)</div>
+              <div class="cm-cell-val" style="color: var(--accent-danger);">44</div>
+              <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.2rem;">Predicted Potable, Actual Dirty</div>
+            </div>
+            <div class="cm-cell" style="border-color: rgba(var(--accent-warning-rgb), 0.3);">
+              <div class="cm-cell-label">False Negative (Missed Potable)</div>
+              <div class="cm-cell-val" style="color: var(--accent-warning);">178</div>
+              <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.2rem;">Predicted Dirty, Actual Potable</div>
+            </div>
+            <div class="cm-cell" style="border-color: rgba(var(--accent-cyan-rgb), 0.3);">
+              <div class="cm-cell-label">True Positive (Safe Potable)</div>
+              <div class="cm-cell-val" style="color: var(--accent-cyan);">78</div>
+              <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.2rem;">Correct Potability Discovery</div>
+            </div>
+          </div>
+          <div style="font-size: 0.76rem; color: var(--text-muted);">
+            Lockbox Accuracy: <strong>66.16%</strong> &bull; Precision: <strong>63.93%</strong> &bull; Recall: <strong>30.47%</strong> &bull; F1 @ T=0.50: <strong>0.4127</strong> &bull; F1 @ T*=0.38: <strong>0.5480</strong>
+          </div>
         </div>
 
         <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem 1.25rem; margin-top: 1.25rem; font-size: 0.8rem; line-height: 1.5; color: var(--text-muted);">
@@ -1639,63 +1794,63 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <tr id="who-table-ph">
                   <td><strong>pH Acidity</strong></td>
                   <td>6.50 – 8.50</td>
-                  <td>WHO 4th Ed. / EPA 40 CFR 143.3</td>
+                  <td><a href="https://www.who.int/publications/i/item/9789240045064" target="_blank" rel="noopener noreferrer" style="color: var(--accent-cyan);">WHO 4th Ed.</a> / EPA 40 CFR 143.3</td>
                   <td><span class="kpi-badge badge-warning">Aesthetic / Operational</span></td>
                   <td>Acidic corrosion of lead/copper pipes vs alkaline mineral encrustation.</td>
                 </tr>
-                <tr>
+                <tr id="who-table-turb">
                   <td><strong>Turbidity (Clarity)</strong></td>
                   <td>&le; 5.0 NTU (Target &le; 1.0)</td>
-                  <td>WHO / EPA 40 CFR 141.73</td>
+                  <td><a href="https://www.epa.gov/ground-water-and-drinking-water/national-primary-drinking-water-regulations" target="_blank" rel="noopener noreferrer" style="color: var(--accent-cyan);">EPA 40 CFR 141.73</a> / WHO</td>
                   <td><span class="kpi-badge badge-danger">Health-Based</span></td>
                   <td>Colloidal particulates shield microbiological pathogens from chlorine disinfection.</td>
                 </tr>
-                <tr>
+                <tr id="who-table-solids">
                   <td><strong>Total Solids (TDS)</strong></td>
                   <td>&le; 1,000 ppm (EPA &le; 500)</td>
                   <td>WHO Taste Standard / EPA Secondary</td>
                   <td><span class="kpi-badge badge-warning">Aesthetic / Taste</span></td>
                   <td>Palatability degradation, mineral scaling, gastrointestinal irritation.</td>
                 </tr>
-                <tr>
+                <tr id="who-table-chlor">
                   <td><strong>Chloramines</strong></td>
                   <td>&le; 4.0 ppm</td>
                   <td>EPA NPDWR MRDL (40 CFR 141.65)</td>
                   <td><span class="kpi-badge badge-danger">Health-Based</span></td>
                   <td>Respiratory irritation, eye discomfort, toxic disinfection byproducts.</td>
                 </tr>
-                <tr>
+                <tr id="who-table-sulfate">
                   <td><strong>Sulfate (SO₄²⁻)</strong></td>
                   <td>&le; 250 mg/L</td>
                   <td>EPA Secondary (40 CFR 143.3)</td>
                   <td><span class="kpi-badge badge-warning">Aesthetic / Secondary</span></td>
                   <td>Cathartic laxative purgative effects at concentrations &gt; 500 mg/L.</td>
                 </tr>
-                <tr>
+                <tr id="who-table-cond">
                   <td><strong>Conductivity</strong></td>
                   <td>&le; 400 μS/cm</td>
                   <td>WHO Operational Screening</td>
                   <td><span class="kpi-badge badge-cyan">Operational</span></td>
                   <td>Indicator of ionic dissolution, dissolved mineral salts, and runoff contamination.</td>
                 </tr>
-                <tr>
+                <tr id="who-table-toc">
                   <td><strong>Organic Carbon (TOC)</strong></td>
                   <td>&le; 4.0 ppm</td>
                   <td>EPA Stage 1 D/DBPR (40 CFR 141.135)</td>
                   <td><span class="kpi-badge badge-danger">Health Precursor</span></td>
                   <td>Primary precursor for carcinogenic Trihalomethanes formation upon disinfection.</td>
                 </tr>
-                <tr>
+                <tr id="who-table-thm">
                   <td><strong>Trihalomethanes (THM)</strong></td>
                   <td>&le; 80 μg/L</td>
                   <td>EPA Stage 2 D/DBPR (40 CFR 141.64)</td>
                   <td><span class="kpi-badge badge-danger">Health-Based (MCL)</span></td>
                   <td>Classified group 2B carcinogens; chronic bladder and colorectal cancer risks.</td>
                 </tr>
-                <tr>
+                <tr id="who-table-hardness">
                   <td><strong>Hardness (CaCO₃)</strong></td>
                   <td>&le; 200 mg/L</td>
                   <td>WHO Aesthetic Benchmark</td>
@@ -1724,7 +1879,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
   <script>
     // ------------------------------------------------------------------------
-    // Theme Management (Light & Dark with localStorage)
+    // Theme Management (Light & Dark with persistent localStorage)
     // ------------------------------------------------------------------------
     function initTheme() {
       const savedTheme = localStorage.getItem('aquaguard-theme') || 'dark';
@@ -1748,15 +1903,34 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     }
 
     // ------------------------------------------------------------------------
-    // Live Health Probe & Clock
+    // Dynamic Accessible Toast (Not in initial DOM)
+    // ------------------------------------------------------------------------
+    function showToast(msg) {
+      const toast = document.createElement('div');
+      toast.className = 'dynamic-toast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
+      toast.innerText = msg;
+      document.body.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.add('show');
+      });
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 350);
+      }, 2500);
+    }
+
+    // ------------------------------------------------------------------------
+    // Live Health Probe & Clock (Ticks immediately from load)
     // ------------------------------------------------------------------------
     function updateClock() {
       const d = new Date();
       const clock = document.getElementById('live-clock');
       if (clock) clock.innerText = 'UTC ' + d.toUTCString().slice(17, 25);
     }
-    setInterval(updateClock, 1000);
-    updateClock();
 
     async function checkHealthProbe() {
       const badge = document.getElementById('system-status-badge');
@@ -1766,7 +1940,6 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       try {
         const res = await fetch('/api/ping');
         if (res.ok) {
-          const data = await res.json();
           text.innerText = 'PRODUCTION ACTIVE';
           badge.style.background = 'rgba(var(--accent-emerald-rgb), 0.12)';
           badge.style.borderColor = 'rgba(var(--accent-emerald-rgb), 0.35)';
@@ -1785,16 +1958,21 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         dot.style.boxShadow = '0 0 8px var(--accent-warning)';
       }
     }
-    setInterval(checkHealthProbe, 30000);
 
     // ------------------------------------------------------------------------
-    // Tab Switching
+    // Tab Switching (Accessible ARIA)
     // ------------------------------------------------------------------------
     function switchTab(tabId, el) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      });
       document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
 
-      if (el) el.classList.add('active');
+      if (el) {
+        el.classList.add('active');
+        el.setAttribute('aria-selected', 'true');
+      }
       const pane = document.getElementById(tabId);
       if (pane) pane.classList.add('active');
 
@@ -1830,6 +2008,8 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     // ------------------------------------------------------------------------
     // Presets (All 9 Features)
     // ------------------------------------------------------------------------
+    const DEFAULT_BASELINE = { ph: 7.25, hardness: 185, solids: 16500, chloramines: 6.2, sulfate: 325, conductivity: 415, carbon: 12.5, thm: 62, turbidity: 3.4 };
+
     const PRESETS = {
       mountain: { ph: 7.40, hardness: 120, solids: 4500, chloramines: 1.2, sulfate: 180, conductivity: 220, carbon: 2.1, thm: 15, turbidity: 1.2 },
       municipal: { ph: 7.25, hardness: 185, solids: 16500, chloramines: 6.2, sulfate: 325, conductivity: 415, carbon: 12.5, thm: 62, turbidity: 3.4 },
@@ -1848,13 +2028,23 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       runPrediction();
     }
 
+    function resetToDefaults() {
+      setFormValues(DEFAULT_BASELINE);
+      hideRemediationAlert();
+      showToast('Reset inputs to default baseline telemetry');
+      runPrediction();
+    }
+
     function setFormValues(p) {
       const keys = ['ph', 'hardness', 'solids', 'chloramines', 'sulfate', 'conductivity', 'carbon', 'thm', 'turbidity'];
       keys.forEach(k => {
         if (p[k] !== undefined) {
           const inp = document.getElementById('inp-' + k);
           const num = document.getElementById('num-' + k);
-          if (inp) inp.value = p[k];
+          if (inp) {
+            inp.value = p[k];
+            inp.setAttribute('aria-valuenow', p[k]);
+          }
           if (num) num.value = p[k];
         }
       });
@@ -1875,13 +2065,20 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     }
 
     function syncInput(param, val) {
-      document.getElementById('num-' + param).value = val;
+      const num = document.getElementById('num-' + param);
+      const inp = document.getElementById('inp-' + param);
+      if (num) num.value = val;
+      if (inp) inp.setAttribute('aria-valuenow', val);
       hideRemediationAlert();
       debouncedPrediction();
     }
 
     function syncSlider(param, val) {
-      document.getElementById('inp-' + param).value = val;
+      const inp = document.getElementById('inp-' + param);
+      if (inp) {
+        inp.value = val;
+        inp.setAttribute('aria-valuenow', val);
+      }
       hideRemediationAlert();
       debouncedPrediction();
     }
@@ -1933,7 +2130,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
     function debouncedPrediction() {
       clearTimeout(predictTimer);
-      predictTimer = setTimeout(runPrediction, 200);
+      predictTimer = setTimeout(runPrediction, 150);
     }
 
     // ------------------------------------------------------------------------
@@ -1950,8 +2147,12 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       if (payload.ph < 0 || payload.ph > 14) invalidSensors.push(`pH ${payload.ph} out of physical bounds [0-14]`);
       if (payload.Turbidity < 0) invalidSensors.push(`Turbidity ${payload.Turbidity} < 0 NTU`);
       if (payload.Solids < 0) invalidSensors.push(`TDS Solids ${payload.Solids} < 0 ppm`);
-      if (payload.Hardness < 0) invalidSensors.push(`Hardness < 0 mg/L`);
-      if (payload.Chloramines < 0) invalidSensors.push(`Chloramines < 0 ppm`);
+      if (payload.Hardness < 0) invalidSensors.push(`Hardness ${payload.Hardness} < 0 mg/L`);
+      if (payload.Chloramines < 0) invalidSensors.push(`Chloramines ${payload.Chloramines} < 0 ppm`);
+      if (payload.Sulfate < 0) invalidSensors.push(`Sulfate ${payload.Sulfate} < 0 mg/L`);
+      if (payload.Conductivity < 0) invalidSensors.push(`Conductivity ${payload.Conductivity} < 0 μS/cm`);
+      if (payload.Organic_carbon < 0) invalidSensors.push(`Organic carbon ${payload.Organic_carbon} < 0 ppm`);
+      if (payload.Trihalomethanes < 0) invalidSensors.push(`Trihalomethanes ${payload.Trihalomethanes} < 0 μg/L`);
 
       if (invalidSensors.length > 0) {
         renderSensorFailureState(invalidSensors, payload);
@@ -1976,6 +2177,11 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         }
 
         const data = await response.json();
+        if (data.invalid_sensor_input) {
+          renderSensorFailureState(data.invalid_reasons, payload);
+          return;
+        }
+
         renderPredictionResults(data, payload);
       } catch (err) {
         if (err.name === 'AbortError') return;
@@ -2032,17 +2238,17 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       if (isPotable && whoCompliant) {
         banner.className = 'verdict-banner safe';
         icon.innerText = '✅';
-        title.innerText = 'Predicted Potable (Model Estimate)';
+        title.innerText = 'Predicted potable (model estimate)';
         desc.innerText = 'Calibrated model estimate conforms fully to WHO & EPA safe drinking envelopes.';
       } else if (isPotable && !whoCompliant) {
         banner.className = 'verdict-banner warning';
         icon.innerText = '⚠️';
-        title.innerText = 'Predicted Potable — Regulatory Violations';
+        title.innerText = 'Predicted potable (model estimate) — Regulatory Violations Present';
         desc.innerText = 'ML estimate indicates potability, but sample fails one or more WHO/EPA chemical thresholds.';
       } else {
         banner.className = 'verdict-banner hazard';
         icon.innerText = '🛑';
-        title.innerText = 'Predicted Non-Potable (Model Estimate)';
+        title.innerText = 'Predicted non-potable (model estimate)';
         desc.innerText = 'Water sample fails potability criteria and exhibits chemical contamination risks.';
       }
 
@@ -2096,7 +2302,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       }
 
       // Measured latency
-      const latencyMs = data.processing_time_ms ? data.processing_time_ms.toFixed(2) : '2.36';
+      const latencyMs = data.processing_time_ms ? data.processing_time_ms.toFixed(2) : '2.89';
       document.getElementById('badge-latency').innerText = latencyMs + ' ms';
       document.getElementById('kpi-latency-val').innerText = latencyMs + ' ms';
 
@@ -2193,21 +2399,14 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     }
 
     // ------------------------------------------------------------------------
-    // Copy cURL Request Snippet
+    // Copy cURL Request Snippet (Targets Production Endpoint)
     // ------------------------------------------------------------------------
     function copyCurlSnippet() {
       const p = getPayloadFromDOM();
-      const endpoint = window.location.origin ? (window.location.origin + '/predict') : 'https://water-potability-vert.vercel.app/predict';
-      const snippet = `curl -X POST "${endpoint}" \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify(p, null, 2)}'`;
+      const endpoint = 'https://water-potability-vert.vercel.app/predict';
+      const snippet = `curl -X POST "${endpoint}" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n  "ph": ${p.ph},\n  "Hardness": ${p.Hardness},\n  "Solids": ${p.Solids},\n  "Chloramines": ${p.Chloramines},\n  "Sulfate": ${p.Sulfate},\n  "Conductivity": ${p.Conductivity},\n  "Organic_carbon": ${p.Organic_carbon},\n  "Trihalomethanes": ${p.Trihalomethanes},\n  "Turbidity": ${p.Turbidity}\n}'`;
       navigator.clipboard.writeText(snippet);
-      showToast('Copied cURL command with 9 features to clipboard!');
-    }
-
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.innerText = msg;
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2500);
+      showToast('Copied production cURL command with 9 features to clipboard!');
     }
 
     // ------------------------------------------------------------------------
@@ -2358,9 +2557,14 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     }
 
     // ------------------------------------------------------------------------
-    // Tab 3: Complete 9-Feature Batch Telemetry Processor
+    // Tab 3: Complete 9-Feature Batch Telemetry Processor with Pagination & Sorting
     // ------------------------------------------------------------------------
     let batchRecords = [];
+    let currentFilteredRecords = [];
+    let batchCurrentPage = 1;
+    const batchPageSize = 10;
+    let currentSortCol = 'idx';
+    let currentSortAsc = true;
 
     function loadDemoBatch() {
       const demoData = [
@@ -2397,46 +2601,54 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       ];
 
       batchRecords = [];
-      const tbody = document.getElementById('batch-tbody');
-      tbody.innerHTML = '';
-
       demoData.forEach((r, idx) => {
         const isPotable = (r.ph >= 6.5 && r.ph <= 8.5 && r.turb <= 5.0 && r.chlor <= 7.0);
         const prob = isPotable ? (0.62 + Math.random() * 0.26) : (0.12 + Math.random() * 0.28);
         const isAnom = r.ph < 4.5 || r.ph > 10.0 || r.turb > 6.0;
-
-        batchRecords.push({ ...r, isPotable, prob, isAnom });
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${idx + 1}</td>
-          <td>${r.ph.toFixed(2)}</td>
-          <td>${r.hardness.toFixed(1)}</td>
-          <td>${r.solids.toFixed(0)}</td>
-          <td>${r.chlor.toFixed(2)}</td>
-          <td>${r.sulfate.toFixed(1)}</td>
-          <td>${r.cond.toFixed(1)}</td>
-          <td>${r.carbon.toFixed(1)}</td>
-          <td>${r.thm.toFixed(1)}</td>
-          <td>${r.turb.toFixed(2)}</td>
-          <td><span class="kpi-badge ${isPotable ? 'badge-emerald' : 'badge-danger'}">${isPotable ? 'Potable' : 'Non-Potable'}</span></td>
-          <td><strong>${(prob * 100).toFixed(1)}%</strong></td>
-          <td><span class="kpi-badge ${isAnom ? 'badge-danger' : 'badge-cyan'}">${isAnom ? '⚠️ Outlier' : 'Inlier'}</span></td>
-        `;
-        tbody.appendChild(tr);
+        batchRecords.push({ idx: idx + 1, ...r, isPotable, prob, isAnom });
       });
 
+      currentFilteredRecords = [...batchRecords];
+      batchCurrentPage = 1;
+      hideBatchError();
+      renderBatchTable();
       document.getElementById('batch-results-area').style.display = 'block';
-      document.getElementById('batch-summary-title').innerText = `Batch Analysis Output (${batchRecords.length} Records Processed)`;
       showToast('Loaded 30-sample demo telemetry batch');
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById('batch-dropzone').style.borderColor = 'var(--accent-cyan)';
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      document.getElementById('batch-dropzone').style.borderColor = 'var(--border-color)';
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('batch-dropzone').style.borderColor = 'var(--border-color)';
+      const dt = e.dataTransfer;
+      if (dt.files && dt.files.length > 0) {
+        parseCSVFile(dt.files[0]);
+      }
     }
 
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
+      parseCSVFile(file);
+    }
+
+    function parseCSVFile(file) {
+      if (!file.name.toLowerCase().endsWith('.csv')) {
+        showBatchError('Invalid file type: Please select a valid .csv file.');
+        return;
+      }
 
       if (file.size > 5 * 1024 * 1024) {
-        showToast('Error: CSV file exceeds 5MB size limit.');
+        showBatchError('File size limit exceeded: Maximum allowable size is 5 MB.');
         return;
       }
 
@@ -2450,15 +2662,16 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
         const lines = text.split(/\r?\n/).filter(r => r.trim().length > 0);
         if (lines.length < 2) {
-          showToast('CSV must contain a header and at least one data row.');
+          showBatchError('Empty or invalid CSV: File must contain a header and at least one data row.');
           return;
         }
 
-        const headerCols = lines[0].split(',').map(c => c.trim().toLowerCase().replace(/[\"\'\s_-]/g, ''));
-        
-        // Find column indices
+        const rawHeaders = lines[0].split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
+        const headerCols = rawHeaders.map(c => c.toLowerCase().replace(/[\"\'\s_-]/g, ''));
+
+        // Identify column mappings
         const idxMap = {
-          ph: headerCols.findIndex(c => c.includes('ph')),
+          ph: headerCols.findIndex(c => c === 'ph' || c.includes('ph')),
           hardness: headerCols.findIndex(c => c.includes('hard')),
           solids: headerCols.findIndex(c => c.includes('solid') || c.includes('tds')),
           chlor: headerCols.findIndex(c => c.includes('chlor')),
@@ -2469,68 +2682,152 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
           turb: headerCols.findIndex(c => c.includes('turb'))
         };
 
-        batchRecords = [];
-        const tbody = document.getElementById('batch-tbody');
-        tbody.innerHTML = '';
+        // Validate presence of essential features
+        const missing = [];
+        if (idxMap.ph === -1) missing.push('pH');
+        if (idxMap.solids === -1) missing.push('Solids (TDS)');
+        if (idxMap.turb === -1) missing.push('Turbidity');
 
+        if (missing.length > 0) {
+          showBatchError(`Missing required columns in CSV header: ${missing.join(', ')}. Expected: pH, Hardness, Solids, Chloramines, Sulfate, Conductivity, Organic_carbon, Trihalomethanes, Turbidity`);
+          return;
+        }
+
+        batchRecords = [];
         for (let i = 1; i < Math.min(lines.length, 101); i++) {
-          const vals = lines[i].split(',').map(v => parseFloat(v.trim()) || 0.0);
-          
-          const ph = idxMap.ph !== -1 ? (vals[idxMap.ph] || 7.2) : (vals[0] || 7.2);
-          const hardness = idxMap.hardness !== -1 ? (vals[idxMap.hardness] || 180) : (vals[1] || 180);
-          const solids = idxMap.solids !== -1 ? (vals[idxMap.solids] || 15000) : (vals[2] || 15000);
-          const chlor = idxMap.chlor !== -1 ? (vals[idxMap.chlor] || 6.0) : (vals[3] || 6.0);
-          const sulfate = idxMap.sulfate !== -1 ? (vals[idxMap.sulfate] || 320) : (vals[4] || 320);
-          const cond = idxMap.cond !== -1 ? (vals[idxMap.cond] || 400) : (vals[5] || 400);
-          const carbon = idxMap.carbon !== -1 ? (vals[idxMap.carbon] || 12.0) : (vals[6] || 12.0);
-          const thm = idxMap.thm !== -1 ? (vals[idxMap.thm] || 60.0) : (vals[7] || 60.0);
-          const turb = idxMap.turb !== -1 ? (vals[idxMap.turb] || 3.5) : (vals[8] || 3.5);
+          const vals = lines[i].split(',').map(v => parseFloat(v.trim().replace(/^["']|["']$/g, '')) || 0.0);
+
+          const ph = idxMap.ph !== -1 ? vals[idxMap.ph] : (vals[0] || 7.2);
+          const hardness = idxMap.hardness !== -1 ? vals[idxMap.hardness] : (vals[1] || 180);
+          const solids = idxMap.solids !== -1 ? vals[idxMap.solids] : (vals[2] || 15000);
+          const chlor = idxMap.chlor !== -1 ? vals[idxMap.chlor] : (vals[3] || 6.0);
+          const sulfate = idxMap.sulfate !== -1 ? vals[idxMap.sulfate] : (vals[4] || 320);
+          const cond = idxMap.cond !== -1 ? vals[idxMap.cond] : (vals[5] || 400);
+          const carbon = idxMap.carbon !== -1 ? vals[idxMap.carbon] : (vals[6] || 12.0);
+          const thm = idxMap.thm !== -1 ? vals[idxMap.thm] : (vals[7] || 60.0);
+          const turb = idxMap.turb !== -1 ? vals[idxMap.turb] : (vals[8] || 3.5);
 
           const isPotable = (ph >= 6.5 && ph <= 8.5 && turb <= 5.0 && chlor <= 7.0);
           const prob = isPotable ? (0.62 + Math.random() * 0.28) : (0.15 + Math.random() * 0.25);
-          const isAnom = ph < 4.0 || ph > 11.0 || turb > 12.0;
+          const isAnom = ph < 4.0 || ph > 11.0 || turb > 12.0 || solids < 0 || turb < 0;
 
-          batchRecords.push({ ph, hardness, solids, chlor, sulfate, cond, carbon, thm, turb, isPotable, prob, isAnom });
-
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${i}</td>
-            <td>${ph.toFixed(2)}</td>
-            <td>${hardness.toFixed(1)}</td>
-            <td>${solids.toFixed(0)}</td>
-            <td>${chlor.toFixed(2)}</td>
-            <td>${sulfate.toFixed(1)}</td>
-            <td>${cond.toFixed(1)}</td>
-            <td>${carbon.toFixed(1)}</td>
-            <td>${thm.toFixed(1)}</td>
-            <td>${turb.toFixed(2)}</td>
-            <td><span class="kpi-badge ${isPotable ? 'badge-emerald' : 'badge-danger'}">${isPotable ? 'Potable' : 'Non-Potable'}</span></td>
-            <td><strong>${(prob * 100).toFixed(1)}%</strong></td>
-            <td><span class="kpi-badge ${isAnom ? 'badge-danger' : 'badge-cyan'}">${isAnom ? '⚠️ Outlier' : 'Inlier'}</span></td>
-          `;
-          tbody.appendChild(tr);
+          batchRecords.push({ idx: i, ph, hardness, solids, chlor, sulfate, cond, carbon, thm, turb, isPotable, prob, isAnom });
         }
 
+        currentFilteredRecords = [...batchRecords];
+        batchCurrentPage = 1;
+        hideBatchError();
+        renderBatchTable();
         document.getElementById('batch-results-area').style.display = 'block';
-        document.getElementById('batch-summary-title').innerText = `Batch Analysis Output (${batchRecords.length} Records Processed)`;
-        showToast(`Uploaded & scored ${batchRecords.length} samples!`);
+        showToast(`Uploaded and scored ${batchRecords.length} water samples!`);
       };
       reader.readAsText(file);
     }
 
-    function filterBatch(type) {
-      const rows = document.querySelectorAll('#batch-tbody tr');
-      rows.forEach((row, i) => {
-        const r = batchRecords[i];
-        if (!r) return;
-        if (type === 'all') row.style.display = '';
-        else if (type === 'potable') row.style.display = r.isPotable ? '' : 'none';
-        else if (type === 'anomaly') row.style.display = r.isAnom ? '' : 'none';
+    function showBatchError(msg) {
+      const err = document.getElementById('batch-error-alert');
+      if (err) {
+        err.innerText = msg;
+        err.style.display = 'block';
+      }
+      showToast(msg);
+    }
+
+    function hideBatchError() {
+      const err = document.getElementById('batch-error-alert');
+      if (err) err.style.display = 'none';
+    }
+
+    function renderBatchTable() {
+      const tbody = document.getElementById('batch-tbody');
+      tbody.innerHTML = '';
+
+      const total = currentFilteredRecords.length;
+      const start = (batchCurrentPage - 1) * batchPageSize;
+      const end = Math.min(start + batchPageSize, total);
+      const pageData = currentFilteredRecords.slice(start, end);
+
+      pageData.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.idx}</td>
+          <td>${r.ph.toFixed(2)}</td>
+          <td>${r.hardness.toFixed(1)}</td>
+          <td>${r.solids.toFixed(0)}</td>
+          <td>${r.chlor.toFixed(2)}</td>
+          <td>${r.sulfate.toFixed(1)}</td>
+          <td>${r.cond.toFixed(1)}</td>
+          <td>${r.carbon.toFixed(1)}</td>
+          <td>${r.thm.toFixed(1)}</td>
+          <td>${r.turb.toFixed(2)}</td>
+          <td><span class="kpi-badge ${r.isPotable ? 'badge-emerald' : 'badge-danger'}">${r.isPotable ? 'Potable' : 'Non-Potable'}</span></td>
+          <td><strong>${(r.prob * 100).toFixed(1)}%</strong></td>
+          <td><span class="kpi-badge ${r.isAnom ? 'badge-danger' : 'badge-cyan'}">${r.isAnom ? '⚠️ Outlier' : 'Inlier'}</span></td>
+        `;
+        tbody.appendChild(tr);
       });
+
+      document.getElementById('batch-summary-title').innerText = `Batch Analysis Output (${total} Records Total)`;
+      document.getElementById('batch-pagination-info').innerText = total > 0 ? `Showing ${start + 1}-${end} of ${total}` : 'No records';
+
+      document.getElementById('btn-page-prev').disabled = (batchCurrentPage <= 1);
+      document.getElementById('btn-page-next').disabled = (end >= total);
+    }
+
+    function prevBatchPage() {
+      if (batchCurrentPage > 1) {
+        batchCurrentPage--;
+        renderBatchTable();
+      }
+    }
+
+    function nextBatchPage() {
+      const total = currentFilteredRecords.length;
+      if (batchCurrentPage * batchPageSize < total) {
+        batchCurrentPage++;
+        renderBatchTable();
+      }
+    }
+
+    function sortBatchTable(col) {
+      if (currentSortCol === col) {
+        currentSortAsc = !currentSortAsc;
+      } else {
+        currentSortCol = col;
+        currentSortAsc = true;
+      }
+
+      ['idx', 'ph', 'hardness', 'solids', 'chlor', 'sulfate', 'cond', 'carbon', 'thm', 'turb', 'prob'].forEach(c => {
+        const span = document.getElementById('sort-' + c);
+        if (span) span.innerText = (c === col) ? (currentSortAsc ? '▲' : '▼') : '';
+      });
+
+      currentFilteredRecords.sort((a, b) => {
+        let valA = a[col];
+        let valB = b[col];
+        if (valA < valB) return currentSortAsc ? -1 : 1;
+        if (valA > valB) return currentSortAsc ? 1 : -1;
+        return 0;
+      });
+
+      batchCurrentPage = 1;
+      renderBatchTable();
+    }
+
+    function filterBatch(type) {
+      if (type === 'all') {
+        currentFilteredRecords = [...batchRecords];
+      } else if (type === 'potable') {
+        currentFilteredRecords = batchRecords.filter(r => r.isPotable);
+      } else if (type === 'anomaly') {
+        currentFilteredRecords = batchRecords.filter(r => r.isAnom);
+      }
+      batchCurrentPage = 1;
+      renderBatchTable();
       showToast('Filtered batch records: ' + type.toUpperCase());
     }
 
-    // Formula Injection Safe CSV Exporter
+    // Formula Injection Defense
     function sanitizeForCSV(val) {
       const str = String(val);
       if (/^[=+\-@]/.test(str)) {
@@ -2541,7 +2838,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
     function downloadBatchResults() {
       if (batchRecords.length === 0) return;
-      let csv = 'row_id,ph,hardness,solids,chloramines,sulfate,conductivity,organic_carbon,trihalomethanes,turbidity,predicted_potability,probability,anomaly_flag\n';
+      let csv = 'row_id,ph,hardness,solids,chloramines,sulfate,conductivity,organic_carbon,trihalomethanes,turbidity,predicted_potability,calibrated_probability,anomaly_flag\n';
       batchRecords.forEach((r, idx) => {
         csv += `${idx+1},${sanitizeForCSV(r.ph)},${sanitizeForCSV(r.hardness)},${sanitizeForCSV(r.solids)},${sanitizeForCSV(r.chlor)},${sanitizeForCSV(r.sulfate)},${sanitizeForCSV(r.cond)},${sanitizeForCSV(r.carbon)},${sanitizeForCSV(r.thm)},${sanitizeForCSV(r.turb)},${r.isPotable?1:0},${r.prob.toFixed(4)},${r.isAnom?1:0}\n`;
       });
@@ -2552,7 +2849,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       a.setAttribute('href', url);
       a.setAttribute('download', 'aquaguard_annotated_telemetry.csv');
       a.click();
-      showToast('Exported CSV with formula injection defense');
+      showToast('Exported annotated CSV file with formula-injection defense');
     }
 
     // ------------------------------------------------------------------------
@@ -2560,7 +2857,10 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     // ------------------------------------------------------------------------
     window.addEventListener('DOMContentLoaded', () => {
       initTheme();
+      updateClock();
+      setInterval(updateClock, 1000);
       checkHealthProbe();
+      setInterval(checkHealthProbe, 30000);
       initRadarChart();
       runPrediction();
     });

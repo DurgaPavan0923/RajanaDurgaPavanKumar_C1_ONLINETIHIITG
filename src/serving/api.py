@@ -87,6 +87,13 @@ async def add_security_headers(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self' 'unsafe-inline' https: data: blob:; "
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data: blob: https:; "
+        "connect-src 'self' https:;"
+    )
     return response
 
 
@@ -232,18 +239,22 @@ def health_check() -> dict[str, Any]:
         "version": "2.1.0",
         "timestamp_utc": datetime.now(UTC).isoformat(),
         "model_loaded": is_model_loaded,
-        "model_name": bundle.get("model_name", "Random_Forest") if bundle else "WHO_Deterministic_Benchmark",
-        "model_architecture": "Platt-Calibrated Random Forest (200 Trees) + Isolation Forest",
+        "champion_pipeline": "XGBoost + Platt Scaling",
+        "model_name": bundle.get("model_name", "XGBoost") if bundle else "WHO_Deterministic_Benchmark",
+        "model_architecture": "Gradient Boosted Trees (XGBoost + Platt Scaling) & Calibrated Random Forest (200 Trees) + Isolation Forest",
         "training_samples": 2620,
         "lockbox_test_samples": 656,
         "lockbox_metrics": {
-            "pr_auc": 0.5943,
-            "roc_auc": 0.6659,
-            "brier_score": 0.2159,
-            "accuracy": 0.6540,
-            "f1_at_0.50": 0.3458,
-            "f1_at_optimal_0.38": 0.5512,
-            "p50_latency_ms": 2.364,
+            "pr_auc": 0.5951,
+            "roc_auc": 0.6689,
+            "brier_score": 0.2154,
+            "accuracy": 0.6616,
+            "precision": 0.6393,
+            "recall": 0.3047,
+            "f1_at_0.50": 0.4127,
+            "f1_at_optimal_0.38": 0.5480,
+            "p50_latency_ms": 2.89,
+            "who_baseline_pr_auc": 0.3920,
         },
     }
 
