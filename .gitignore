@@ -49,6 +49,14 @@ data/04_lockbox/*
 *.log
 outputs/logs/*.log
 artifacts/
+*.tmp
+*.bak
+
+# Deprecated Migration & Reorganization Scripts
+organize.sh
+organize.ps1
+restructure.sh
+restructure.ps1
 
 # Secrets, Tokens & Local Environment Variables
 .env
