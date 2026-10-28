@@ -38,26 +38,21 @@ Thumbs.db
 # Dynamic Pipeline Intermediate Data (Preserve Structure via .gitkeep)
 data/interim/*
 !data/interim/.gitkeep
-data/processed/*
-!data/processed/.gitkeep
 data/02_processed/*
 !data/02_processed/.gitkeep
 data/03_features/*
 !data/03_features/.gitkeep
 data/04_lockbox/*
 !data/04_lockbox/.gitkeep
-*.parquet
 
-# Intermediate Model Artifacts (Keep Only Production Frozen Model)
-artifacts/**/*.joblib
-
-# Temporary Logs (Allow outputs/logs/)
+# Temporary Logs & Execution Artifacts
 *.log
-!outputs/logs/*.log
+outputs/logs/*.log
 
 # Secrets, Tokens & Local Environment Variables
 .env
 .env.*
+!.env.example
 *.pem
 *.key
 *.token
