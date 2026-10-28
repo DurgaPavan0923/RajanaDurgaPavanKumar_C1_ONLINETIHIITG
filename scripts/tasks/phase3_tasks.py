@@ -1235,7 +1235,7 @@ print(df_gate.to_string(index=False))"""
             {
                 "title": "Lead Technical Sign-Off Attestation",
                 "desc": "Generate signed technical statement authorizing production serialization.",
-                "code": """signoff_stmt = "Model Architecture Sign-Off APPROVED by Rajana Durga Pavan Kumar on 2026-10-28."
+                "code": """signoff_stmt = "Model Architecture Sign-Off APPROVED by Rajana Durga Pavan Kumar ."
 print(signoff_stmt)"""
             },
             {

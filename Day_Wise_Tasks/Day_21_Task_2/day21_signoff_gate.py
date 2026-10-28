@@ -88,7 +88,7 @@ print("Public health safety protocol: Low-probability decision threshold guardra
 # Generate signed technical statement authorizing production serialization.
 
 # %% [step_11]
-signoff_stmt = "Model Architecture Sign-Off APPROVED by Rajana Durga Pavan Kumar on 2026-10-28."
+signoff_stmt = "Model Architecture Sign-Off APPROVED by Rajana Durga Pavan Kumar."
 print(signoff_stmt)
 
 # %% [markdown]

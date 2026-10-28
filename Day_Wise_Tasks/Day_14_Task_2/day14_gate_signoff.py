@@ -95,7 +95,7 @@ print("Regulatory compliance review: Confirmed aligned with WHO 4th Edition stan
 # Generate signed text attestation authorizing transition to model benchmarking.
 
 # %% [step_11]
-attestation_text = "Data Freeze Gate SIGNED OFF by Rajana Durga Pavan Kumar on 2026-10-28."
+attestation_text = "Data Freeze Gate SIGNED OFF by Rajana Durga Pavan Kumar."
 print(attestation_text)
 
 # %% [markdown]

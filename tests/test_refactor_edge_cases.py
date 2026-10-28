@@ -24,7 +24,6 @@ from src.features.stream import (
     engineer_stream_features,
     generate_causal_lags,
     generate_cross_sensor_features,
-    generate_cyclical_time_features,
     generate_rolling_features,
 )
 from src.forecasting import PersistenceForecaster
@@ -35,7 +34,6 @@ from src.preprocessing import (
     audit_sensor_quality,
     clean_and_resample_stream,
     detect_temporal_gaps_and_drift,
-    temporal_walk_forward_split,
 )
 
 
@@ -354,7 +352,11 @@ def test_stream_and_tabular_feature_pipelines():
 # -----------------------------------------------------------------------------
 def test_all_forecaster_implementations():
     """Validates fit and multi-step predict contracts across all forecaster models."""
-    from src.forecasting import LinearRegressionForecaster, RandomForestForecaster, XGBoostForecaster
+    from src.forecasting import (
+        LinearRegressionForecaster,
+        RandomForestForecaster,
+        XGBoostForecaster,
+    )
 
     X = np.random.RandomState(42).randn(40, 10)
     Y = np.random.RandomState(42).randn(40, 6)

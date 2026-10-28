@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "certified_date": "2026-08-31",
+  "certified_status": "Phase_2_Frozen",
   "partitions": {
     "train": {
       "path": "data/processed/dataset_v1_train.parquet",

@@ -1309,7 +1309,7 @@ print(pd.Series(handoff))"""
             {
                 "title": "Engineering Sign-Off Attestation",
                 "desc": "Generate signed text attestation authorizing transition to model benchmarking.",
-                "code": """attestation_text = "Data Freeze Gate SIGNED OFF by Rajana Durga Pavan Kumar on 2026-10-28."
+                "code": """attestation_text = "Data Freeze Gate SIGNED OFF by Rajana Durga Pavan Kumar ."
 print(attestation_text)"""
             },
             {

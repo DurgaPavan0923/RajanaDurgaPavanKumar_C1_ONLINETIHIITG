@@ -1,7 +1,6 @@
 """End-to-End Submission Smoke Tests for TIH IIT Guwahati Final Evaluation."""
 
 import pandas as pd
-import pytest
 
 from src.data.schemas import TrackBWaterSample
 from src.models.baselines import WHORuleClassifier

@@ -54,7 +54,6 @@ def main():
     # =========================================================================
     d7_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 07: Initial Data Ingestion & Integrity Audit
-- **Date:** 26 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Objective:** Ingest raw environmental and potability datasets, verify cryptographic SHA-256 hashes, and audit initial schema statistics.
 - **Inputs Consumed:** `data/raw/underwater_sensor_stream.csv`, `data/raw/water_potability.csv`
@@ -131,7 +130,6 @@ display_df"""),
     # =========================================================================
     d8_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 08: Temporal Data Quality, Jitter & Gaps
-- **Date:** 27 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Objective:** Audit temporal sampling regularity, detect gaps and distribution drift, and establish frozen cleaning rules.
 - **Inputs Consumed:** `data/raw/underwater_sensor_stream.csv`, `artifacts/day07/raw_summary.json`
@@ -208,7 +206,6 @@ print("Cleaning rules saved to artifacts/day08/rules.yaml")"""),
     # =========================================================================
     d9_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 09: Temporal Split Definition & Quarantined Lockbox
-- **Date:** 28 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Objective:** Partition telemetry stream into 70% Train, 15% Validation, and 15% Test Lockbox. Quarantine Test set.
 - **Inputs Consumed:** `data/raw/underwater_sensor_stream.csv`, `artifacts/day08/rules.yaml`
@@ -293,7 +290,6 @@ print("Partition summary:", split_meta)"""),
     # =========================================================================
     d10_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 10: Environmental EDA & Cross-Sensor Correlations
-- **Date:** 29 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Objective:** Explore physical trends, distributions, and cross-sensor correlations on the training partition only.
 - **Inputs Consumed:** `data/raw/underwater_sensor_stream.csv`, `artifacts/day09/split.json`
@@ -389,7 +385,6 @@ hypotheses"""),
     # =========================================================================
     d11_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 11: Preprocessing Pipeline & Dataset V1
-- **Date:** 30 Aug 2026
 - **Phase:** Phase 2: Feature Engineering & Preprocessing
 - **Objective:** Compose leakage-proof cleaning, resampling, and scaling pipeline. Fit scalers strictly on Train partition.
 - **Inputs Consumed:** `data/raw/underwater_sensor_stream.csv`, `artifacts/day09/split.json`, `artifacts/day08/rules.yaml`
@@ -473,7 +468,6 @@ print("Dataset V1 saved to data/processed/")"""),
     # =========================================================================
     d12_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 12: Dataset V1 Freeze & Leakage Verification
-- **Date:** 31 Aug 2026
 - **Phase:** Phase 2: Feature Engineering & Preprocessing
 - **Objective:** Execute automated assertion test suite on Processed Dataset V1 and certify cryptographic freeze.
 - **Inputs Consumed:** `data/processed/dataset_v1_*.parquet`, `artifacts/day11/preprocessor.joblib`
@@ -527,7 +521,7 @@ print(f"Assertion 3 (Scaler Parameters Strictly Match Train Set, Diff={diff:.6f}
 Compute SHA-256 hashes of all three partitions and issue formal freeze certificate."""),
         make_cell("code", """certificate = {
     "version": "1.0.0",
-    "certified_date": "2026-08-31",
+    "certified_status": "Phase_2_Frozen",
     "partitions": {
         "train": {
             "path": "data/processed/dataset_v1_train.parquet",
@@ -564,7 +558,6 @@ print(certificate)"""),
     # =========================================================================
     d13_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 13: Causal Feature Engineering
-- **Date:** 01 Sep 2026
 - **Phase:** Phase 2: Feature Engineering & Preprocessing
 - **Objective:** Generate strictly causal past lags, rolling window statistics, diurnal cycles, and physical interactions.
 - **Inputs Consumed:** `data/processed/dataset_v1_train.parquet`, `data/processed/dataset_v1_val.parquet`
@@ -652,7 +645,6 @@ df_catalog.head(10)"""),
     # =========================================================================
     d15_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 15: Anomaly Detection Baselines
-- **Date:** 03 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Establish statistical baselines (Z-score, IQR fences) and fit unsupervised Isolation Forest on continuous sensor streams.
 - **Inputs Consumed:** `data/processed/dataset_v2_features.parquet`
@@ -736,7 +728,6 @@ print("Anomaly overlay plot saved to artifacts/day15/anomaly_overlay_plot.png")"
     # =========================================================================
     d16_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 16: Multi-Step Forecasting Baselines
-- **Date:** 04 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Benchmark Persistence Forecaster against Multi-Step Ridge Regression and Random Forest on chronological holdout.
 - **Inputs Consumed:** `data/processed/dataset_v2_features.parquet`, `configs/config.yaml`
@@ -828,7 +819,6 @@ print("Forecast vs actual plot saved to artifacts/day16/forecast_vs_actual.png")
     # =========================================================================
     d17_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 17: Advanced Model Evaluation
-- **Date:** 05 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Evaluate gradient boosted decision trees against baselines with validation curve tracking and architectural justification.
 - **Inputs Consumed:** `data/processed/dataset_v2_features.parquet`, `artifacts/day16/forecasting_baselines.json`
@@ -921,7 +911,6 @@ print("Validation curves saved to artifacts/day17/training_validation_curves.png
     # =========================================================================
     d18_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 18: Unified Method Comparison
-- **Date:** 06 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Consolidate evaluation metrics from Days 15, 16, and 17 into a unified comparison table including runtime latency.
 - **Inputs Consumed:** `artifacts/day15/anomaly_baseline_eval.json`, `artifacts/day16/forecasting_baselines.json`, `artifacts/day17/advanced_model_metrics.json`
@@ -1041,7 +1030,6 @@ print("Leaderboard comparison figure saved to artifacts/day18/leaderboard_compar
     # =========================================================================
     d19_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 19: Hyperparameter Optimization
-- **Date:** 07 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Execute structured validation-only hyperparameter tuning, record every trial in experiment log, and save best config.
 - **Inputs Consumed:** `data/processed/dataset_v2_features.parquet`, `configs/config.yaml`
@@ -1137,7 +1125,6 @@ df_trials"""),
     # =========================================================================
     d20_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 20: Robustness Testing & Feature Ablation (LOFO)
-- **Date:** 08 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Perform Leave-One-Feature-Out (LOFO) ablation, test sensor dropout fault-tolerance, and rank feature sensitivities.
 - **Inputs Consumed:** `data/processed/dataset_v2_features.parquet`, `artifacts/day19/best_config.json`
@@ -1227,7 +1214,6 @@ print("Ablation tornado plot saved to artifacts/day20/ablation_tornado.png")""")
     # =========================================================================
     d22_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 22: Champion Model Packaging & Production Freeze
-- **Date:** 10 Sep 2026
 - **Phase:** Phase 4: Production Delivery & Verification
 - **Objective:** Train final model on combined Train+Val partitions, package frozen bundle, and calculate SHA-256 seal.
 - **Inputs Consumed:** `data/processed/dataset_v1_train.parquet`, `data/processed/dataset_v1_val.parquet`, `artifacts/day19/best_config.json`
@@ -1320,7 +1306,6 @@ print(manifest)"""),
     # =========================================================================
     d23_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 23: Single-Pass Held-Out Test Evaluation
-- **Date:** 11 Sep 2026
 - **Phase:** Phase 4: Production Delivery & Verification
 - **Objective:** Unblind the quarantined Test Lockbox partition for the first and only time; evaluate final production performance.
 - **Inputs Consumed:** `artifacts/day22/production_bundle.joblib`, `data/raw/water_potability.csv`
@@ -1401,7 +1386,6 @@ print("Diagnostic curves saved to artifacts/day23/test_pr_and_calibration.png")"
     # =========================================================================
     d25_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 25: Error Diagnostics & Failure Modes
-- **Date:** 13 Sep 2026
 - **Phase:** Phase 4: Production Delivery & Verification
 - **Objective:** Dissect false negative hazards (toxic water predicted potable), inspect worst-case samples, and catalog model limitations.
 - **Inputs Consumed:** `artifacts/day22/production_bundle.joblib`, `data/raw/water_potability.csv`
@@ -1480,7 +1464,6 @@ if importances is not None:
         make_cell("markdown", """## 3. Generate Error Diagnostics Report
 Export formal limitation analysis to Markdown."""),
         make_cell("code", """report = f\"\"\"# AquaGuard AI — Error Analysis & Operational Limitations Report
-- **Date:** 13 Sep 2026
 - **Test Lockbox Evaluated:** {len(df_analysis)} samples
 
 ## 1. Hazard Audit (False Negatives)
@@ -1509,7 +1492,6 @@ print("Error report generated at artifacts/day25/error_analysis_report.md")"""),
     # =========================================================================
     d26_cells = [
         make_cell("markdown", """# AquaGuard AI — Day 26: End-to-End Production Inference Demo
-- **Date:** 14 Sep 2026
 - **Phase:** Phase 4: Production Delivery & Verification
 - **Objective:** Demonstrate end-to-end inference workflow using the frozen production pipeline artifact.
 - **Inputs Consumed:** `artifacts/day22/production_bundle.joblib`, `configs/config.yaml`

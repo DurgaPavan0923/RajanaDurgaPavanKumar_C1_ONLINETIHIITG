@@ -1258,7 +1258,7 @@ print(df_master.to_string(index=False))"""
     "Programme": "AI/ML Internship (Cohort 4)",
     "Institution": "Technology Innovation Hub (TIH), IIT Guwahati",
     "Repository": "RajanaDurgaPavanKumar_C1_ONLINETIHIITG",
-    "Review_Date": "2026-10-28",
+    "Review_Status": "Approved",
     "Live_Deployment": "https://water-potability-vert.vercel.app/"
 }
 print(pd.Series(intern_details))"""

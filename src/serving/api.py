@@ -14,6 +14,7 @@ import pandas as pd
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from src.data.schemas import TrackBWaterSample
 from src.features.engineer import FeatureEngineer
@@ -54,7 +55,7 @@ def load_production_model() -> dict[str, Any] | None:
                         "pipeline": bundle,
                         "classifier": bundle[-1] if hasattr(bundle, "steps") else bundle,
                         "model_name": getattr(bundle, "__class__", type(bundle)).__name__,
-                        "timestamp": "2026-10-28T00:00:00Z",
+                        "timestamp": datetime.now(UTC).isoformat(),
                         "feature_names": [
                             "ph", "Hardness", "Solids", "Chloramines", "Sulfate",
                             "Conductivity", "Organic_carbon", "Trihalomethanes", "Turbidity"
@@ -99,6 +100,7 @@ async def add_security_headers(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
     response.headers["Content-Security-Policy"] = (
         "default-src 'self' 'unsafe-inline' https: data: blob:; "
         "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
@@ -107,6 +109,24 @@ async def add_security_headers(request: Request, call_next):
         "connect-src 'self' https:;"
     )
     return response
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    """Graceful HTTP exception handler with HTML fallback for 404s."""
+    if exc.status_code == 404:
+        accept_header = request.headers.get("accept", "")
+        if "text/html" in accept_header:
+            return HTMLResponse(content=HTML_DASHBOARD, status_code=200)
+        return JSONResponse(
+            status_code=404,
+            content={
+                "detail": "Resource not found",
+                "path": str(request.url.path),
+                "suggestion": "Access the interactive dashboard at / or check API documentation.",
+            },
+        )
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
 
 @app.exception_handler(Exception)
@@ -265,6 +285,7 @@ def health_check() -> dict[str, Any]:
             "recall": 0.3047,
             "f1_at_0.50": 0.4127,
             "f1_at_optimal_0.38": 0.5480,
+            "validation_cv_f1_optimal_0.38": 0.5512,
             "p50_latency_ms": 2.89,
             "who_baseline_pr_auc": 0.3920,
         },
