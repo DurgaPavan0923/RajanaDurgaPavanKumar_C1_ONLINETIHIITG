@@ -1,0 +1,50 @@
+{
+  "standard": "WHO Guidelines for Drinking-water Quality (4th Edition) & EPA Standards",
+  "parameters": {
+    "ph": {
+      "min": 6.5,
+      "max": 8.5,
+      "unit": "pH units"
+    },
+    "Hardness": {
+      "min": 0.0,
+      "max": 300.0,
+      "unit": "mg/L CaCO3"
+    },
+    "Solids": {
+      "min": 0.0,
+      "max": 1000.0,
+      "unit": "ppm (TDS)"
+    },
+    "Chloramines": {
+      "min": 0.0,
+      "max": 4.0,
+      "unit": "mg/L"
+    },
+    "Sulfate": {
+      "min": 0.0,
+      "max": 250.0,
+      "unit": "mg/L"
+    },
+    "Conductivity": {
+      "min": 0.0,
+      "max": 400.0,
+      "unit": "uS/cm"
+    },
+    "Organic_carbon": {
+      "min": 0.0,
+      "max": 4.0,
+      "unit": "mg/L TOC"
+    },
+    "Trihalomethanes": {
+      "min": 0.0,
+      "max": 80.0,
+      "unit": "ug/L"
+    },
+    "Turbidity": {
+      "min": 0.0,
+      "max": 5.0,
+      "unit": "NTU"
+    }
+  }
+}
