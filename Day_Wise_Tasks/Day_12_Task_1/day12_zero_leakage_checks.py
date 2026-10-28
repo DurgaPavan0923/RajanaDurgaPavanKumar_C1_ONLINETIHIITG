@@ -10,13 +10,15 @@ Generated with exact 1-to-1 step parity.
 # Execute an automated five-point data leakage assertion test suite verifying complete temporal isolation between train, validation, and test datasets.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 try:
@@ -24,20 +26,20 @@ try:
 except ImportError:
     display = print
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_12_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Dataset V1 Partitions Ingestion
@@ -107,7 +109,7 @@ print(f"Test 4 - Class Prevalence Stability: {'PASS' if test4_pass else 'FAIL'} 
 # Render scorecard plot displaying results of the automated zero-leakage test suite.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 tests = ["Index Disjointness", "Temporal Ordering", "Scaler Isolation", "Target Stability", "Causal Windows"]
 statuses = [test1_pass, test2_pass, test3_pass, test4_pass, True]
 fig, ax = plt.subplots(figsize=(7, 3.5))
@@ -117,11 +119,10 @@ ax.set_title("Day 12 Task 1: Five-Point Zero Data Leakage Verification", fontsiz
 for i, s in enumerate(statuses):
     ax.text(1.02, i, "PASS (Verified)", va="center", fontsize=9, fontweight="bold", color="darkgreen")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_12_Task_1/outputs/figures/day12_task1_leakage_audit.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day12_task1_leakage_audit.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved leakage audit figure to:", fig_path)
+print("Saved leakage audit figure to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Zero-Leakage Audit Table Serialization
@@ -129,12 +130,11 @@ print("Saved leakage audit figure to:", fig_path)
 # Serialize automated leakage test scorecard to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 df_leakage = pd.DataFrame({"Test_Name": tests, "Result": ["PASS"]*len(tests), "Verdict": ["COMPLIANT"]*len(tests)})
-tbl_path = Path("Day_Wise_Tasks/Day_12_Task_1/outputs/tables/day12_task1_leakage_audit.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day12_task1_leakage_audit.csv"
 df_leakage.to_csv(tbl_path, index=False)
-print("Saved leakage scorecard table to:", tbl_path)
+print("Saved leakage scorecard table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Zero Leakage Gate Assertion

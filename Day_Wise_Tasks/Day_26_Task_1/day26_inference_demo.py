@@ -10,13 +10,15 @@ Generated with exact 1-to-1 step parity.
 # Demonstrate single-sample, batch, and simulated continuous streaming inference using the production serialized model pipeline.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 try:
@@ -24,20 +26,20 @@ try:
 except ImportError:
     display = print
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_26_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Production Model Deserialization
@@ -110,7 +112,7 @@ print(json.dumps(api_response, indent=2))
 # Render histogram showing distribution of predicted potability probabilities.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(6, 4))
 ax.hist(batch_probs, bins=15, color="#1f77b4", edgecolor="black", alpha=0.8)
 ax.axvline(0.5, color="red", linestyle="--", label="Decision Threshold (0.50)")
@@ -119,11 +121,10 @@ ax.set_xlabel("Predicted Probability of Potability")
 ax.set_ylabel("Sample Count")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_26_Task_1/outputs/figures/day26_task1_inference_distribution.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day26_task1_inference_distribution.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved inference distribution plot to:", fig_path)
+print("Saved inference distribution plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Inference Demonstration Table Serialization
@@ -131,16 +132,15 @@ print("Saved inference distribution plot to:", fig_path)
 # Export batch prediction results table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 df_inf_results = pd.DataFrame({
     "Sample_ID": range(1, 101),
     "Predicted_Probability": np.round(batch_probs, 4),
     "Decision": ["POTABLE" if p >= 0.5 else "NON_POTABLE" for p in batch_probs]
 })
-tbl_path = Path("Day_Wise_Tasks/Day_26_Task_1/outputs/tables/day26_task1_inference_results.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day26_task1_inference_results.csv"
 df_inf_results.head(20).to_csv(tbl_path, index=False)
-print("Saved inference results table to:", tbl_path)
+print("Saved inference results table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Inference Gate Assertion

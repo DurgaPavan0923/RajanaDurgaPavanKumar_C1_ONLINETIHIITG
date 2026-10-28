@@ -27,6 +27,9 @@ def notebook_to_py(nb_path: Path) -> Path:
     lines.append("Generated with exact 1-to-1 step parity.")
     lines.append('"""\n')
 
+    fig_outputs_found = 0
+    tbl_outputs_found = 0
+
     for cell_idx, cell in enumerate(nb.cells):
         if cell.cell_type == "markdown":
             lines.append("# %% [markdown]")
@@ -35,22 +38,44 @@ def notebook_to_py(nb_path: Path) -> Path:
             lines.append("")
         elif cell.cell_type == "code":
             lines.append(f"# %% [step_{cell_idx}]")
-            # Check for embedded outputs to tag
             code_text = cell.source.strip()
+
+            # Strip any unconditional matplotlib.use("Agg")
+            code_text = code_text.replace('matplotlib.use("Agg")', '')
+            code_text = code_text.replace("matplotlib.use('Agg')", '')
+
+            # Handle %matplotlib inline by replacing with conditional headless backend check
+            if "%matplotlib inline" in code_text:
+                headless_check = (
+                    "# %matplotlib inline\n"
+                    "import os, matplotlib\n"
+                    "if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':\n"
+                    "    matplotlib.use('Agg')"
+                )
+                code_text = code_text.replace("%matplotlib inline", headless_check)
+
+            # Check for embedded outputs to tag
             if "savefig(" in code_text:
                 for cl in code_text.splitlines():
                     if "savefig(" in cl:
                         parts = cl.split("savefig(")
                         if len(parts) > 1:
                             sub = parts[1].split(",")[0].strip("\"' ")
-                            lines.append(f"# Output Figure: {sub}")
+                            # Extract clean basename if path was variable
+                            if "/" in sub:
+                                sub = sub.split("/")[-1].strip("\"' ")
+                            lines.append(f"# Output: outputs/figures/{sub}")
+                            fig_outputs_found += 1
             if "to_csv(" in code_text:
                 for cl in code_text.splitlines():
                     if "to_csv(" in cl:
                         parts = cl.split("to_csv(")
                         if len(parts) > 1:
                             sub = parts[1].split(",")[0].strip("\"' ")
-                            lines.append(f"# Output Table: {sub}")
+                            if "/" in sub:
+                                sub = sub.split("/")[-1].strip("\"' ")
+                            lines.append(f"# Output: outputs/tables/{sub}")
+                            tbl_outputs_found += 1
 
             lines.append(code_text)
             lines.append("")
@@ -61,7 +86,7 @@ def notebook_to_py(nb_path: Path) -> Path:
         rel = py_path.relative_to(ROOT)
     except Exception:
         rel = py_path.name
-    print(f"Synced mirror: {rel}")
+    print(f"Synced mirror: {rel} ({fig_outputs_found} fig tags, {tbl_outputs_found} tbl tags)")
     return py_path
 
 

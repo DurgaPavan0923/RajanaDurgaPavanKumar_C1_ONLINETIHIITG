@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Investigate physical parameter couplings across drinking water quality metrics and assess empirical distributions against environmental dynamics.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_2_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Physicochemical Dataset Ingestion
@@ -95,7 +102,7 @@ print(f"Empirical Mineral Trend: Conductivity = {slope:.3f} * Hardness + {interc
 # Render an annotated correlation matrix heatmap visualizing parameter inter-dependencies.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(8, 6))
 cax = ax.matshow(corr_mat, cmap="coolwarm", vmin=-0.15, vmax=0.15)
 fig.colorbar(cax)
@@ -105,11 +112,10 @@ ax.set_xticklabels(feature_cols, rotation=45, ha="left", fontsize=9)
 ax.set_yticklabels(feature_cols, fontsize=9)
 ax.set_title("Day 2 Task 1: Physicochemical Parameter Correlation Matrix", pad=20, fontsize=11)
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_2_Task_1/outputs/figures/day2_task1_correlation_matrix.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day2_task1_correlation_matrix.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved correlation figure to:", fig_path)
+print("Saved correlation figure to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Domain Correlation Table Serialization
@@ -117,11 +123,10 @@ print("Saved correlation figure to:", fig_path)
 # Serialize full cross-parameter correlation matrix to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path)
-tbl_path = Path("Day_Wise_Tasks/Day_2_Task_1/outputs/tables/day2_task1_correlation_matrix.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path)
+tbl_path = TBL_DIR / "day2_task1_correlation_matrix.csv"
 corr_mat.round(4).to_csv(tbl_path)
-print("Saved correlation table to:", tbl_path)
+print("Saved correlation table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Parameter Independence Assertion

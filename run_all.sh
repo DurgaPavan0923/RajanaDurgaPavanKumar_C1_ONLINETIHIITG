@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# run_all.sh: Master script to execute all 28 days of tasks in order
+# AquaGuard AI - Master Rerun Script
 # ==============================================================================
-set -e
+set -euo pipefail
 
-echo "Starting master rerun across all 28 days..."
+echo "Executing Master Verification Runner across Days 1 to 28..."
+export MPLBACKEND="Agg"
 python run_all.py
-
-echo "Master rerun completed successfully!"

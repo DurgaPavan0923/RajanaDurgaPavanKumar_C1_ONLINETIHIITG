@@ -10,13 +10,15 @@ Generated with exact 1-to-1 step parity.
 # Extract high-hazard worst-case misclassifications, analyze tree Gini feature importances, and document operational hazard mitigation protocols.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 try:
@@ -24,20 +26,20 @@ try:
 except ImportError:
     display = print
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_25_Task_2"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Worst-Case Residual Extraction
@@ -106,7 +108,7 @@ print("Operational mitigation: Secondary laboratory validation triggered wheneve
 # Render horizontal bar chart displaying Gini importance rankings across all 9 features.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(7, 4))
 ax.barh(df_imp["Feature"], df_imp["Gini_Importance"], color="#1f77b4", alpha=0.85)
 ax.invert_yaxis()
@@ -115,11 +117,10 @@ ax.set_xlabel("Normalized Gini Importance")
 for i, v in enumerate(df_imp["Gini_Importance"]):
     ax.text(v + 0.003, i, f"{v:.3f}", va="center", fontsize=8, fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_25_Task_2/outputs/figures/day25_task2_feature_importances.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day25_task2_feature_importances.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved feature importances plot to:", fig_path)
+print("Saved feature importances plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Worst Cases Profile Table Serialization
@@ -127,11 +128,10 @@ print("Saved feature importances plot to:", fig_path)
 # Export worst-case profile samples table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
-tbl_path = Path("Day_Wise_Tasks/Day_25_Task_2/outputs/tables/day25_task2_worst_cases.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path
+tbl_path = TBL_DIR / "day25_task2_worst_cases.csv"
 df_worst.to_csv(tbl_path, index=False)
-print("Saved worst cases profile table to:", tbl_path)
+print("Saved worst cases profile table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Hazard Profiling Gate Assertion

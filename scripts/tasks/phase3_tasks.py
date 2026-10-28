@@ -60,11 +60,10 @@ ax.set_ylabel("DO (mg/L)")
 ax.set_xlabel("Time Index")
 ax.legend(loc="upper right")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_15_Task_1/outputs/figures/day15_task1_zscore_anomalies.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day15_task1_zscore_anomalies.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved anomaly plot to:", fig_path)"""
+print("Saved anomaly plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Statistical Anomaly Baselines Table Export",
@@ -73,10 +72,9 @@ print("Saved anomaly plot to:", fig_path)"""
     {"Method": "Z-Score (3.5 sigma)", "Lower_Limit": round(mu - 3.5*sigma, 3), "Upper_Limit": round(mu + 3.5*sigma, 3), "Anomalies_Flagged": int(z_anomalies.sum())},
     {"Method": "IQR (1.5x)", "Lower_Limit": round(lower_bound, 3), "Upper_Limit": round(upper_bound, 3), "Anomalies_Flagged": int(iqr_anomalies.sum())}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_15_Task_1/outputs/tables/day15_task1_anomaly_baselines.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day15_task1_anomaly_baselines.csv"
 df_anom_base.to_csv(tbl_path, index=False)
-print("Saved anomaly baselines table to:", tbl_path)"""
+print("Saved anomaly baselines table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Baseline Gate Assertion",
@@ -147,11 +145,10 @@ ax.set_xlabel("Temperature (deg C)")
 ax.set_ylabel("Dissolved Oxygen (mg/L)")
 ax.legend(loc="upper right")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_15_Task_2/outputs/figures/day15_task2_isolation_forest.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day15_task2_isolation_forest.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved isolation forest plot to:", fig_path)"""
+print("Saved isolation forest plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Isolation Forest Summary Table Export",
@@ -159,10 +156,9 @@ print("Saved isolation forest plot to:", fig_path)"""
                 "code": """df_iso_res = pd.DataFrame([
     {"Model": "Isolation Forest", "Contamination": 0.02, "N_Estimators": 100, "Flagged_Anomalies": anom_count, "Min_Score": round(score_min, 4)}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_15_Task_2/outputs/tables/day15_task2_isolation_forest_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day15_task2_isolation_forest_summary.csv"
 df_iso_res.to_csv(tbl_path, index=False)
-print("Saved isolation forest summary to:", tbl_path)"""
+print("Saved isolation forest summary to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Isolation Forest Quality Gate Assertion",
@@ -249,11 +245,10 @@ ax.set_ylabel("DO (mg/L)")
 ax.set_xticks(horizons)
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_16_Task_1/outputs/figures/day16_task1_forecasting_baselines.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day16_task1_forecasting_baselines.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved forecasting baselines figure to:", fig_path)"""
+print("Saved forecasting baselines figure to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Forecasting Baselines Summary Table Export",
@@ -263,10 +258,9 @@ print("Saved forecasting baselines figure to:", fig_path)"""
     {"Model": "Ridge Regression", "MAE_mg_L": round(mae_ridge, 4), "Gain_vs_Baseline_Pct": round((mae_persist - mae_ridge)/mae_persist*100, 1)},
     {"Model": "Random Forest", "MAE_mg_L": round(mae_rf, 4), "Gain_vs_Baseline_Pct": round((mae_persist - mae_rf)/mae_persist*100, 1)}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_16_Task_1/outputs/tables/day16_task1_baseline_metrics.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day16_task1_baseline_metrics.csv"
 df_base_perf.to_csv(tbl_path, index=False)
-print("Saved baseline metrics table to:", tbl_path)"""
+print("Saved baseline metrics table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Baseline Performance Assertion",
@@ -347,11 +341,10 @@ ax.set_ylabel("MAE (mg/L)")
 ax.set_xticks(range(1, 7))
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_16_Task_2/outputs/figures/day16_task2_horizon_error_growth.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day16_task2_horizon_error_growth.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved horizon error growth figure to:", fig_path)"""
+print("Saved horizon error growth figure to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Horizon Decomposition Table Export",
@@ -363,10 +356,9 @@ print("Saved horizon error growth figure to:", fig_path)"""
     "Residual_Std": np.round(res_stds, 4),
     "MDA_Pct": mdas
 })
-tbl_path = Path("Day_Wise_Tasks/Day_16_Task_2/outputs/tables/day16_task2_horizon_metrics.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day16_task2_horizon_metrics.csv"
 df_h_decomp.to_csv(tbl_path, index=False)
-print("Saved horizon decomposition table to:", tbl_path)"""
+print("Saved horizon decomposition table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Horizon Quality Gate Assertion",
@@ -456,11 +448,10 @@ ax.set_ylabel("DO (mg/L)")
 ax.set_xticks(range(1, 7))
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_17_Task_1/outputs/figures/day17_task1_xgboost_forecast.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day17_task1_xgboost_forecast.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved XGBoost trajectory plot to:", fig_path)"""
+print("Saved XGBoost trajectory plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "XGBoost Evaluation Metrics Table Serialization",
@@ -470,10 +461,9 @@ print("Saved XGBoost trajectory plot to:", fig_path)"""
     "XGBoost_MAE": np.round(xgb_h_maes, 4),
     "Baseline_RF_MAE": np.round(horizon_maes, 4)
 })
-tbl_path = Path("Day_Wise_Tasks/Day_17_Task_1/outputs/tables/day17_task1_xgboost_metrics.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day17_task1_xgboost_metrics.csv"
 df_xgb_metrics.to_csv(tbl_path, index=False)
-print("Saved XGBoost metrics table to:", tbl_path)"""
+print("Saved XGBoost metrics table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "XGBoost Forecaster Quality Gate",
@@ -553,11 +543,10 @@ ax.set_xlabel("Number of Estimators (Trees)")
 ax.set_ylabel("MAE (mg/L)")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_17_Task_2/outputs/figures/day17_task2_learning_curves.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day17_task2_learning_curves.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved learning curves plot to:", fig_path)"""
+print("Saved learning curves plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Learning Curves Epoch Table Serialization",
@@ -568,10 +557,9 @@ print("Saved learning curves plot to:", fig_path)"""
     "Val_MAE": np.round(val_scores, 4),
     "Generalization_Gap": np.round(gen_gaps, 4)
 })
-tbl_path = Path("Day_Wise_Tasks/Day_17_Task_2/outputs/tables/day17_task2_learning_curves.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day17_task2_learning_curves.csv"
 df_curves.to_csv(tbl_path, index=False)
-print("Saved learning curves table to:", tbl_path)"""
+print("Saved learning curves table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Learning Curve Gate Assertion",
@@ -647,19 +635,17 @@ ax.set_xticklabels(df_bench["Model"], rotation=15, ha="right")
 ax.set_ylabel("Error Metric (mg/L)")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_18_Task_1/outputs/figures/day18_task1_method_comparison.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day18_task1_method_comparison.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved method comparison figure to:", fig_path)"""
+print("Saved method comparison figure to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Cross-Method Benchmark Table Serialization",
                 "desc": "Export compiled benchmark comparison table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_18_Task_1/outputs/tables/day18_task1_benchmark_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day18_task1_benchmark_summary.csv"
 df_bench.to_csv(tbl_path, index=False)
-print("Saved benchmark summary table to:", tbl_path)"""
+print("Saved benchmark summary table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Cross-Method Benchmark Gate Assertion",
@@ -735,19 +721,17 @@ for bar in bars:
     w = bar.get_width()
     ax.text(w + 0.02, bar.get_y() + bar.get_height()/2.0, f"{w:.3f}", va="center", fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_18_Task_2/outputs/figures/day18_task2_master_leaderboard.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day18_task2_master_leaderboard.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved master leaderboard plot to:", fig_path)"""
+print("Saved master leaderboard plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Master Leaderboard Table Serialization",
                 "desc": "Export master model leaderboard to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_18_Task_2/outputs/tables/day18_task2_master_leaderboard.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day18_task2_master_leaderboard.csv"
 df_lead.to_csv(tbl_path, index=False)
-print("Saved master leaderboard table to:", tbl_path)"""
+print("Saved master leaderboard table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Leaderboard Gate Assertion",
@@ -836,19 +820,17 @@ ax.set_title("Day 19 Task 1: Hyperparameter Grid Search Response Surface", pad=2
 ax.set_xlabel("n_estimators")
 ax.set_ylabel("max_depth")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_19_Task_1/outputs/figures/day19_task1_hyperparameter_surface.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day19_task1_hyperparameter_surface.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved hyperparameter response surface to:", fig_path)"""
+print("Saved hyperparameter response surface to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Grid Search Results Table Export",
                 "desc": "Serialize full grid search sweep table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_19_Task_1/outputs/tables/day19_task1_hparam_tuning_results.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day19_task1_hparam_tuning_results.csv"
 df_grid.to_csv(tbl_path, index=False)
-print("Saved tuning results table to:", tbl_path)"""
+print("Saved tuning results table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Grid Search Gate Assertion",
@@ -929,11 +911,10 @@ ax.set_title("Day 19 Task 2: Champion Hyperparameter CV Stability", fontsize=11,
 ax.set_ylabel("Validation PR-AUC")
 ax.set_xticklabels(["Champion Config"])
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_19_Task_2/outputs/figures/day19_task2_hparam_stability.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day19_task2_hparam_stability.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved CV stability plot to:", fig_path)"""
+print("Saved CV stability plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Best Config Table Serialization",
@@ -942,10 +923,9 @@ print("Saved CV stability plot to:", fig_path)"""
     {"Track": "Track B", "Model": "Random Forest", "N_Estimators": 100, "Max_Depth": 8, "Validation_Score": cv_mean},
     {"Track": "Track A", "Model": "XGBoost", "N_Estimators": 100, "Max_Depth": 5, "Validation_Score": 0.2291}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_19_Task_2/outputs/tables/day19_task2_best_config_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day19_task2_best_config_summary.csv"
 df_best_summary.to_csv(tbl_path, index=False)
-print("Saved best config summary to:", tbl_path)"""
+print("Saved best config summary to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Optimal Config Gate Assertion",
@@ -1024,19 +1004,17 @@ for bar in bars:
     w = bar.get_width()
     ax.text(w + 0.001, bar.get_y() + bar.get_height()/2.0, f"{w:.4f}", va="center", fontsize=8)
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_20_Task_1/outputs/figures/day20_task1_lofo_ablation.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day20_task1_lofo_ablation.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved LOFO ablation plot to:", fig_path)"""
+print("Saved LOFO ablation plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "LOFO Ablation Table Serialization",
                 "desc": "Export LOFO ablation results table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_20_Task_1/outputs/tables/day20_task1_lofo_results.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day20_task1_lofo_results.csv"
 df_lofo.to_csv(tbl_path, index=False)
-print("Saved LOFO results table to:", tbl_path)"""
+print("Saved LOFO results table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Ablation Gate Assertion",
@@ -1105,19 +1083,17 @@ ax.set_xlabel("Relative Sensitivity Score (0 - 100)")
 for i, v in enumerate(df_ranked["Sensitivity_Index"]):
     ax.text(v + 1.5, i, f"{v:.1f}", va="center", fontsize=8, fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_20_Task_2/outputs/figures/day20_task2_ablation_tornado.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day20_task2_ablation_tornado.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved ablation tornado figure to:", fig_path)"""
+print("Saved ablation tornado figure to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Sensitivity Rankings Table Export",
                 "desc": "Export authoritative feature sensitivity rankings table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_20_Task_2/outputs/tables/day20_task2_sensitivity_rankings.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day20_task2_sensitivity_rankings.csv"
 df_ranked.to_csv(tbl_path, index=False)
-print("Saved sensitivity rankings table to:", tbl_path)"""
+print("Saved sensitivity rankings table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Sensitivity Gate Assertion",
@@ -1183,19 +1159,17 @@ print(f"Overall Internship Progress: {progress_pct:.1f}% Complete.")"""
 ax.pie([75, 25], labels=["Milestone 1 & 2 (Complete)", "Phase 4 Packaging (Upcoming)"], autopct="%1.0f%%", startangle=90, colors=["#2ca02c", "#e0e0e0"])
 ax.set_title("Day 21 Task 1: Milestone 2 Architecture Review (75% Complete)", fontsize=11, pad=10)
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_21_Task_1/outputs/figures/day21_task1_milestone2_progress.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day21_task1_milestone2_progress.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved milestone 2 progress plot to:", fig_path)"""
+print("Saved milestone 2 progress plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Milestone 2 Review Table Serialization",
                 "desc": "Export Milestone 2 technical achievements table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_21_Task_1/outputs/tables/day21_task1_milestone2_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day21_task1_milestone2_summary.csv"
 df_m2.to_csv(tbl_path, index=False)
-print("Saved milestone 2 review table to:", tbl_path)"""
+print("Saved milestone 2 review table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Milestone 2 Review Gate Assertion",
@@ -1261,19 +1235,17 @@ ax.set_title("Day 21 Task 2: Model Architecture Gate Sign-Off (100% Approved)", 
 for i in range(len(df_gate)):
     ax.text(102, i, "APPROVED", va="center", fontsize=9, fontweight="bold", color="darkgreen")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_21_Task_2/outputs/figures/day21_task2_signoff_gate.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day21_task2_signoff_gate.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved sign-off gate plot to:", fig_path)"""
+print("Saved sign-off gate plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Architecture Sign-Off Table Serialization",
                 "desc": "Export architecture sign-off checklist table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_21_Task_2/outputs/tables/day21_task2_signoff_gate.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day21_task2_signoff_gate.csv"
 df_gate.to_csv(tbl_path, index=False)
-print("Saved architecture sign-off table to:", tbl_path)"""
+print("Saved architecture sign-off table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Sign-Off Approval Gate Assertion",

@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Conduct comprehensive benchmark comparing Persistence, Ridge, Random Forest, and XGBoost on validation partitions across MAE, RMSE, R2, and latency.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_18_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Model Performance Results Compilation
@@ -93,7 +100,7 @@ print("Residual skewness: 0.04 (Nearly symmetric Gaussian distribution).")
 # Render multi-bar plot comparing MAE and RMSE across all 4 candidate model families.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(8, 4))
 x = np.arange(len(df_bench))
 width = 0.35
@@ -105,11 +112,10 @@ ax.set_xticklabels(df_bench["Model"], rotation=15, ha="right")
 ax.set_ylabel("Error Metric (mg/L)")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_18_Task_1/outputs/figures/day18_task1_method_comparison.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day18_task1_method_comparison.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved method comparison figure to:", fig_path)
+print("Saved method comparison figure to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Cross-Method Benchmark Table Serialization
@@ -117,11 +123,10 @@ print("Saved method comparison figure to:", fig_path)
 # Export compiled benchmark comparison table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
-tbl_path = Path("Day_Wise_Tasks/Day_18_Task_1/outputs/tables/day18_task1_benchmark_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path
+tbl_path = TBL_DIR / "day18_task1_benchmark_summary.csv"
 df_bench.to_csv(tbl_path, index=False)
-print("Saved benchmark summary table to:", tbl_path)
+print("Saved benchmark summary table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Cross-Method Benchmark Gate Assertion

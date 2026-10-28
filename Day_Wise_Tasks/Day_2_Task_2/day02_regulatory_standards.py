@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Formulate machine-enforceable regulatory thresholds using World Health Organization (WHO) and EPA potable water guidelines.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_2_Task_2"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Regulatory Guardrail Standards Definition
@@ -116,7 +123,7 @@ print(f"Mean Regulatory Severity Index (First 500): {np.mean(severity_scores):.4
 # Render a bar chart illustrating percentage compliance across all 9 physicochemical parameters.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(8, 4.5))
 bars = ax.bar(df_comp_rates["Parameter"], df_comp_rates["Compliance_Pct"], color="#2ca02c", alpha=0.85)
 ax.axhline(100.0, color="gray", linestyle="--", alpha=0.7)
@@ -128,11 +135,10 @@ for bar in bars:
     yval = bar.get_height()
     ax.text(bar.get_x() + bar.get_width()/2.0, yval + 1.5, f"{yval:.1f}%", ha="center", va="bottom", fontsize=8)
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_2_Task_2/outputs/figures/day2_task2_regulatory_compliance.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day2_task2_regulatory_compliance.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved compliance plot to:", fig_path)
+print("Saved compliance plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Regulatory Thresholds Specification Export
@@ -140,11 +146,10 @@ print("Saved compliance plot to:", fig_path)
 # Save compiled compliance table and threshold limits to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
-tbl_path = Path("Day_Wise_Tasks/Day_2_Task_2/outputs/tables/day2_task2_regulatory_scorecard.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path
+tbl_path = TBL_DIR / "day2_task2_regulatory_scorecard.csv"
 df_comp_rates.to_csv(tbl_path, index=False)
-print("Saved scorecard table to:", tbl_path)
+print("Saved scorecard table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Compliance Threshold Assertion

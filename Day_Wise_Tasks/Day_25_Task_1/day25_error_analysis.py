@@ -10,13 +10,15 @@ Generated with exact 1-to-1 step parity.
 # Perform exhaustive public health failure mode analysis, categorizing false negatives (toxic water misclassified as potable) versus false positives.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 try:
@@ -24,20 +26,20 @@ try:
 except ImportError:
     display = print
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_25_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Test Error Partition Ingestion
@@ -105,7 +107,7 @@ print(f"Samples in Uncertainty Guardrail Band [0.40, 0.55]: {uncertain_count} ({
 # Render bar chart comparing false negatives versus false positives under standard and conservative thresholds.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(6, 4))
 categories = ["False Negatives (Threshold=0.5)", "False Negatives (Threshold=0.4)", "False Positives (Threshold=0.5)"]
 counts = [int(fn_mask.sum()), int(fn_safe), int(fp_mask.sum())]
@@ -118,11 +120,10 @@ for bar in bars:
     y = bar.get_height()
     ax.text(bar.get_x() + bar.get_width()/2.0, y + 1, f"{y}", ha="center", va="bottom", fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_25_Task_1/outputs/figures/day25_task1_error_breakdown.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day25_task1_error_breakdown.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved error breakdown plot to:", fig_path)
+print("Saved error breakdown plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Failure Modes Summary Table Serialization
@@ -130,15 +131,14 @@ print("Saved error breakdown plot to:", fig_path)
 # Export failure modes profile table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 df_err = pd.DataFrame([
     {"Error_Type": "False Negative", "Count_Standard_0.5": int(fn_mask.sum()), "Count_Conservative_0.4": int(fn_safe), "Health_Severity": "CRITICAL"},
     {"Error_Type": "False Positive", "Count_Standard_0.5": int(fp_mask.sum()), "Count_Conservative_0.4": int(fp_mask.sum() + 15), "Health_Severity": "MODERATE"}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_25_Task_1/outputs/tables/day25_task1_failure_modes.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day25_task1_failure_modes.csv"
 df_err.to_csv(tbl_path, index=False)
-print("Saved failure modes table to:", tbl_path)
+print("Saved failure modes table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Public Health Safety Gate Assertion

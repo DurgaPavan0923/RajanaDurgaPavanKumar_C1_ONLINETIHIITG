@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Execute a chronological walk-forward partition (70% train, 15% validation, 15% test) guaranteeing zero lookahead leakage across partitions.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_9_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Timestamped Water Quality Dataset Ingestion
@@ -98,7 +105,7 @@ print(f"pH Mean Drift (Train vs Val): {drift_ph:.4f}")
 # Render multi-color timeline plotting sample indices and partition intervals.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(8, 3.5))
 ax.plot(train_df.index, train_df["Solids"], color="#1f77b4", label=f"Train (0..{cut1})", lw=1)
 ax.plot(val_df.index, val_df["Solids"], color="#ff7f0e", label=f"Val ({cut1}..{cut2})", lw=1)
@@ -108,11 +115,10 @@ ax.set_xlabel("Chronological Sample Index")
 ax.set_ylabel("Total Dissolved Solids (ppm)")
 ax.legend(loc="upper right")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_9_Task_1/outputs/figures/day9_task1_split_timeline.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day9_task1_split_timeline.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved split timeline figure to:", fig_path)
+print("Saved split timeline figure to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Walk-Forward Partition Metadata Table Serialization
@@ -120,16 +126,15 @@ print("Saved split timeline figure to:", fig_path)
 # Serialize partition boundaries and timestamp intervals to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 df_split_meta = pd.DataFrame([
     {"Partition": "Train", "Start_Index": 0, "End_Index": cut1-1, "Count": len(train_df), "Start_Date": str(train_df["timestamp"].min()), "End_Date": str(train_df["timestamp"].max())},
     {"Partition": "Validation", "Start_Index": cut1, "End_Index": cut2-1, "Count": len(val_df), "Start_Date": str(val_df["timestamp"].min()), "End_Date": str(val_df["timestamp"].max())},
     {"Partition": "Test_Lockbox", "Start_Index": cut2, "End_Index": n-1, "Count": len(test_df), "Start_Date": str(test_df["timestamp"].min()), "End_Date": str(test_df["timestamp"].max())}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_9_Task_1/outputs/tables/day9_task1_split_metadata.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day9_task1_split_metadata.csv"
 df_split_meta.to_csv(tbl_path, index=False)
-print("Saved split metadata table to:", tbl_path)
+print("Saved split metadata table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Split Integrity Gate

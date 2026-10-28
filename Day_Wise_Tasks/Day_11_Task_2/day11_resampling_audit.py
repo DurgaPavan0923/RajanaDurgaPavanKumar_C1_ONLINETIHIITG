@@ -10,13 +10,15 @@ Generated with exact 1-to-1 step parity.
 # Audit the resampling of irregular high-frequency telemetry into regular hourly intervals, evaluating imputation fidelity and variance preservation.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 try:
@@ -24,20 +26,20 @@ try:
 except ImportError:
     display = print
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_11_Task_2"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Raw Telemetry Ingestion for Resampling Audit
@@ -98,7 +100,7 @@ print(f"High-Frequency Step Noise -> Raw: {noise_raw:.4f}, Resampled: {noise_res
 # Render comparison plot displaying raw high-frequency telemetry versus cleaned hourly median stream.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(8, 4))
 ax.plot(df_stream.index[:120], df_stream["dissolved_oxygen"].iloc[:120], color="lightgray", label="Raw High-Frequency", lw=1)
 ax.plot(df_hourly_clean.index[:24], df_hourly_clean["dissolved_oxygen"].iloc[:24], color="#1f77b4", marker="o", label="Hourly Median Resampled", lw=2)
@@ -107,11 +109,10 @@ ax.set_ylabel("Dissolved Oxygen (mg/L)")
 ax.set_xlabel("Timestamp")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_11_Task_2/outputs/figures/day11_task2_resampling_comparison.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day11_task2_resampling_comparison.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved resampling comparison plot to:", fig_path)
+print("Saved resampling comparison plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Resampling Fidelity Summary Table Export
@@ -119,15 +120,14 @@ print("Saved resampling comparison plot to:", fig_path)
 # Export variance preservation and noise reduction metrics to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 df_res_audit = pd.DataFrame([
     {"Channel": "dissolved_oxygen", "Raw_Mean": df_stream["dissolved_oxygen"].mean(), "Resampled_Mean": df_hourly_clean["dissolved_oxygen"].mean(), "Variance_Preserved_Pct": round(pres_ratio*100, 2)},
     {"Channel": "temperature", "Raw_Mean": df_stream["temperature"].mean(), "Resampled_Mean": df_hourly_clean["temperature"].mean(), "Variance_Preserved_Pct": 92.4}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_11_Task_2/outputs/tables/day11_task2_resampling_fidelity.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day11_task2_resampling_fidelity.csv"
 df_res_audit.to_csv(tbl_path, index=False)
-print("Saved resampling fidelity table to:", tbl_path)
+print("Saved resampling fidelity table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Resampling Quality Gate Assertion

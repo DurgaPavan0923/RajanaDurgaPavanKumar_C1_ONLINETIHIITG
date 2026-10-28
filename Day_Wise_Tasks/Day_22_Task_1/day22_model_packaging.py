@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Package preprocessors, calibrated tree ensembles, and metadata into serialized production .joblib artifacts in models/production/.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_22_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Packaging Subsystem Initialization
@@ -103,7 +110,7 @@ print(f"Max Deserialization Probability Divergence: {diff}")
 # Render bar chart displaying file sizes of serialized production models.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(6, 3.5))
 ax.bar([model_path.name], [sz_mb], color="#1f77b4", width=0.4, alpha=0.85)
 ax.set_title("Day 22 Task 1: Serialized Production Model Footprint", fontsize=11, pad=10)
@@ -111,11 +118,10 @@ ax.set_ylabel("Bundle Size (MB)")
 ax.set_ylim(0, sz_mb * 1.3)
 ax.text(0, sz_mb + 0.5, f"{sz_mb:.2f} MB", ha="center", fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_22_Task_1/outputs/figures/day22_task1_model_packaging.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day22_task1_model_packaging.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved model packaging plot to:", fig_path)
+print("Saved model packaging plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Production Packaging Table Export
@@ -123,14 +129,13 @@ print("Saved model packaging plot to:", fig_path)
 # Export serialized artifact specifications table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 df_pkg = pd.DataFrame([
     {"Artifact": model_path.name, "Format": "joblib", "Compression": 3, "Size_MB": round(sz_mb, 2), "Status": "FROZEN_FOR_PRODUCTION"}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_22_Task_1/outputs/tables/day22_task1_packaging_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day22_task1_packaging_summary.csv"
 df_pkg.to_csv(tbl_path, index=False)
-print("Saved packaging summary table to:", tbl_path)
+print("Saved packaging summary table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Serialization Gate Assertion

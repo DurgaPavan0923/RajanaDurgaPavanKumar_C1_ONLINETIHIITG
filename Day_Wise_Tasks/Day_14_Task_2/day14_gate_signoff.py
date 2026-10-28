@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Formally sign off on data engineering freeze gate, certifying readiness for predictive modeling phases.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_14_Task_2"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Gate Audit Criteria Inspection
@@ -97,7 +104,7 @@ print(attestation_text)
 # Render gate audit scorecard bar chart displaying 100% compliance across all criteria.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(7, 3.5))
 ax.barh(df_crit["Criterion"], [100.0]*len(df_crit), color="#2ca02c", alpha=0.85)
 ax.set_xlim(0, 120)
@@ -105,11 +112,10 @@ ax.set_title("Day 14 Task 2: Data Freeze Gate Sign-Off (100% Approved)", fontsiz
 for i in range(len(df_crit)):
     ax.text(102, i, "APPROVED", va="center", fontsize=9, fontweight="bold", color="darkgreen")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_14_Task_2/outputs/figures/day14_task2_gate_signoff.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day14_task2_gate_signoff.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved gate sign-off plot to:", fig_path)
+print("Saved gate sign-off plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Gate Sign-Off Table Serialization
@@ -117,11 +123,10 @@ print("Saved gate sign-off plot to:", fig_path)
 # Export sign-off gate audit criteria table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
-tbl_path = Path("Day_Wise_Tasks/Day_14_Task_2/outputs/tables/day14_task2_gate_signoff.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path
+tbl_path = TBL_DIR / "day14_task2_gate_signoff.csv"
 df_crit.to_csv(tbl_path, index=False)
-print("Saved gate sign-off table to:", tbl_path)
+print("Saved gate sign-off table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Sign-Off Approval Assertion

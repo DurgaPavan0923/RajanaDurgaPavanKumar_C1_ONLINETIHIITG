@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Audit git repository structure, track committed artifacts, verify version control ignore rules, and ensure workspace hygiene.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_1_Task_2"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Repository Directory Hierarchy Scan
@@ -121,17 +128,16 @@ print(df_sizes.to_string(index=False))
 # Render a distribution donut chart visualizing disk allocation across repository subsystems.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(6, 5))
 valid_sizes = df_sizes[df_sizes["Disk_Size_MB"] > 0]
 ax.pie(valid_sizes["Disk_Size_MB"], labels=valid_sizes["Subsystem"], autopct="%1.1f%%", startangle=140, colors=["#2ca02c", "#ff7f0e", "#1f77b4", "#d62728", "#9467bd"])
 ax.set_title("Day 1 Task 2: Subsystem Disk Footprint Allocation", fontsize=11, pad=10)
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_1_Task_2/outputs/figures/day1_task2_workspace_footprint.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day1_task2_workspace_footprint.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved figure to:", fig_path)
+print("Saved figure to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Workspace Audit Metrics Serialization
@@ -139,11 +145,10 @@ print("Saved figure to:", fig_path)
 # Save workspace hierarchy summary and subsystem metrics to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
-tbl_path = Path("Day_Wise_Tasks/Day_1_Task_2/outputs/tables/day1_task2_workspace_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path
+tbl_path = TBL_DIR / "day1_task2_workspace_summary.csv"
 df_sizes.to_csv(tbl_path, index=False)
-print("Saved summary table to:", tbl_path)
+print("Saved summary table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Repository Health Assertion

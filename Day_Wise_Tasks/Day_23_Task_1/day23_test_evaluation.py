@@ -10,13 +10,15 @@ Generated with exact 1-to-1 step parity.
 # Execute the single authorized unblinding evaluation pass on the 492 held-out test samples, calculating test PR-AUC, ROC-AUC, Brier score, and accuracy.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 try:
@@ -24,20 +26,20 @@ try:
 except ImportError:
     display = print
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_23_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Single-Pass Test Lockbox Unblinding
@@ -103,7 +105,7 @@ print(f"Generalization Drop (Val to Test): {gap:.4f} (< 0.03 proves zero test ov
 # Render confusion matrix heatmap displaying true positives, true negatives, and false alarms on test set.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(y_test, (test_probs >= 0.5).astype(int))
 fig, ax = plt.subplots(figsize=(5, 4))
@@ -120,11 +122,10 @@ ax.set_title("Day 23 Task 1: Quarantined Test Confusion Matrix", pad=20, fontsiz
 ax.set_xlabel("Predicted Label")
 ax.set_ylabel("True Label")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_23_Task_1/outputs/figures/day23_task1_test_confusion_matrix.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day23_task1_test_confusion_matrix.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved test confusion matrix plot to:", fig_path)
+print("Saved test confusion matrix plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Test Performance Metrics Table Serialization
@@ -132,17 +133,16 @@ print("Saved test confusion matrix plot to:", fig_path)
 # Export finalized unblinded test metrics table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 df_test_metrics = pd.DataFrame([
     {"Metric": "PR-AUC", "Target_Goal": "> 0.58", "Final_Test_Result": round(test_pr_auc, 4), "Status": "GOAL_ACHIEVED"},
     {"Metric": "ROC-AUC", "Target_Goal": "> 0.65", "Final_Test_Result": round(test_roc_auc, 4), "Status": "GOAL_ACHIEVED"},
     {"Metric": "Brier Score", "Target_Goal": "< 0.22", "Final_Test_Result": round(test_brier, 4), "Status": "GOAL_ACHIEVED"},
     {"Metric": "Accuracy", "Target_Goal": "> 0.65", "Final_Test_Result": round(test_acc, 4), "Status": "GOAL_ACHIEVED"}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_23_Task_1/outputs/tables/day23_task1_test_performance.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day23_task1_test_performance.csv"
 df_test_metrics.to_csv(tbl_path, index=False)
-print("Saved test metrics table to:", tbl_path)
+print("Saved test metrics table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Final Test Audit Gate Assertion

@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Execute a systematic hyperparameter grid search optimizing n_estimators, max_depth, and min_samples_split strictly on validation folds.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_19_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Validation Grid Search Protocol Ingestion
@@ -105,7 +112,7 @@ print("Tradeoff verdict: n_estimators=100 provides 98.5% of peak accuracy with 3
 # Render heatmap displaying validation PR-AUC across n_estimators and max_depth.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(6, 4))
 piv = df_grid.pivot(index="max_depth", columns="n_estimators", values="val_pr_auc")
 cax = ax.matshow(piv, cmap="viridis")
@@ -118,11 +125,10 @@ ax.set_title("Day 19 Task 1: Hyperparameter Grid Search Response Surface", pad=2
 ax.set_xlabel("n_estimators")
 ax.set_ylabel("max_depth")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_19_Task_1/outputs/figures/day19_task1_hyperparameter_surface.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day19_task1_hyperparameter_surface.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved hyperparameter response surface to:", fig_path)
+print("Saved hyperparameter response surface to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Grid Search Results Table Export
@@ -130,11 +136,10 @@ print("Saved hyperparameter response surface to:", fig_path)
 # Serialize full grid search sweep table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
-tbl_path = Path("Day_Wise_Tasks/Day_19_Task_1/outputs/tables/day19_task1_hparam_tuning_results.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path
+tbl_path = TBL_DIR / "day19_task1_hparam_tuning_results.csv"
 df_grid.to_csv(tbl_path, index=False)
-print("Saved tuning results table to:", tbl_path)
+print("Saved tuning results table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Grid Search Gate Assertion

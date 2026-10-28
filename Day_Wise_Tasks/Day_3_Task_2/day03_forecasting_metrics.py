@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Design loss functions and multi-horizon evaluation protocols (MAE, RMSE, MAPE, and MDA) for continuous dissolved oxygen forecasting.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_3_Task_2"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Telemetry Dataset Stream Ingestion
@@ -99,7 +106,7 @@ for h in horizons:
 # Plot MAE and RMSE degradation across forecast horizons T+1 through T+6.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(7, 4.5))
 ax.plot(horizons, list(maes.values()), marker="o", color="#1f77b4", label="MAE (mg/L)", lw=2)
 ax.plot(horizons, list(rmses.values()), marker="s", color="#d62728", label="RMSE (mg/L)", lw=2)
@@ -110,11 +117,10 @@ ax.set_xticks(horizons)
 ax.grid(True, linestyle="--", alpha=0.5)
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_3_Task_2/outputs/figures/day3_task2_forecast_error_growth.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day3_task2_forecast_error_growth.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved horizon error growth figure to:", fig_path)
+print("Saved horizon error growth figure to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Forecasting Loss Benchmark Table Serialization
@@ -122,17 +128,16 @@ print("Saved horizon error growth figure to:", fig_path)
 # Export complete multi-horizon loss benchmarks table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 df_loss = pd.DataFrame({
     "Horizon": [f"T+{h}" for h in horizons],
     "MAE_mg_L": [round(maes[h], 4) for h in horizons],
     "RMSE_mg_L": [round(rmses[h], 4) for h in horizons],
     "MDA_Pct": [mdas[h] for h in horizons]
 })
-tbl_path = Path("Day_Wise_Tasks/Day_3_Task_2/outputs/tables/day3_task2_forecasting_loss_table.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day3_task2_forecasting_loss_table.csv"
 df_loss.to_csv(tbl_path, index=False)
-print("Saved loss benchmark table to:", tbl_path)
+print("Saved loss benchmark table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Horizon Monotonicity Assertion

@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Conduct Leave-One-Feature-Out (LOFO) ablation testing across all sensor and engineered feature groups to quantify marginal predictive value.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_20_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Feature Group Definition for Ablation
@@ -99,7 +106,7 @@ print("Contains Detrimental/Noisy Features:", has_noisy)
 # Render bar chart displaying validation PR-AUC drop when each feature is ablated.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(8, 4))
 bars = ax.barh(df_lofo["Ablated_Feature"], df_lofo["Delta_PR_AUC"].abs(), color="#d62728", alpha=0.85)
 ax.set_title("Day 20 Task 1: Leave-One-Feature-Out (LOFO) Marginal Value Loss", fontsize=11, pad=10)
@@ -108,11 +115,10 @@ for bar in bars:
     w = bar.get_width()
     ax.text(w + 0.001, bar.get_y() + bar.get_height()/2.0, f"{w:.4f}", va="center", fontsize=8)
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_20_Task_1/outputs/figures/day20_task1_lofo_ablation.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day20_task1_lofo_ablation.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved LOFO ablation plot to:", fig_path)
+print("Saved LOFO ablation plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. LOFO Ablation Table Serialization
@@ -120,11 +126,10 @@ print("Saved LOFO ablation plot to:", fig_path)
 # Export LOFO ablation results table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
-tbl_path = Path("Day_Wise_Tasks/Day_20_Task_1/outputs/tables/day20_task1_lofo_results.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path
+tbl_path = TBL_DIR / "day20_task1_lofo_results.csv"
 df_lofo.to_csv(tbl_path, index=False)
-print("Saved LOFO results table to:", tbl_path)
+print("Saved LOFO results table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Ablation Gate Assertion

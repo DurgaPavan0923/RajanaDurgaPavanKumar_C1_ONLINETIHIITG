@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Audit, seal, and export the globally optimal hyperparameter configuration bundle in machine-actionable JSON format.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_19_Task_2"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Optimal Parameter Bundle Extraction
@@ -106,18 +113,17 @@ print("Estimated peak RAM footprint: ~45 MB during inference.")
 # Render boxplot displaying metric variance across cross-validation folds.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(5, 3.5))
 ax.boxplot(cv_scores, patch_artist=True, boxprops=dict(facecolor="#1f77b4", color="#1f77b4"))
 ax.set_title("Day 19 Task 2: Champion Hyperparameter CV Stability", fontsize=11, pad=10)
 ax.set_ylabel("Validation PR-AUC")
 ax.set_xticklabels(["Champion Config"])
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_19_Task_2/outputs/figures/day19_task2_hparam_stability.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day19_task2_hparam_stability.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved CV stability plot to:", fig_path)
+print("Saved CV stability plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Best Config Table Serialization
@@ -125,15 +131,14 @@ print("Saved CV stability plot to:", fig_path)
 # Serialize optimal hyperparameter summary table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 df_best_summary = pd.DataFrame([
     {"Track": "Track B", "Model": "Random Forest", "N_Estimators": 100, "Max_Depth": 8, "Validation_Score": cv_mean},
     {"Track": "Track A", "Model": "XGBoost", "N_Estimators": 100, "Max_Depth": 5, "Validation_Score": 0.2291}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_19_Task_2/outputs/tables/day19_task2_best_config_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day19_task2_best_config_summary.csv"
 df_best_summary.to_csv(tbl_path, index=False)
-print("Saved best config summary to:", tbl_path)
+print("Saved best config summary to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Optimal Config Gate Assertion

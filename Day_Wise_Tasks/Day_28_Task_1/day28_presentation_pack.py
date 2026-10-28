@@ -10,13 +10,15 @@ Generated with exact 1-to-1 step parity.
 # Compile the complete slide deck inventory, speaker scripts, technical exhibits, and demonstration talking points for the final review meeting.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 try:
@@ -24,20 +26,20 @@ try:
 except ImportError:
     display = print
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_28_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Presentation Slide Pack Inventory
@@ -114,7 +116,7 @@ print("TIH IIT Guwahati Compliance: 100% VERIFIED.")
 # Render milestone timeline chart displaying 28-day progression from onboarding to final defense.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(8, 3.5))
 milestones_x = [1, 6, 14, 21, 28]
 milestones_lbl = ["Onboarding", "Governance", "Milestone 1", "Milestone 2", "Final Defense"]
@@ -126,11 +128,10 @@ ax.set_xlim(0, 30)
 ax.set_title("Day 28 Task 1: 28-Day AI/ML Internship Developmental Progression", fontsize=11, pad=10)
 ax.axis("off")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_28_Task_1/outputs/figures/day28_task1_presentation_timeline.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day28_task1_presentation_timeline.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved presentation timeline plot to:", fig_path)
+print("Saved presentation timeline plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Presentation Inventory Table Export
@@ -138,11 +139,10 @@ print("Saved presentation timeline plot to:", fig_path)
 # Export complete slide deck inventory table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
-tbl_path = Path("Day_Wise_Tasks/Day_28_Task_1/outputs/tables/day28_task1_presentation_inventory.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path
+tbl_path = TBL_DIR / "day28_task1_presentation_inventory.csv"
 df_slides.to_csv(tbl_path, index=False)
-print("Saved presentation inventory table to:", tbl_path)
+print("Saved presentation inventory table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Presentation Pack Gate Assertion

@@ -10,13 +10,15 @@ Generated with exact 1-to-1 step parity.
 # Perform exploratory data analysis on continuous underwater sensor streams, investigating diurnal dynamics, thermal stratification, and dissolved oxygen oscillations.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 try:
@@ -24,20 +26,20 @@ try:
 except ImportError:
     display = print
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_10_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Continuous Telemetry Stream Ingestion
@@ -93,7 +95,7 @@ print(f"pH Stability: Mean = {ph_stats['mean']:.3f}, Std = {ph_stats['std']:.3f}
 # Render multi-panel time-series plot displaying continuous DO and Temperature trajectories.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, axes = plt.subplots(2, 1, figsize=(9, 5), sharex=True)
 axes[0].plot(df_stream["timestamp"], df_stream["dissolved_oxygen"], color="#1f77b4", lw=1.2)
 axes[0].set_ylabel("DO (mg/L)")
@@ -103,11 +105,10 @@ axes[1].plot(df_stream["timestamp"], df_stream["temperature"], color="#d62728", 
 axes[1].set_ylabel("Temp (deg C)")
 axes[1].set_xlabel("Observation Timestamp")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_10_Task_1/outputs/figures/day10_task1_sensor_streams.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day10_task1_sensor_streams.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved telemetry streams plot to:", fig_path)
+print("Saved telemetry streams plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Telemetry Summary Statistics Serialization
@@ -115,11 +116,10 @@ print("Saved telemetry streams plot to:", fig_path)
 # Serialize multi-channel descriptive statistics to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path)
-tbl_path = Path("Day_Wise_Tasks/Day_10_Task_1/outputs/tables/day10_task1_telemetry_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path)
+tbl_path = TBL_DIR / "day10_task1_telemetry_summary.csv"
 df_stream.describe().round(4).to_csv(tbl_path)
-print("Saved summary table to:", tbl_path)
+print("Saved summary table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Telemetry Continuity Assertion

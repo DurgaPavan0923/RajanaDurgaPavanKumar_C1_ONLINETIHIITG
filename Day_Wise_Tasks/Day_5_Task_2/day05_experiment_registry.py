@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Build and validate a centralized experiment run registry tracking model candidate iterations, hyperparameters, and validation scores.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_5_Task_2"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Registry Schema Formulation
@@ -96,7 +103,7 @@ print("Run IDs Uniqueness Check:", is_unique)
 # Render a bar chart displaying PR-AUC progression across all logged experimental runs.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(8, 4))
 bars = ax.bar(df_registry["run_id"], df_registry["val_pr_auc"], color=["#7f7f7f", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"], alpha=0.85)
 ax.axhline(base_auc, color="red", linestyle="--", label=f"Baseline ({base_auc})")
@@ -108,11 +115,10 @@ for bar in bars:
     ax.text(bar.get_x() + bar.get_width()/2.0, y + 0.02, f"{y:.3f}", ha="center", va="bottom", fontsize=9, fontweight="bold")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_5_Task_2/outputs/figures/day5_task2_experiment_progression.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day5_task2_experiment_progression.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved experiment progression plot to:", fig_path)
+print("Saved experiment progression plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Registry Table Serialization
@@ -120,11 +126,10 @@ print("Saved experiment progression plot to:", fig_path)
 # Save compiled experiment run registry table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
-tbl_path = Path("Day_Wise_Tasks/Day_5_Task_2/outputs/tables/day5_task2_experiment_registry.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path
+tbl_path = TBL_DIR / "day5_task2_experiment_registry.csv"
 df_registry.to_csv(tbl_path, index=False)
-print("Saved experiment registry to:", tbl_path)
+print("Saved experiment registry to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Registry Validation Gate

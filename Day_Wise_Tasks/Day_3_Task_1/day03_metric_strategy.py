@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Formulate evaluation metrics for class-imbalanced water potability, establishing PR-AUC as primary ranking metric and Brier score for calibration.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_3_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Class Imbalance Characterization
@@ -100,7 +107,7 @@ print(f"Model Brier Score: {brier:.4f} (Lower is better) | Baseline Brier: {brie
 # Plot side-by-side ROC Curve and Precision-Recall Curve demonstrating PR sensitivity to true positives.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, axes = plt.subplots(1, 2, figsize=(10, 4.5))
 axes[0].plot(fpr, tpr, color="#1f77b4", lw=2, label=f"Model (AUC = {roc_auc:.3f})")
 axes[0].plot([0, 1], [0, 1], color="navy", lw=1.5, linestyle="--", label="Random Chance")
@@ -116,11 +123,10 @@ axes[1].set_xlabel("Recall")
 axes[1].set_ylabel("Precision")
 axes[1].legend(loc="upper right")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_3_Task_1/outputs/figures/day3_task1_roc_vs_pr.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day3_task1_roc_vs_pr.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved comparison curve to:", fig_path)
+print("Saved comparison curve to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Classification Metric Strategy Matrix Serialization
@@ -128,17 +134,16 @@ print("Saved comparison curve to:", fig_path)
 # Export comparison table summarizing ROC-AUC, PR-AUC, and Brier score specifications.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 metrics_summary = [
     {"Metric": "PR-AUC", "Target_Role": "Primary Model Selection", "Benchmark_Goal": "> 0.58", "Baseline": f"{prevalence:.3f}"},
     {"Metric": "ROC-AUC", "Target_Role": "Secondary Discriminative", "Benchmark_Goal": "> 0.65", "Baseline": "0.500"},
     {"Metric": "Brier Score", "Target_Role": "Probability Calibration", "Benchmark_Goal": "< 0.22", "Baseline": "0.250"},
 ]
 df_m = pd.DataFrame(metrics_summary)
-tbl_path = Path("Day_Wise_Tasks/Day_3_Task_1/outputs/tables/day3_task1_metric_strategy.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day3_task1_metric_strategy.csv"
 df_m.to_csv(tbl_path, index=False)
-print("Saved metric strategy table to:", tbl_path)
+print("Saved metric strategy table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Metric Hierarchy Assertion

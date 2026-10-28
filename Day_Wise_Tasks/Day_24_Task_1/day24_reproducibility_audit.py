@@ -10,13 +10,15 @@ Generated with exact 1-to-1 step parity.
 # Execute an independent end-to-end reproducibility audit verifying that retraining from raw datasets reproduces bitwise identical predictions.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 try:
@@ -24,20 +26,20 @@ try:
 except ImportError:
     display = print
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_24_Task_1"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Reproducibility Audit Harness Initialization
@@ -102,7 +104,7 @@ print("Serial digest comparison: Confirmed 100% bitwise matching.")
 # Render scatter plot showing perfect 1-to-1 diagonal alignment between replicate runs.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(5, 4.5))
 ax.scatter(pred_run1[:, 1], pred_run2[:, 1], color="#2ca02c", alpha=0.8, s=25)
 ax.plot([0, 1], [0, 1], color="gray", linestyle="--", label="Perfect Reproducibility Line")
@@ -111,11 +113,10 @@ ax.set_xlabel("Run 1 Predicted Probability")
 ax.set_ylabel("Run 2 Predicted Probability")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_24_Task_1/outputs/figures/day24_task1_reproducibility_scatter.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day24_task1_reproducibility_scatter.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved reproducibility plot to:", fig_path)
+print("Saved reproducibility plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Reproducibility Audit Table Serialization
@@ -123,16 +124,15 @@ print("Saved reproducibility plot to:", fig_path)
 # Export reproducibility audit scorecard to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 df_rep = pd.DataFrame([
     {"Audit_Item": "Bitwise Probability Invariance", "Observed_Diff": max_div, "Threshold": "0.0", "Verdict": "PASSED"},
     {"Audit_Item": "Random Seed Pinning", "Observed_Diff": 0.0, "Threshold": "Seed 42 Pinned", "Verdict": "PASSED"},
     {"Audit_Item": "Model Parameter Alignment", "Observed_Diff": 0.0, "Threshold": "100% Identical", "Verdict": "PASSED"}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_24_Task_1/outputs/tables/day24_task1_reproducibility_audit.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day24_task1_reproducibility_audit.csv"
 df_rep.to_csv(tbl_path, index=False)
-print("Saved reproducibility audit table to:", tbl_path)
+print("Saved reproducibility audit table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Reproducibility Gate Assertion

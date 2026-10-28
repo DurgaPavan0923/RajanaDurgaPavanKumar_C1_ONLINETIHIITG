@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Formally sign off on model architecture gate, freezing model structures and authoring the deployment packaging certificate.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_21_Task_2"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Sign-Off Gate Checklist Inspection
@@ -90,7 +97,7 @@ print(signoff_stmt)
 # Render gate approval bar chart displaying 100% compliance across all 5 architecture gate criteria.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(7, 3.5))
 ax.barh(df_gate["Requirement"], [100.0]*len(df_gate), color="#2ca02c", alpha=0.85)
 ax.set_xlim(0, 120)
@@ -98,11 +105,10 @@ ax.set_title("Day 21 Task 2: Model Architecture Gate Sign-Off (100% Approved)", 
 for i in range(len(df_gate)):
     ax.text(102, i, "APPROVED", va="center", fontsize=9, fontweight="bold", color="darkgreen")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_21_Task_2/outputs/figures/day21_task2_signoff_gate.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day21_task2_signoff_gate.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved sign-off gate plot to:", fig_path)
+print("Saved sign-off gate plot to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Architecture Sign-Off Table Serialization
@@ -110,11 +116,10 @@ print("Saved sign-off gate plot to:", fig_path)
 # Export architecture sign-off checklist table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
-tbl_path = Path("Day_Wise_Tasks/Day_21_Task_2/outputs/tables/day21_task2_signoff_gate.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path
+tbl_path = TBL_DIR / "day21_task2_signoff_gate.csv"
 df_gate.to_csv(tbl_path, index=False)
-print("Saved architecture sign-off table to:", tbl_path)
+print("Saved architecture sign-off table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Sign-Off Approval Gate Assertion

@@ -61,19 +61,17 @@ for bar in bars:
     y = bar.get_height()
     ax.text(bar.get_x() + bar.get_width()/2.0, y + 0.8, f"{y:.1f}%", ha="center", va="bottom", fontsize=9, fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_7_Task_1/outputs/figures/day7_task1_missingness_profile.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day7_task1_missingness_profile.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved missingness plot to:", fig_path)"""
+print("Saved missingness plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Raw Schema Profile Table Serialization",
                 "desc": "Save compiled raw schema profile and missingness table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_7_Task_1/outputs/tables/day7_task1_raw_schema_profile.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day7_task1_raw_schema_profile.csv"
 df_nulls.to_csv(tbl_path)
-print("Saved raw schema profile table to:", tbl_path)"""
+print("Saved raw schema profile table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Raw Ingestion Assertion",
@@ -142,11 +140,10 @@ ax.set_xticklabels(missing_cols, rotation=45, ha="left")
 ax.set_yticklabels(missing_cols)
 ax.set_title("Day 7 Task 2: Missingness Co-occurrence Correlation", pad=20, fontsize=11)
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_7_Task_2/outputs/figures/day7_task2_missingness_corr.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day7_task2_missingness_corr.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved missingness co-occurrence figure to:", fig_path)"""
+print("Saved missingness co-occurrence figure to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Missingness Profiling Table Serialization",
@@ -156,10 +153,9 @@ print("Saved missingness co-occurrence figure to:", fig_path)"""
     {"Parameter": "Sulfate", "Missing_Count": 781, "Potability_When_Present": round(pot_with_sulf, 4), "Potability_When_Missing": round(pot_missing_sulf, 4)},
     {"Parameter": "Trihalomethanes", "Missing_Count": 162, "Potability_When_Present": 0.393, "Potability_When_Missing": 0.389}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_7_Task_2/outputs/tables/day7_task2_missingness_profile.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day7_task2_missingness_profile.csv"
 df_miss_profile.to_csv(tbl_path, index=False)
-print("Saved missingness profile table to:", tbl_path)"""
+print("Saved missingness profile table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "MCAR Plausibility Assertion",
@@ -249,19 +245,17 @@ df_stream[["temperature", "dissolved_oxygen", "ph", "turbidity"]].boxplot(ax=ax)
 ax.set_title("Day 8 Task 1: Continuous Telemetry Operating Range Distributions", fontsize=11, pad=10)
 ax.set_ylabel("Measured Sensor Value")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_8_Task_1/outputs/figures/day8_task1_sensor_distributions.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day8_task1_sensor_distributions.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved sensor distributions plot to:", fig_path)"""
+print("Saved sensor distributions plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Sensor Range Quality Table Export",
                 "desc": "Export sensor envelopes and empirical range statistics table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_8_Task_1/outputs/tables/day8_task1_sensor_quality_table.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day8_task1_sensor_quality_table.csv"
 df_rel.to_csv(tbl_path, index=False)
-print("Saved sensor quality table to:", tbl_path)"""
+print("Saved sensor quality table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Physical Range Verification Assertion",
@@ -356,19 +350,17 @@ ax.set_ylabel("Compliance Percentage (%)")
 for i, r in enumerate(df_eval["Rule_ID"]):
     ax.text(i, 100.5, "PASS", ha="center", fontsize=9, fontweight="bold", color="darkgreen")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_8_Task_2/outputs/figures/day8_task2_validation_pass_rates.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day8_task2_validation_pass_rates.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved validation rules plot to:", fig_path)"""
+print("Saved validation rules plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Unified Quality Scorecard Export",
                 "desc": "Save compiled validation rules matrix and scorecard table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_8_Task_2/outputs/tables/day8_task2_quality_scorecard.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day8_task2_quality_scorecard.csv"
 df_card.to_csv(tbl_path, index=False)
-print("Saved quality scorecard table to:", tbl_path)"""
+print("Saved quality scorecard table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Rule Verification Gate",
@@ -447,11 +439,10 @@ ax.set_xlabel("Chronological Sample Index")
 ax.set_ylabel("Total Dissolved Solids (ppm)")
 ax.legend(loc="upper right")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_9_Task_1/outputs/figures/day9_task1_split_timeline.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day9_task1_split_timeline.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved split timeline figure to:", fig_path)"""
+print("Saved split timeline figure to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Walk-Forward Partition Metadata Table Serialization",
@@ -461,10 +452,9 @@ print("Saved split timeline figure to:", fig_path)"""
     {"Partition": "Validation", "Start_Index": cut1, "End_Index": cut2-1, "Count": len(val_df), "Start_Date": str(val_df["timestamp"].min()), "End_Date": str(val_df["timestamp"].max())},
     {"Partition": "Test_Lockbox", "Start_Index": cut2, "End_Index": n-1, "Count": len(test_df), "Start_Date": str(test_df["timestamp"].min()), "End_Date": str(test_df["timestamp"].max())}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_9_Task_1/outputs/tables/day9_task1_split_metadata.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day9_task1_split_metadata.csv"
 df_split_meta.to_csv(tbl_path, index=False)
-print("Saved split metadata table to:", tbl_path)"""
+print("Saved split metadata table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Split Integrity Gate",
@@ -538,19 +528,17 @@ ax.set_ylabel("Number of Samples")
 for i, v in enumerate([cut2, len(test_lockbox)]):
     ax.text(i, v + 50, f"{v}", ha="center", fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_9_Task_2/outputs/figures/day9_task2_lockbox_isolation.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day9_task2_lockbox_isolation.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved lockbox isolation plot to:", fig_path)"""
+print("Saved lockbox isolation plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Lockbox Manifest Table Export",
                 "desc": "Export lockbox quarantine security manifest to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_9_Task_2/outputs/tables/day9_task2_lockbox_manifest.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day9_task2_lockbox_manifest.csv"
 df_manifest.to_csv(tbl_path, index=False)
-print("Saved lockbox manifest to:", tbl_path)"""
+print("Saved lockbox manifest to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Quarantine Integrity Gate",
@@ -619,19 +607,17 @@ axes[1].plot(df_stream["timestamp"], df_stream["temperature"], color="#d62728", 
 axes[1].set_ylabel("Temp (deg C)")
 axes[1].set_xlabel("Observation Timestamp")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_10_Task_1/outputs/figures/day10_task1_sensor_streams.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day10_task1_sensor_streams.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved telemetry streams plot to:", fig_path)"""
+print("Saved telemetry streams plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Telemetry Summary Statistics Serialization",
                 "desc": "Serialize multi-channel descriptive statistics to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_10_Task_1/outputs/tables/day10_task1_telemetry_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day10_task1_telemetry_summary.csv"
 df_stream.describe().round(4).to_csv(tbl_path)
-print("Saved summary table to:", tbl_path)"""
+print("Saved summary table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Telemetry Continuity Assertion",
@@ -709,19 +695,17 @@ ax.set_xticklabels(numeric_cols, rotation=45, ha="left", fontsize=9)
 ax.set_yticklabels(numeric_cols, fontsize=9)
 ax.set_title("Day 10 Task 2: Cross-Sensor Pearson Correlation Matrix", pad=20, fontsize=11)
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_10_Task_2/outputs/figures/day10_task2_correlation_matrix.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day10_task2_correlation_matrix.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved correlation heatmap to:", fig_path)"""
+print("Saved correlation heatmap to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Hypotheses Table and Correlation Matrix Export",
                 "desc": "Save domain hypotheses and correlation matrix to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_10_Task_2/outputs/tables/day10_task2_hypotheses_table.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day10_task2_hypotheses_table.csv"
 df_hypo.to_csv(tbl_path, index=False)
-print("Saved hypotheses table to:", tbl_path)"""
+print("Saved hypotheses table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Domain Hypothesis Gate Assertion",
@@ -794,11 +778,10 @@ ax.set_ylabel("Dissolved Oxygen (mg/L)")
 ax.set_xlabel("Timestamp")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_11_Task_2/outputs/figures/day11_task2_resampling_comparison.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day11_task2_resampling_comparison.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved resampling comparison plot to:", fig_path)"""
+print("Saved resampling comparison plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Resampling Fidelity Summary Table Export",
@@ -807,10 +790,9 @@ print("Saved resampling comparison plot to:", fig_path)"""
     {"Channel": "dissolved_oxygen", "Raw_Mean": df_stream["dissolved_oxygen"].mean(), "Resampled_Mean": df_hourly_clean["dissolved_oxygen"].mean(), "Variance_Preserved_Pct": round(pres_ratio*100, 2)},
     {"Channel": "temperature", "Raw_Mean": df_stream["temperature"].mean(), "Resampled_Mean": df_hourly_clean["temperature"].mean(), "Variance_Preserved_Pct": 92.4}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_11_Task_2/outputs/tables/day11_task2_resampling_fidelity.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day11_task2_resampling_fidelity.csv"
 df_res_audit.to_csv(tbl_path, index=False)
-print("Saved resampling fidelity table to:", tbl_path)"""
+print("Saved resampling fidelity table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Resampling Quality Gate Assertion",
@@ -894,20 +876,18 @@ ax.set_title("Day 12 Task 1: Five-Point Zero Data Leakage Verification", fontsiz
 for i, s in enumerate(statuses):
     ax.text(1.02, i, "PASS (Verified)", va="center", fontsize=9, fontweight="bold", color="darkgreen")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_12_Task_1/outputs/figures/day12_task1_leakage_audit.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day12_task1_leakage_audit.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved leakage audit figure to:", fig_path)"""
+print("Saved leakage audit figure to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Zero-Leakage Audit Table Serialization",
                 "desc": "Serialize automated leakage test scorecard to CSV.",
                 "code": """df_leakage = pd.DataFrame({"Test_Name": tests, "Result": ["PASS"]*len(tests), "Verdict": ["COMPLIANT"]*len(tests)})
-tbl_path = Path("Day_Wise_Tasks/Day_12_Task_1/outputs/tables/day12_task1_leakage_audit.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day12_task1_leakage_audit.csv"
 df_leakage.to_csv(tbl_path, index=False)
-print("Saved leakage scorecard table to:", tbl_path)"""
+print("Saved leakage scorecard table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Zero Leakage Gate Assertion",
@@ -988,19 +968,17 @@ print(df_hashes.to_string(index=False))"""
 ax.pie(df_hashes["Samples"], labels=df_hashes["Partition"], autopct="%1.1f%%", startangle=140, colors=["#1f77b4", "#ff7f0e", "#2ca02c"])
 ax.set_title("Day 12 Task 2: Cryptographic Dataset V1 Partition Allocation", fontsize=11, pad=10)
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_12_Task_2/outputs/figures/day12_task2_freeze_certificate.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day12_task2_freeze_certificate.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved freeze certificate plot to:", fig_path)"""
+print("Saved freeze certificate plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Dataset Freeze Certificate Serialization",
                 "desc": "Serialize certified dataset freeze manifest table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_12_Task_2/outputs/tables/day12_task2_freeze_certificate.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day12_task2_freeze_certificate.csv"
 df_hashes.to_csv(tbl_path, index=False)
-print("Saved freeze certificate table to:", tbl_path)"""
+print("Saved freeze certificate table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Freeze Verification Gate",
@@ -1075,21 +1053,19 @@ ax.set_xlabel("Chronological Sample Index")
 ax.set_ylabel("Solids Value")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_13_Task_1/outputs/figures/day13_task1_feature_dynamics.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day13_task1_feature_dynamics.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved feature dynamics figure to:", fig_path)"""
+print("Saved feature dynamics figure to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Engineered Features Correlation Table Export",
                 "desc": "Export correlation between engineered features and target Potability to CSV.",
                 "code": """corr_target = df[["Solids_roll_mean_6", "sulfate_solids_ratio", "ph_who_delta", "chlor_trihalo_ratio"]].apply(lambda x: x.corr(df["Potability"]))
 df_feat_corr = pd.DataFrame({"Feature": corr_target.index, "Target_Correlation": corr_target.values.round(4)})
-tbl_path = Path("Day_Wise_Tasks/Day_13_Task_1/outputs/tables/day13_task1_feature_correlations.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day13_task1_feature_correlations.csv"
 df_feat_corr.to_csv(tbl_path, index=False)
-print("Saved feature correlations table to:", tbl_path)"""
+print("Saved feature correlations table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Causal Feature Quality Gate Assertion",
@@ -1166,19 +1142,17 @@ for bar in bars:
     y = bar.get_height()
     ax.text(bar.get_x() + bar.get_width()/2.0, y + 0.5, f"{y}", ha="center", va="bottom", fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_13_Task_2/outputs/figures/day13_task2_feature_catalog_breakdown.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day13_task2_feature_catalog_breakdown.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved feature catalog breakdown to:", fig_path)"""
+print("Saved feature catalog breakdown to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Feature Catalog Table Export",
                 "desc": "Export compiled feature catalog dictionary to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_13_Task_2/outputs/tables/day13_task2_feature_catalog.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day13_task2_feature_catalog.csv"
 df_sample_cat.to_csv(tbl_path, index=False)
-print("Saved feature catalog table to:", tbl_path)"""
+print("Saved feature catalog table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Catalog Completeness Assertion",
@@ -1250,19 +1224,17 @@ print(f"Internship Midpoint Progress: {completion_pct:.1f}% Lifecycle Complete."
 ax.pie([50, 50], labels=["Milestone 1 (Complete)", "Milestone 2 (Upcoming)"], autopct="%1.0f%%", startangle=90, colors=["#2ca02c", "#e0e0e0"])
 ax.set_title("Day 14 Task 1: Milestone 1 Technical Review Progress (50%)", fontsize=11, pad=10)
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_14_Task_1/outputs/figures/day14_task1_milestone1_progress.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day14_task1_milestone1_progress.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved milestone 1 progress plot to:", fig_path)"""
+print("Saved milestone 1 progress plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Milestone 1 Review Summary Table Serialization",
                 "desc": "Serialize Milestone 1 achievement summary table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_14_Task_1/outputs/tables/day14_task1_milestone1_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day14_task1_milestone1_summary.csv"
 df_m1.to_csv(tbl_path, index=False)
-print("Saved milestone review table to:", tbl_path)"""
+print("Saved milestone review table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Milestone 1 Gate Assertion",
@@ -1335,19 +1307,17 @@ ax.set_title("Day 14 Task 2: Data Freeze Gate Sign-Off (100% Approved)", fontsiz
 for i in range(len(df_crit)):
     ax.text(102, i, "APPROVED", va="center", fontsize=9, fontweight="bold", color="darkgreen")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_14_Task_2/outputs/figures/day14_task2_gate_signoff.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day14_task2_gate_signoff.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved gate sign-off plot to:", fig_path)"""
+print("Saved gate sign-off plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Gate Sign-Off Table Serialization",
                 "desc": "Export sign-off gate audit criteria table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_14_Task_2/outputs/tables/day14_task2_gate_signoff.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day14_task2_gate_signoff.csv"
 df_crit.to_csv(tbl_path, index=False)
-print("Saved gate sign-off table to:", tbl_path)"""
+print("Saved gate sign-off table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Sign-Off Approval Assertion",

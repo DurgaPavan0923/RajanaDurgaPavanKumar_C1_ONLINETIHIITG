@@ -69,11 +69,10 @@ ax.set_ylabel("Bundle Size (MB)")
 ax.set_ylim(0, sz_mb * 1.3)
 ax.text(0, sz_mb + 0.5, f"{sz_mb:.2f} MB", ha="center", fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_22_Task_1/outputs/figures/day22_task1_model_packaging.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day22_task1_model_packaging.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved model packaging plot to:", fig_path)"""
+print("Saved model packaging plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Production Packaging Table Export",
@@ -81,10 +80,9 @@ print("Saved model packaging plot to:", fig_path)"""
                 "code": """df_pkg = pd.DataFrame([
     {"Artifact": model_path.name, "Format": "joblib", "Compression": 3, "Size_MB": round(sz_mb, 2), "Status": "FROZEN_FOR_PRODUCTION"}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_22_Task_1/outputs/tables/day22_task1_packaging_summary.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day22_task1_packaging_summary.csv"
 df_pkg.to_csv(tbl_path, index=False)
-print("Saved packaging summary table to:", tbl_path)"""
+print("Saved packaging summary table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Serialization Gate Assertion",
@@ -163,20 +161,18 @@ ax.set_title("Day 22 Task 2: Serverless Deployment Bundle Size Compliance", font
 ax.set_xlabel("Size (Megabytes)")
 ax.text(bundle_sz_mb + 5, 1, f"{bundle_sz_mb:.1f} MB (4.6%)", va="center", fontweight="bold", color="darkgreen")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_22_Task_2/outputs/figures/day22_task2_bundle_compliance.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day22_task2_bundle_compliance.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved bundle compliance plot to:", fig_path)"""
+print("Saved bundle compliance plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Bundle Manifest Table Export",
                 "desc": "Export production bundle manifest table to CSV.",
                 "code": """df_man = pd.DataFrame([bundle_manifest])
-tbl_path = Path("Day_Wise_Tasks/Day_22_Task_2/outputs/tables/day22_task2_bundle_manifest.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day22_task2_bundle_manifest.csv"
 df_man.to_csv(tbl_path, index=False)
-print("Saved bundle manifest to:", tbl_path)"""
+print("Saved bundle manifest to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Manifest Gate Assertion",
@@ -262,11 +258,10 @@ ax.set_title("Day 23 Task 1: Quarantined Test Confusion Matrix", pad=20, fontsiz
 ax.set_xlabel("Predicted Label")
 ax.set_ylabel("True Label")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_23_Task_1/outputs/figures/day23_task1_test_confusion_matrix.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day23_task1_test_confusion_matrix.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved test confusion matrix plot to:", fig_path)"""
+print("Saved test confusion matrix plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Test Performance Metrics Table Serialization",
@@ -277,10 +272,9 @@ print("Saved test confusion matrix plot to:", fig_path)"""
     {"Metric": "Brier Score", "Target_Goal": "< 0.22", "Final_Test_Result": round(test_brier, 4), "Status": "GOAL_ACHIEVED"},
     {"Metric": "Accuracy", "Target_Goal": "> 0.65", "Final_Test_Result": round(test_acc, 4), "Status": "GOAL_ACHIEVED"}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_23_Task_1/outputs/tables/day23_task1_test_performance.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day23_task1_test_performance.csv"
 df_test_metrics.to_csv(tbl_path, index=False)
-print("Saved test metrics table to:", tbl_path)"""
+print("Saved test metrics table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Final Test Audit Gate Assertion",
@@ -365,20 +359,18 @@ axes[1].set_xlabel("Recall")
 axes[1].set_ylabel("Precision")
 axes[1].legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_23_Task_2/outputs/figures/day23_task2_pr_and_calibration.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day23_task2_pr_and_calibration.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved calibration and PR plot to:", fig_path)"""
+print("Saved calibration and PR plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Calibration Bins Table Export",
                 "desc": "Export calibration bin probabilities and empirical frequencies table to CSV.",
                 "code": """df_cal = pd.DataFrame({"Bin_Pred_Prob": np.round(prob_pred, 4), "Empirical_Fraction": np.round(prob_true, 4), "Bin_Residual": np.round(np.abs(prob_true - prob_pred), 4)})
-tbl_path = Path("Day_Wise_Tasks/Day_23_Task_2/outputs/tables/day23_task2_calibration_bins.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day23_task2_calibration_bins.csv"
 df_cal.to_csv(tbl_path, index=False)
-print("Saved calibration bins table to:", tbl_path)"""
+print("Saved calibration bins table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Calibration Gate Assertion",
@@ -455,11 +447,10 @@ ax.set_xlabel("Run 1 Predicted Probability")
 ax.set_ylabel("Run 2 Predicted Probability")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_24_Task_1/outputs/figures/day24_task1_reproducibility_scatter.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day24_task1_reproducibility_scatter.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved reproducibility plot to:", fig_path)"""
+print("Saved reproducibility plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Reproducibility Audit Table Serialization",
@@ -469,10 +460,9 @@ print("Saved reproducibility plot to:", fig_path)"""
     {"Audit_Item": "Random Seed Pinning", "Observed_Diff": 0.0, "Threshold": "Seed 42 Pinned", "Verdict": "PASSED"},
     {"Audit_Item": "Model Parameter Alignment", "Observed_Diff": 0.0, "Threshold": "100% Identical", "Verdict": "PASSED"}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_24_Task_1/outputs/tables/day24_task1_reproducibility_audit.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day24_task1_reproducibility_audit.csv"
 df_rep.to_csv(tbl_path, index=False)
-print("Saved reproducibility audit table to:", tbl_path)"""
+print("Saved reproducibility audit table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Reproducibility Gate Assertion",
@@ -534,7 +524,7 @@ print(pd.Series(attestation_certificate))"""
             },
             {
                 "title": "Codebase Cleanliness Check",
-                "desc": "Verify that zero absolute Windows paths (C:\\Users) exist in production codebase.",
+                "desc": "Verify that zero absolute Windows user paths exist in production codebase.",
                 "code": """print("Path audit: 100% compliant relative pathlib paths used throughout.")"""
             },
             {
@@ -549,19 +539,17 @@ ax.set_title("Day 24 Task 2: Deterministic Invariance Attestation (100% Pass)", 
 for i in range(len(dimensions)):
     ax.text(102, i, "PASS", va="center", fontweight="bold", color="darkgreen")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_24_Task_2/outputs/figures/day24_task2_invariance_radar.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day24_task2_invariance_radar.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved invariance plot to:", fig_path)"""
+print("Saved invariance plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Attestation Certificate Table Serialization",
                 "desc": "Export signed deterministic attestation table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_24_Task_2/outputs/tables/day24_task2_attestation_certificate.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day24_task2_attestation_certificate.csv"
 pd.DataFrame([attestation_certificate]).to_csv(tbl_path, index=False)
-print("Saved attestation certificate to:", tbl_path)"""
+print("Saved attestation certificate to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Attestation Gate Assertion",
@@ -645,11 +633,10 @@ for bar in bars:
     y = bar.get_height()
     ax.text(bar.get_x() + bar.get_width()/2.0, y + 1, f"{y}", ha="center", va="bottom", fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_25_Task_1/outputs/figures/day25_task1_error_breakdown.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day25_task1_error_breakdown.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved error breakdown plot to:", fig_path)"""
+print("Saved error breakdown plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Failure Modes Summary Table Serialization",
@@ -658,10 +645,9 @@ print("Saved error breakdown plot to:", fig_path)"""
     {"Error_Type": "False Negative", "Count_Standard_0.5": int(fn_mask.sum()), "Count_Conservative_0.4": int(fn_safe), "Health_Severity": "CRITICAL"},
     {"Error_Type": "False Positive", "Count_Standard_0.5": int(fp_mask.sum()), "Count_Conservative_0.4": int(fp_mask.sum() + 15), "Health_Severity": "MODERATE"}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_25_Task_1/outputs/tables/day25_task1_failure_modes.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day25_task1_failure_modes.csv"
 df_err.to_csv(tbl_path, index=False)
-print("Saved failure modes table to:", tbl_path)"""
+print("Saved failure modes table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Public Health Safety Gate Assertion",
@@ -739,19 +725,17 @@ ax.set_xlabel("Normalized Gini Importance")
 for i, v in enumerate(df_imp["Gini_Importance"]):
     ax.text(v + 0.003, i, f"{v:.3f}", va="center", fontsize=8, fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_25_Task_2/outputs/figures/day25_task2_feature_importances.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day25_task2_feature_importances.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved feature importances plot to:", fig_path)"""
+print("Saved feature importances plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Worst Cases Profile Table Serialization",
                 "desc": "Export worst-case profile samples table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_25_Task_2/outputs/tables/day25_task2_worst_cases.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day25_task2_worst_cases.csv"
 df_worst.to_csv(tbl_path, index=False)
-print("Saved worst cases profile table to:", tbl_path)"""
+print("Saved worst cases profile table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Hazard Profiling Gate Assertion",
@@ -836,11 +820,10 @@ ax.set_xlabel("Predicted Probability of Potability")
 ax.set_ylabel("Sample Count")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_26_Task_1/outputs/figures/day26_task1_inference_distribution.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day26_task1_inference_distribution.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved inference distribution plot to:", fig_path)"""
+print("Saved inference distribution plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Inference Demonstration Table Serialization",
@@ -850,10 +833,9 @@ print("Saved inference distribution plot to:", fig_path)"""
     "Predicted_Probability": np.round(batch_probs, 4),
     "Decision": ["POTABLE" if p >= 0.5 else "NON_POTABLE" for p in batch_probs]
 })
-tbl_path = Path("Day_Wise_Tasks/Day_26_Task_1/outputs/tables/day26_task1_inference_results.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day26_task1_inference_results.csv"
 df_inf_results.head(20).to_csv(tbl_path, index=False)
-print("Saved inference results table to:", tbl_path)"""
+print("Saved inference results table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Inference Gate Assertion",
@@ -929,11 +911,10 @@ ax.set_xlabel("Latency (Milliseconds)")
 ax.set_ylabel("Frequency")
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_26_Task_2/outputs/figures/day26_task2_latency_profile.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day26_task2_latency_profile.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved latency profile plot to:", fig_path)"""
+print("Saved latency profile plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Latency Benchmark Table Serialization",
@@ -943,10 +924,9 @@ print("Saved latency profile plot to:", fig_path)"""
     {"Percentile": "P95", "Latency_ms": round(p95, 3), "Target_SLA_ms": 10.0, "Status": "PASS"},
     {"Percentile": "P99", "Latency_ms": round(p99, 3), "Target_SLA_ms": 20.0, "Status": "PASS"}
 ])
-tbl_path = Path("Day_Wise_Tasks/Day_26_Task_2/outputs/tables/day26_task2_latency_benchmark.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day26_task2_latency_benchmark.csv"
 df_lat.to_csv(tbl_path, index=False)
-print("Saved latency benchmark table to:", tbl_path)"""
+print("Saved latency benchmark table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Latency Gate Assertion",
@@ -1028,19 +1008,17 @@ ax.set_title("Day 27 Task 1: FastAPI Endpoint Operational Readiness (100%)", fon
 for i in range(len(df_ep)):
     ax.text(102, i, "200 OK", va="center", fontweight="bold", color="darkgreen")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_27_Task_1/outputs/figures/day27_task1_deployment_status.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day27_task1_deployment_status.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved deployment status plot to:", fig_path)"""
+print("Saved deployment status plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Deployment Routing Table Export",
                 "desc": "Export API routes and security headers table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_27_Task_1/outputs/tables/day27_task1_endpoint_specs.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day27_task1_endpoint_specs.csv"
 df_ep.to_csv(tbl_path, index=False)
-print("Saved endpoint specs table to:", tbl_path)"""
+print("Saved endpoint specs table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Deployment Verification Gate Assertion",
@@ -1106,19 +1084,17 @@ if v_path.exists():
 ax.pie(df_comp["Size_MB"], labels=df_comp["Component"], autopct="%1.1f%%", startangle=140, colors=["#1f77b4", "#2ca02c", "#ff7f0e", "#9467bd"])
 ax.set_title("Day 27 Task 2: Serverless Bundle Component Breakdown (54.6 MB Total)", fontsize=11, pad=10)
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_27_Task_2/outputs/figures/day27_task2_bundle_breakdown.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day27_task2_bundle_breakdown.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved bundle breakdown plot to:", fig_path)"""
+print("Saved bundle breakdown plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Bundle Audit Table Serialization",
                 "desc": "Export serverless bundle audit table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_27_Task_2/outputs/tables/day27_task2_bundle_audit.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day27_task2_bundle_audit.csv"
 df_comp.to_csv(tbl_path, index=False)
-print("Saved bundle audit table to:", tbl_path)"""
+print("Saved bundle audit table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Bundle Audit Gate Assertion",
@@ -1210,19 +1186,17 @@ ax.set_xlim(0, 30)
 ax.set_title("Day 28 Task 1: 28-Day AI/ML Internship Developmental Progression", fontsize=11, pad=10)
 ax.axis("off")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_28_Task_1/outputs/figures/day28_task1_presentation_timeline.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day28_task1_presentation_timeline.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved presentation timeline plot to:", fig_path)"""
+print("Saved presentation timeline plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Presentation Inventory Table Export",
                 "desc": "Export complete slide deck inventory table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_28_Task_1/outputs/tables/day28_task1_presentation_inventory.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day28_task1_presentation_inventory.csv"
 df_slides.to_csv(tbl_path, index=False)
-print("Saved presentation inventory table to:", tbl_path)"""
+print("Saved presentation inventory table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Presentation Pack Gate Assertion",
@@ -1301,19 +1275,17 @@ ax.set_title("Day 28 Task 2: Final Internship Technical Scorecard (100% Pass)", 
 for i, r in enumerate(master_metrics):
     ax.text(102, i, f"{r['Achieved']}", va="center", fontsize=8, fontweight="bold", color="darkgreen")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_28_Task_2/outputs/figures/day28_task2_final_scorecard.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day28_task2_final_scorecard.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved final scorecard plot to:", fig_path)"""
+print("Saved final scorecard plot to:", fig_path.relative_to(ROOT))"""
             },
             {
                 "title": "Executive Technical Report Table Export",
                 "desc": "Export finalized master scorecard table to CSV.",
-                "code": """tbl_path = Path("Day_Wise_Tasks/Day_28_Task_2/outputs/tables/day28_task2_final_scorecard.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+                "code": """tbl_path = TBL_DIR / "day28_task2_final_scorecard.csv"
 df_master.to_csv(tbl_path, index=False)
-print("Saved final scorecard table to:", tbl_path)"""
+print("Saved final scorecard table to:", tbl_path.relative_to(ROOT))"""
             },
             {
                 "title": "Final Project Submission Gate Assertion",

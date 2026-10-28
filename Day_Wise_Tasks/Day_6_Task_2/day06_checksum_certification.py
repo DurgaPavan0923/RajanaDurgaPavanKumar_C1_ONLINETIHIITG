@@ -10,29 +10,36 @@ Generated with exact 1-to-1 step parity.
 # Compute and certify SHA-256 cryptographic digests for raw and processed datasets, guaranteeing byte-level immutability against corruption.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_6_Task_2"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. SHA-256 Digest Computation Engine
@@ -113,7 +120,7 @@ print("Avalanche Effect: 100% digest divergence from single character change.")
 # Render horizontal bar chart displaying byte sizes and certification status of sealed datasets.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(7, 3.5))
 ax.barh(df_digests["File"], df_digests["Bytes"] / 1024, color="#1f77b4", alpha=0.85)
 ax.set_title("Day 6 Task 2: Sealed Dataset Byte Count & Certification", fontsize=11, pad=10)
@@ -121,11 +128,10 @@ ax.set_xlabel("Size (Kilobytes)")
 for i, v in enumerate(df_digests["Bytes"] / 1024):
     ax.text(v + 10, i, f"{v:.1f} KB", va="center", fontsize=9, fontweight="bold")
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_6_Task_2/outputs/figures/day6_task2_checksum_profile.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day6_task2_checksum_profile.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved checksum profile figure to:", fig_path)
+print("Saved checksum profile figure to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Checksum Certificate Table Serialization
@@ -133,11 +139,10 @@ print("Saved checksum profile figure to:", fig_path)
 # Serialize certified cryptographic manifest table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
-tbl_path = Path("Day_Wise_Tasks/Day_6_Task_2/outputs/tables/day6_task2_checksum_manifest.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+# Output: outputs/tables/tbl_path
+tbl_path = TBL_DIR / "day6_task2_checksum_manifest.csv"
 df_digests.to_csv(tbl_path, index=False)
-print("Saved checksum manifest table to:", tbl_path)
+print("Saved checksum manifest table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Immutability Seal Assertion

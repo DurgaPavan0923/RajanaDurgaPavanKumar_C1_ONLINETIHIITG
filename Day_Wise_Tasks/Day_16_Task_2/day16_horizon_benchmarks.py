@@ -10,13 +10,15 @@ Generated with exact 1-to-1 step parity.
 # Perform exhaustive per-horizon error decomposition (T+1 to T+6) evaluating error growth dynamics and residual bias across forecast horizons.
 
 # %% [step_1]
+# %matplotlib inline
+import os, matplotlib
+if os.environ.get('DISPLAY', '') == '' and os.name != 'nt' or os.environ.get('MPLBACKEND') == 'Agg':
+    matplotlib.use('Agg')
 import os
 import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 try:
@@ -24,20 +26,20 @@ try:
 except ImportError:
     display = print
 
-def _find_project_root():
-    curr = Path.cwd()
-    for p in [curr] + list(curr.parents):
-        if (p / "pyproject.toml").exists() or (p / "requirements.txt").exists():
-            return p
-    return curr
+ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "Day_Wise_Tasks").exists())
+project_root = ROOT
+TASK_DIR = ROOT / "Day_Wise_Tasks" / "Day_16_Task_2"
+FIG_DIR = TASK_DIR / "outputs" / "figures"
+TBL_DIR = TASK_DIR / "outputs" / "tables"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+TBL_DIR.mkdir(parents=True, exist_ok=True)
 
-project_root = _find_project_root()
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-os.chdir(project_root)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 np.random.seed(42)
-print("Environment initialized successfully. Project root:", project_root)
+print("Environment initialized successfully. Root:", ROOT)
 
 # %% [markdown]
 # ## 1. Per-Horizon Error Decomposition
@@ -108,7 +110,7 @@ print("95% Prediction Interval Half-Widths:", [round(w, 3) for w in ci_widths])
 # Render error growth curve displaying MAE and 95% uncertainty interval bounds across horizons.
 
 # %% [step_13]
-# Output Figure: fig_path
+# Output: outputs/figures/fig_path
 fig, ax = plt.subplots(figsize=(7, 4))
 ax.plot(range(1, 7), horizon_maes, marker="o", color="#1f77b4", lw=2, label="Random Forest MAE")
 ax.fill_between(range(1, 7), [m - 0.5*s for m, s in zip(horizon_maes, res_stds)], [m + 0.5*s for m, s in zip(horizon_maes, res_stds)], color="#1f77b4", alpha=0.2, label="+/- 0.5 Std Band")
@@ -118,11 +120,10 @@ ax.set_ylabel("MAE (mg/L)")
 ax.set_xticks(range(1, 7))
 ax.legend()
 plt.tight_layout()
-fig_path = Path("Day_Wise_Tasks/Day_16_Task_2/outputs/figures/day16_task2_horizon_error_growth.png")
-fig_path.parent.mkdir(parents=True, exist_ok=True)
+fig_path = FIG_DIR / "day16_task2_horizon_error_growth.png"
 plt.savefig(fig_path, dpi=150, bbox_inches="tight")
 plt.show()
-print("Saved horizon error growth figure to:", fig_path)
+print("Saved horizon error growth figure to:", fig_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 7. Horizon Decomposition Table Export
@@ -130,7 +131,7 @@ print("Saved horizon error growth figure to:", fig_path)
 # Export per-horizon MAE, bias, and variance metrics table to CSV.
 
 # %% [step_15]
-# Output Table: tbl_path
+# Output: outputs/tables/tbl_path
 df_h_decomp = pd.DataFrame({
     "Horizon": [f"T+{h}" for h in range(1, 7)],
     "MAE_mg_L": np.round(horizon_maes, 4),
@@ -138,10 +139,9 @@ df_h_decomp = pd.DataFrame({
     "Residual_Std": np.round(res_stds, 4),
     "MDA_Pct": mdas
 })
-tbl_path = Path("Day_Wise_Tasks/Day_16_Task_2/outputs/tables/day16_task2_horizon_metrics.csv")
-tbl_path.parent.mkdir(parents=True, exist_ok=True)
+tbl_path = TBL_DIR / "day16_task2_horizon_metrics.csv"
 df_h_decomp.to_csv(tbl_path, index=False)
-print("Saved horizon decomposition table to:", tbl_path)
+print("Saved horizon decomposition table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]
 # ## 8. Horizon Quality Gate Assertion
