@@ -1,4 +1,4 @@
-# 🌊 Day 03: Metric Strategy & Evaluation Formulation
+# Day 03: Metric Strategy & Evaluation Formulation
 - **Date:** 22 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Deliverable:** Mathematical formulation of evaluation metrics, imbalance penalties, and temporal forecasting loss functions.

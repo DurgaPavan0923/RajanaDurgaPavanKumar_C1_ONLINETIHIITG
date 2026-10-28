@@ -1,0 +1,5 @@
+Rule_ID,Policy,Enforcement
+GOV_01,Raw Data Immutability,Read-Only Permissions; SHA-256 Digest Verification
+GOV_02,Chronological Partitioning,Strict Temporal Ordering (Train < Val < Test)
+GOV_03,Test Lockbox Quarantine,Zero Access Until Final Unblinding
+GOV_04,Deterministic Seed Control,Global Seed 42 Across All Stochastic Stages

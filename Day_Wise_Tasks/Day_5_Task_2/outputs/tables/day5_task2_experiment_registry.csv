@@ -1,0 +1,6 @@
+run_id,model_family,hyperparameters,val_pr_auc,val_roc_auc,val_brier,status
+EXP_001,Persistence Baseline,None,0.392,0.5,0.25,BASELINE
+EXP_002,Ridge Classifier,alpha=1.0,0.445,0.582,0.241,BENCHMARK
+EXP_003,Random Forest,"n_estimators=100, max_depth=8",0.581,0.674,0.219,CANDIDATE
+EXP_004,Tuned Random Forest,"n_estimators=150, max_depth=10",0.595,0.688,0.215,CHAMPION
+EXP_005,XGBoost Classifier,"n_estimators=100, lr=0.05",0.578,0.669,0.222,CHALLENGER

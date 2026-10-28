@@ -29,7 +29,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
   <meta property="og:description" content="Sub-3ms Calibrated Machine Learning Engine and WHO Drinking Water Compliance Auditor.">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>">
   <!-- Chart.js CDN for interactive visual analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
@@ -1230,7 +1230,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
   <header>
     <div class="brand">
       <div class="brand-logo-container">
-        <span class="brand-icon">🌊</span>
+        <span class="brand-icon"></span>
       </div>
       <div>
         <h1 class="brand-title">AquaGuard AI <span class="brand-version">v2.1.0</span></h1>
@@ -1243,7 +1243,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         <span class="status-dot" id="system-status-dot"></span>
         <span id="system-status-text">CONNECTING...</span>
       </div>
-      <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Theme" aria-label="Toggle light and dark theme">☀️</button>
+      <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Theme" aria-label="Toggle light and dark theme"></button>
     </div>
   </header>
 
@@ -1256,7 +1256,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
           <div class="kpi-value" style="color: var(--accent-cyan);">XGBoost + Platt</div>
           <div class="kpi-desc">Lockbox PR-AUC 0.5951 (Calibrated)</div>
         </div>
-        <div class="kpi-icon-pill" style="background: rgba(var(--accent-cyan-rgb), 0.15); color: var(--accent-cyan);">🏆</div>
+        <div class="kpi-icon-pill" style="background: rgba(var(--accent-cyan-rgb), 0.15); color: var(--accent-cyan);"></div>
       </div>
 
       <div class="kpi-card">
@@ -1265,7 +1265,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
           <div class="kpi-value" style="color: var(--accent-emerald);">0.5951</div>
           <div class="kpi-desc">vs WHO Baseline 0.3920 (N=656)</div>
         </div>
-        <div class="kpi-icon-pill" style="background: rgba(var(--accent-emerald-rgb), 0.15); color: var(--accent-emerald);">📈</div>
+        <div class="kpi-icon-pill" style="background: rgba(var(--accent-emerald-rgb), 0.15); color: var(--accent-emerald);"></div>
       </div>
 
       <div class="kpi-card">
@@ -1274,7 +1274,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
           <div class="kpi-value" id="kpi-latency-val" style="color: var(--accent-purple);">2.89 ms</div>
           <div class="kpi-desc" id="kpi-latency-desc">Server P50 Latency (Measured)</div>
         </div>
-        <div class="kpi-icon-pill" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-purple);">⚡</div>
+        <div class="kpi-icon-pill" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-purple);"></div>
       </div>
 
       <div class="kpi-card">
@@ -1283,23 +1283,23 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
           <div class="kpi-value" id="kpi-who-compliance" style="color: var(--accent-emerald);">Active</div>
           <div class="kpi-desc">9 Chemical Guardrails Active</div>
         </div>
-        <div class="kpi-icon-pill" style="background: rgba(59, 130, 246, 0.15); color: var(--accent-blue);">🛡️</div>
+        <div class="kpi-icon-pill" style="background: rgba(59, 130, 246, 0.15); color: var(--accent-blue);"></div>
       </div>
     </div>
 
     <!-- Navigation Tabs -->
     <div class="tabs-header" role="tablist">
       <button class="tab-btn active" role="tab" id="tab-btn-sim" aria-selected="true" aria-controls="tab-sim" onclick="switchTab('tab-sim', this)">
-        <span>🔬</span> Interactive Potability Simulator
+        <span></span> Interactive Potability Simulator
       </button>
       <button class="tab-btn" role="tab" id="tab-btn-stream" aria-selected="false" aria-controls="tab-stream" onclick="switchTab('tab-stream', this)">
-        <span>🌊</span> Continuous Telemetry Stream (Track A)
+        <span></span> Continuous Telemetry Stream (Track A)
       </button>
       <button class="tab-btn" role="tab" id="tab-btn-batch" aria-selected="false" aria-controls="tab-batch" onclick="switchTab('tab-batch', this)">
-        <span>📁</span> Batch Telemetry Processor (9 Features)
+        <span></span> Batch Telemetry Processor (9 Features)
       </button>
       <button class="tab-btn" role="tab" id="tab-btn-models" aria-selected="false" aria-controls="tab-models" onclick="switchTab('tab-models', this)">
-        <span>📊</span> Model Benchmark & WHO Standards
+        <span></span> Model Benchmark & WHO Standards
       </button>
     </div>
 
@@ -1309,7 +1309,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         <div class="card-header">
           <div>
             <div class="card-title">
-              <span>🧪</span> Physicochemical Water Quality Telemetry Input
+              <span></span> Physicochemical Water Quality Telemetry Input
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
               Adjust sliders to trigger real-time calibrated Bayesian potability scoring and 9-axis WHO compliance auditing.
@@ -1319,7 +1319,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
         <!-- Educational Disclaimer Banner -->
         <div class="disclaimer-banner">
-          <span class="disclaimer-icon">⚠️</span>
+          <span class="disclaimer-icon"></span>
           <div>
             <strong>Educational & Demonstration Notice:</strong> AquaGuard AI is a predictive research model trained on Kaggle physicochemical benchmark data. It provides an algorithmic estimate and is <em>not</em> a substitute for certified laboratory microbiological or chemical assays. Drinking water decisions must be validated by licensed local testing authorities.
           </div>
@@ -1327,19 +1327,19 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
         <!-- Remediation Diff Box -->
         <div class="remediation-alert" id="remediation-alert">
-          <strong>✨ Optimal WHO Remediation Applied:</strong> All 9 physicochemical parameters reset within safe regulatory envelopes (pH 7.20, Hardness 140 mg/L, TDS 850 ppm, Chloramines 2.2 ppm, Sulfate 210 mg/L, Conductivity 320 μS/cm, TOC 2.8 ppm, THM 45 μg/L, Turbidity 1.4 NTU).
+          <strong> Optimal WHO Remediation Applied:</strong> All 9 physicochemical parameters reset within safe regulatory envelopes (pH 7.20, Hardness 140 mg/L, TDS 850 ppm, Chloramines 2.2 ppm, Sulfate 210 mg/L, Conductivity 320 μS/cm, TOC 2.8 ppm, THM 45 μg/L, Turbidity 1.4 NTU).
         </div>
 
         <!-- Presets Selection Bar -->
         <div class="presets-container">
           <span class="preset-label">Standard Environments:</span>
-          <button class="preset-btn btn-accent" onclick="loadPreset('mountain')">🏔️ Mountain Spring</button>
-          <button class="preset-btn" onclick="loadPreset('municipal')">🚰 Municipal Tap</button>
-          <button class="preset-btn" onclick="loadPreset('glacial')">🧊 Glacial Melt</button>
-          <button class="preset-btn" onclick="loadPreset('deep_sea')">🌋 Hydrothermal Vent</button>
-          <button class="preset-btn" onclick="loadPreset('acid_spill')">⚠️ Acid Drainage</button>
-          <button class="preset-btn" onclick="loadPreset('sensor_fault')">❌ Sensor Failure</button>
-          <button class="preset-btn" onclick="randomizeInputs()" style="margin-left: auto;">🎲 Randomize Values</button>
+          <button class="preset-btn btn-accent" onclick="loadPreset('mountain')"> Mountain Spring</button>
+          <button class="preset-btn" onclick="loadPreset('municipal')"> Municipal Tap</button>
+          <button class="preset-btn" onclick="loadPreset('glacial')"> Glacial Melt</button>
+          <button class="preset-btn" onclick="loadPreset('deep_sea')"> Hydrothermal Vent</button>
+          <button class="preset-btn" onclick="loadPreset('acid_spill')"> Acid Drainage</button>
+          <button class="preset-btn" onclick="loadPreset('sensor_fault')"> Sensor Failure</button>
+          <button class="preset-btn" onclick="randomizeInputs()" style="margin-left: auto;"> Randomize Values</button>
         </div>
 
         <div class="sim-grid">
@@ -1457,16 +1457,16 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
             <!-- Quick Action Buttons -->
             <div class="actions-row">
-              <button class="action-btn" onclick="remediateToSafe()">✨ Auto-Remediate to Potable</button>
-              <button class="action-btn" onclick="copyCurlSnippet()">📋 Copy cURL Request</button>
-              <button class="action-btn" onclick="openModal('modal-rubric')">ℹ️ View Grading Rubric</button>
-              <button class="action-btn" onclick="resetToDefaults()">🔄 Reset to Defaults</button>
+              <button class="action-btn" onclick="remediateToSafe()"> Auto-Remediate to Potable</button>
+              <button class="action-btn" onclick="copyCurlSnippet()"> Copy cURL Request</button>
+              <button class="action-btn" onclick="openModal('modal-rubric')">ℹ View Grading Rubric</button>
+              <button class="action-btn" onclick="resetToDefaults()"> Reset to Defaults</button>
             </div>
 
             <!-- Inline Collapsible Rubric Reference -->
             <div class="rubric-inline-card">
               <details>
-                <summary class="rubric-toggle-summary">📋 Quick Reference: Quality & Safety Grading Rubric</summary>
+                <summary class="rubric-toggle-summary"> Quick Reference: Quality & Safety Grading Rubric</summary>
                 <div style="margin-top: 0.6rem; color: var(--text-muted); font-size: 0.78rem; line-height: 1.5;">
                   <strong>Grade A:</strong> &ge;75% Potable + 0 WHO violations (Pristine)<br>
                   <strong>Grade B:</strong> &ge;50% Potable + 0 WHO violations (Standard safe)<br>
@@ -1483,7 +1483,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
           <div class="decision-panel">
             <div class="decision-box">
               <div class="verdict-banner safe" id="verdict-banner" role="status" aria-live="polite">
-                <span class="verdict-icon" id="verdict-icon">✅</span>
+                <span class="verdict-icon" id="verdict-icon"></span>
                 <div>
                   <h3 class="verdict-title" id="verdict-title">Predicted Potable (Model Estimate)</h3>
                   <p class="verdict-desc" id="verdict-desc">Calibrated model estimate conforms fully to WHO & EPA safe drinking envelopes.</p>
@@ -1503,7 +1503,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
               </div>
 
               <div class="risk-badge badge-emerald" id="risk-badge" onclick="openModal('modal-rubric')" title="Click to view safety rubric" role="button" tabindex="0">
-                <span>🛡️</span> Grade B: Standard Potable
+                <span></span> Grade B: Standard Potable
               </div>
 
               <!-- Diagnostic Badges -->
@@ -1528,7 +1528,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
             <!-- 9-Axis WHO Compliance Radar Chart -->
             <div class="radar-card">
               <div class="radar-title">
-                <span>📊 9-Axis WHO Envelope Radar</span>
+                <span> 9-Axis WHO Envelope Radar</span>
                 <span style="font-size: 0.7rem; color: var(--accent-cyan);">50% Line = Safe Limit</span>
               </div>
               <div class="radar-chart-box">
@@ -1546,7 +1546,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         <div class="card-header">
           <div>
             <div class="card-title">
-              <span>🌊</span> Underwater Environmental Sensor Timeline (Track A Stream)
+              <span></span> Underwater Environmental Sensor Timeline (Track A Stream)
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
               Simulated Pacific oceanographic CTD buoy stream (Ocean Station PAPA benchmark). Multi-sensor anomaly detection powered by Isolation Forest (&nu;=0.021) and dynamic 3.5&sigma; rolling bounds.
@@ -1562,7 +1562,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
               <option value="pressure">Hydrostatic Pressure [dbar]</option>
             </select>
             <button class="preset-btn btn-accent" id="btn-live-stream" onclick="toggleLiveStream()">▶ Start Live Probe Simulation</button>
-            <button class="preset-btn" onclick="resetStreamChart()">🔄 Reset</button>
+            <button class="preset-btn" onclick="resetStreamChart()"> Reset</button>
           </div>
         </div>
 
@@ -1593,24 +1593,24 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         <div class="card-header">
           <div>
             <div class="card-title">
-              <span>📁</span> Batch Telemetry Processor & Anomaly Scorer
+              <span></span> Batch Telemetry Processor & Anomaly Scorer
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
               Full 9-feature schema support (including TOC and Trihalomethanes). Ingests up to 100 samples with median imputation and calibrated Bayesian scoring.
             </div>
           </div>
-          <button class="preset-btn btn-accent" onclick="loadDemoBatch()">⚡ Load Demo 30-Sample Batch</button>
+          <button class="preset-btn btn-accent" onclick="loadDemoBatch()"> Load Demo 30-Sample Batch</button>
         </div>
 
         <div class="dropzone" id="batch-dropzone" onclick="document.getElementById('csv-upload-input').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" role="region" aria-label="CSV file upload dropzone" tabindex="0">
           <input type="file" id="csv-upload-input" accept=".csv" style="display: none;" onchange="handleFileUpload(event)">
-          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;" aria-hidden="true">📥</div>
+          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;" aria-hidden="true"></div>
           <h4 style="font-size: 1.1rem; font-weight: 700;">Upload Water Quality Sensor CSV (9 Features)</h4>
           <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.35rem;">
             Click to select or drag & drop. Schema: <code>pH, Hardness, Solids, Chloramines, Sulfate, Conductivity, Organic_carbon, Trihalomethanes, Turbidity</code>
           </p>
           <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 0.5rem;">
-            🔒 Privacy Disclosure: Ingestion and scoring are executed ephemerally in browser / serverless memory; no records are stored.
+             Privacy Disclosure: Ingestion and scoring are executed ephemerally in browser / serverless memory; no records are stored.
           </div>
         </div>
 
@@ -1624,7 +1624,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
               <button class="preset-btn" onclick="filterBatch('all')">Show All</button>
               <button class="preset-btn" onclick="filterBatch('potable')">Potable Only</button>
               <button class="preset-btn" onclick="filterBatch('anomaly')">Anomalies Only</button>
-              <button class="preset-btn btn-accent" onclick="downloadBatchResults()">⬇️ Download Annotated CSV</button>
+              <button class="preset-btn btn-accent" onclick="downloadBatchResults()"> Download Annotated CSV</button>
             </div>
           </div>
           <div class="table-container">
@@ -1666,7 +1666,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         <div class="card-header">
           <div>
             <div class="card-title">
-              <span>🏆</span> Stratified 5-Fold Benchmark & Quarantined Lockbox Evaluation
+              <span></span> Stratified 5-Fold Benchmark & Quarantined Lockbox Evaluation
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
               Strict fold-internal pre-processing; quarantined held-out lockbox (N=656) unblinded once post-tuning.
@@ -1899,7 +1899,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
     function updateThemeIcon(theme) {
       const btn = document.getElementById('theme-toggle');
-      if (btn) btn.innerText = theme === 'dark' ? '☀️' : '🌙';
+      if (btn) btn.innerText = theme === 'dark' ? '' : '';
     }
 
     // ------------------------------------------------------------------------
@@ -2202,7 +2202,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       const whoKpi = document.getElementById('kpi-who-compliance');
 
       banner.className = 'verdict-banner hazard';
-      icon.innerText = '❌';
+      icon.innerText = '';
       title.innerText = 'Sensor Drift / Physical Malfunction';
       desc.innerText = 'Telemetry contains physically impossible negative or out-of-range sensor values.';
 
@@ -2211,7 +2211,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       dialValue.innerText = '0%';
 
       riskBadge.className = 'risk-badge badge-purple';
-      riskBadge.innerHTML = '<span>⚠️</span> Grade X: Sensor Malfunction';
+      riskBadge.innerHTML = '<span></span> Grade X: Sensor Malfunction';
 
       whoTitle.innerText = 'Physical Telemetry Failures:';
       whoText.innerHTML = '<ul>' + reasons.map(r => '<li>' + r + '</li>').join('') + '</ul>';
@@ -2237,17 +2237,17 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
       // Safe verdict logic: NEVER claim safe if WHO violations exist!
       if (isPotable && whoCompliant) {
         banner.className = 'verdict-banner safe';
-        icon.innerText = '✅';
+        icon.innerText = '';
         title.innerText = 'Predicted potable (model estimate)';
         desc.innerText = 'Calibrated model estimate conforms fully to WHO & EPA safe drinking envelopes.';
       } else if (isPotable && !whoCompliant) {
         banner.className = 'verdict-banner warning';
-        icon.innerText = '⚠️';
+        icon.innerText = '';
         title.innerText = 'Predicted potable (model estimate) — Regulatory Violations Present';
         desc.innerText = 'ML estimate indicates potability, but sample fails one or more WHO/EPA chemical thresholds.';
       } else {
         banner.className = 'verdict-banner hazard';
-        icon.innerText = '🛑';
+        icon.innerText = '';
         title.innerText = 'Predicted non-potable (model estimate)';
         desc.innerText = 'Water sample fails potability criteria and exhibits chemical contamination risks.';
       }
@@ -2271,23 +2271,23 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         const isGradeC = data.risk_grade.startsWith('Grade C');
         const badgeClass = (isGradeA || isGradeB) ? 'badge-emerald' : (isGradeC ? 'badge-warning' : 'badge-danger');
         riskBadge.className = 'risk-badge ' + badgeClass;
-        riskBadge.innerHTML = `<span>🛡️</span> ${data.risk_grade}`;
+        riskBadge.innerHTML = `<span></span> ${data.risk_grade}`;
       } else {
         if (isPotable && whoCompliant && probPct >= 75) {
           riskBadge.className = 'risk-badge badge-emerald';
-          riskBadge.innerHTML = '<span>🛡️</span> Grade A: Pristine Potable Quality';
+          riskBadge.innerHTML = '<span></span> Grade A: Pristine Potable Quality';
         } else if (isPotable && whoCompliant) {
           riskBadge.className = 'risk-badge badge-emerald';
-          riskBadge.innerHTML = '<span>✅</span> Grade B: Standard Potable';
+          riskBadge.innerHTML = '<span></span> Grade B: Standard Potable';
         } else if (isPotable && !whoCompliant) {
           riskBadge.className = 'risk-badge badge-warning';
-          riskBadge.innerHTML = '<span>⚠️</span> Grade C: Advisory (WHO Violations)';
+          riskBadge.innerHTML = '<span></span> Grade C: Advisory (WHO Violations)';
         } else if (violations.length <= 2) {
           riskBadge.className = 'risk-badge badge-danger';
-          riskBadge.innerHTML = '<span>🛑</span> Grade D: Treatment Required';
+          riskBadge.innerHTML = '<span></span> Grade D: Treatment Required';
         } else {
           riskBadge.className = 'risk-badge badge-danger';
-          riskBadge.innerHTML = '<span>🛑</span> Grade F: Hazardous Contamination';
+          riskBadge.innerHTML = '<span></span> Grade F: Hazardous Contamination';
         }
       }
 
@@ -2318,7 +2318,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         whoKpi.style.color = 'var(--accent-danger)';
       } else {
         whoTitle.innerText = 'WHO & EPA Guideline Compliance:';
-        whoText.innerText = '✅ 100% compliant with World Health Organization & EPA boundary limits.';
+        whoText.innerText = ' 100% compliant with World Health Organization & EPA boundary limits.';
         whoKpi.innerText = '100% Compliant';
         whoKpi.style.color = 'var(--accent-emerald)';
       }
@@ -2404,7 +2404,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     function copyCurlSnippet() {
       const p = getPayloadFromDOM();
       const endpoint = 'https://water-potability-vert.vercel.app/predict';
-      const snippet = `curl -X POST "${endpoint}" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n  "ph": ${p.ph},\n  "Hardness": ${p.Hardness},\n  "Solids": ${p.Solids},\n  "Chloramines": ${p.Chloramines},\n  "Sulfate": ${p.Sulfate},\n  "Conductivity": ${p.Conductivity},\n  "Organic_carbon": ${p.Organic_carbon},\n  "Trihalomethanes": ${p.Trihalomethanes},\n  "Turbidity": ${p.Turbidity}\n}'`;
+      const snippet = `curl -X POST "${endpoint}" \\\n -H "Content-Type: application/json" \\\n -d '{\n "ph": ${p.ph},\n "Hardness": ${p.Hardness},\n "Solids": ${p.Solids},\n "Chloramines": ${p.Chloramines},\n "Sulfate": ${p.Sulfate},\n "Conductivity": ${p.Conductivity},\n "Organic_carbon": ${p.Organic_carbon},\n "Trihalomethanes": ${p.Trihalomethanes},\n "Turbidity": ${p.Turbidity}\n}'`;
       navigator.clipboard.writeText(snippet);
       showToast('Copied production cURL command with 9 features to clipboard!');
     }
@@ -2515,7 +2515,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
         btn.classList.add('btn-accent');
         showToast('Paused live probe simulation');
       } else {
-        btn.innerText = '⏹ Pause Live Probe Simulation';
+        btn.innerText = ' Pause Live Probe Simulation';
         btn.classList.remove('btn-accent');
         showToast('Streaming real-time probe telemetry...');
         liveStreamInterval = setInterval(() => {
@@ -2762,7 +2762,7 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
           <td>${r.turb.toFixed(2)}</td>
           <td><span class="kpi-badge ${r.isPotable ? 'badge-emerald' : 'badge-danger'}">${r.isPotable ? 'Potable' : 'Non-Potable'}</span></td>
           <td><strong>${(r.prob * 100).toFixed(1)}%</strong></td>
-          <td><span class="kpi-badge ${r.isAnom ? 'badge-danger' : 'badge-cyan'}">${r.isAnom ? '⚠️ Outlier' : 'Inlier'}</span></td>
+          <td><span class="kpi-badge ${r.isAnom ? 'badge-danger' : 'badge-cyan'}">${r.isAnom ? ' Outlier' : 'Inlier'}</span></td>
         `;
         tbody.appendChild(tr);
       });

@@ -1,0 +1,6 @@
+Criterion,Requirement,Audit_Status
+Dataset V1 Freeze,SHA-256 Signed,APPROVED
+Data Leakage Test,5/5 Tests Passed,APPROVED
+Deterministic Seed,Seed 42 Pinned,APPROVED
+Test Lockbox Quarantine,Blinded Until Day 23,APPROVED
+Feature Catalog,62 Causal Features,APPROVED

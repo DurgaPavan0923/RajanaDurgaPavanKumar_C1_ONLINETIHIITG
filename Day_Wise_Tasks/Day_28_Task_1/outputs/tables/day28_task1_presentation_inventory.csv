@@ -1,0 +1,11 @@
+Slide_Num,Title,Topic
+1,Title & Executive Overview,Internship Context & Dual-Track Objective
+2,Problem Statement & Regulations,WHO / EPA Drinking Water Guidelines
+3,Dual-Track System Architecture,Decoupled Streaming vs Batch REST
+4,Data Governance & Zero Leakage,Chronological Walk-Forward 70/15/15 Split
+5,62 Causal Feature Engineering,Shift >= 1 Rolling Volatility & Lags
+6,Cross-Method Benchmarking,Leaderboard: Persistence vs Ridge vs RF vs XGBoost
+7,Unblinded Test Lockbox Performance,"PR-AUC = 0.5951, Brier = 0.2154"
+8,Public Health Error Analysis,False-Negative Hazard Mitigation
+9,Production Cloud Deployment,Live Vercel FastAPI Endpoint & SLA
+10,Conclusion & Programmatic Learnings,Engineering Rigor & Review Sign-Off

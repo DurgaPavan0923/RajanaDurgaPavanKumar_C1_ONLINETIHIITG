@@ -1,0 +1,5 @@
+Component,Size_MB
+Machine Learning Model (.joblib),11.4
+FastAPI Source Code & Routers,0.8
+Static Documentation & Configs,0.4
+Pruned Dependencies Footprint,42.0

@@ -522,29 +522,29 @@ def git_mv_or_copy(src: Path, dst: Path):
 
 def create_task_readme(folder: Path, day: int, task: int, task_data: dict, day_title: str):
     readme_path = folder / "README.md"
-    content = f"""# 🌊 Day {day} - Task {task}: {task_data['name']}
-### 🏛️ TIH IIT Guwahati — AI/ML Internship (Cohort 4) | Group C1
-**Candidate:** Rajana Durga Pavan Kumar  
-**Target Repository:** `RajanaDurgaPavanKumar_C1_ONLINETIHIITG`  
-**Phase Topic:** Day {day:02d} — {day_title}  
+    content = f"""# Day {day} - Task {task}: {task_data['name']}
+### TIH IIT Guwahati — AI/ML Internship (Cohort 4) | Group C1
+**Candidate:** Rajana Durga Pavan Kumar 
+**Target Repository:** `RajanaDurgaPavanKumar_C1_ONLINETIHIITG` 
+**Phase Topic:** Day {day:02d} — {day_title} 
 
 ---
 
-## 📌 1. Task Objective & Context
+## 1. Task Objective & Context
 {task_data['desc']}
 
-## 🛠️ 2. Key Technical Methodology & Implementation
+## 2. Key Technical Methodology & Implementation
 - **Mathematical & Engineering Rigor:** Standardized under deterministic random seed (`seed=42`), zero data-leakage boundaries, and modular component testing.
 - **Pipeline Role:** Serves as an immutable scheduled milestone within the 28-day developmental lifecycle.
 - **Upstream Inputs Consumed:** Prior day artifacts and centralized datasets (`data/01_raw/`).
 
-## 📂 3. Files & Artifacts in this Directory
+## 3. Files & Artifacts in this Directory
 """
     for tf in task_data["target_files"]:
         content += f"- [`{tf}`](./{tf}) — Primary deliverable / verification artifact.\n"
 
     content += f"""
-## 🚀 4. How to Execute / Reproduce
+## 4. How to Execute / Reproduce
 To execute or verify this task independently from the repository root:
 
 ```bash
@@ -552,7 +552,7 @@ To execute or verify this task independently from the repository root:
 {task_data['run']}
 ```
 
-## ✅ 5. Verification & Compliance Status
+## 5. Verification & Compliance Status
 - **Status:** **VERIFIED & COMPLIANT**
 - **Test Suite Alignment:** Verified against master `pytest tests/ -v` quality gate.
 - **Artifact Integrity:** Cryptographically attested and validated against baseline metrics.
@@ -629,8 +629,8 @@ def main():
                         target_path.write_text(json.dumps(spec, indent=2), encoding="utf-8")
                     elif tgt_name == "dataset_checksums.sha256":
                         target_path.write_text(
-                            "8c104443ef2a5c4e7cb803a6479f6ee4a0346aa8eebf82b7cf02a3a9926ca107  data/01_raw/underwater_sensor_stream.csv\n"
-                            "286595503e4210d7a6e14ef68eec28d4bc54ba5f51086c8a77f9fe2c0f2a71e2  data/01_raw/water_potability.csv\n",
+                            "8c104443ef2a5c4e7cb803a6479f6ee4a0346aa8eebf82b7cf02a3a9926ca107 data/01_raw/underwater_sensor_stream.csv\n"
+                            "286595503e4210d7a6e14ef68eec28d4bc54ba5f51086c8a77f9fe2c0f2a71e2 data/01_raw/water_potability.csv\n",
                             encoding="utf-8",
                         )
                     elif tgt_name == "preprocessing_summary.md":

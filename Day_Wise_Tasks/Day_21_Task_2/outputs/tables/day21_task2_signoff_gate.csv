@@ -1,0 +1,6 @@
+Requirement,Observed,Status
+PR-AUC Benchmark > 0.58,0.5951,APPROVED
+Brier Calibration < 0.22,0.2154,APPROVED
+Forecasting MAE < 0.25,0.2291,APPROVED
+Inference Latency < 10ms,2.89ms,APPROVED
+Deterministic Seed Control,Seed 42 Pinned,APPROVED

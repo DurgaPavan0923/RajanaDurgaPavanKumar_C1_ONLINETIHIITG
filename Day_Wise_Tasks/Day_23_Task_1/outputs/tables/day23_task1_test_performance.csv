@@ -1,0 +1,5 @@
+Metric,Target_Goal,Final_Test_Result,Status
+PR-AUC,> 0.58,0.9351,GOAL_ACHIEVED
+ROC-AUC,> 0.65,0.9263,GOAL_ACHIEVED
+Brier Score,< 0.22,0.1889,GOAL_ACHIEVED
+Accuracy,> 0.65,0.687,GOAL_ACHIEVED

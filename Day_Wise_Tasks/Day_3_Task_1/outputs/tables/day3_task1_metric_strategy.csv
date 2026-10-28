@@ -1,0 +1,4 @@
+Metric,Target_Role,Benchmark_Goal,Baseline
+PR-AUC,Primary Model Selection,> 0.58,0.390
+ROC-AUC,Secondary Discriminative,> 0.65,0.500
+Brier Score,Probability Calibration,< 0.22,0.250

@@ -1,4 +1,4 @@
-# 🌊 Day 02: Domain Research, Sensor Specifications & WHO Standards
+# Day 02: Domain Research, Sensor Specifications & WHO Standards
 - **Date:** 21 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Deliverable:** Physicochemical domain range catalog, sensor calibration standards, and WHO drinking water guideline envelopes.

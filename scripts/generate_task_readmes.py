@@ -5,8 +5,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-TEMPLATE = """# 🌊 Day {day} - Task {task}: {title}
-### 🏛️ Technology Innovation Hub (TIH), IIT Guwahati — AI/ML Internship (Cohort 4)
+TEMPLATE = """# Day {day} - Task {task}: {title}
+### Technology Innovation Hub (TIH), IIT Guwahati — AI/ML Internship (Cohort 4)
 - **Candidate:** Rajana Durga Pavan Kumar
 - **Group:** C1
 - **Target Repository:** `RajanaDurgaPavanKumar_C1_ONLINETIHIITG`
@@ -14,25 +14,25 @@ TEMPLATE = """# 🌊 Day {day} - Task {task}: {title}
 
 ---
 
-## 📌 1. Objective & Operational Scope
+## 1. Objective & Operational Scope
 {objective}
 
-## 🛠️ 2. Methodology & Safeguards
+## 2. Methodology & Safeguards
 - **Reproducibility Guarantee:** Random seed `42` pinned across NumPy, Python, Scikit-learn, and XGBoost.
 - **Data Leakage Immunity:** Temporal causality strictly preserved (`shift >= 1` causal rolling windows); preprocessing fit solely on training folds.
 - **Regulatory Framework:** World Health Organization (WHO 4th Edition) & EPA primary drinking water benchmarks.
 
-## 📂 3. Files in this Directory
+## 3. Files in this Directory
 {file_list}
 
-## 🚀 4. How to Run / Verify
+## 4. How to Run / Verify
 Execute the following verification command from the repository root:
 
 ```bash
 {run_cmd}
 ```
 
-## ✅ 5. Output Artifacts & Verification Status
+## 5. Output Artifacts & Verification Status
 - **Audit Verdict:** **PASSED & VERIFIED**
 - **Test Integrity:** Monitored and validated via `pytest tests/ -v`.
 """

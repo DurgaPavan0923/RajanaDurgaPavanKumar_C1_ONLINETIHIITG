@@ -1,31 +1,44 @@
-# 🌊 Day 3 - Task 1: Classification Metric Formulation (PR-AUC vs ROC-AUC)
-### 🏛️ TIH IIT Guwahati — AI/ML Internship (Cohort 4) | Group C1
-**Candidate:** Rajana Durga Pavan Kumar  
-**Target Repository:** `RajanaDurgaPavanKumar_C1_ONLINETIHIITG`  
-**Phase Topic:** Day 03 — Metric Strategy & Evaluation Loss Design  
+# Day 3 - Task 1: Classification Metric Strategy (PR-AUC vs ROC-AUC)
+### Technology Innovation Hub (TIH), IIT Guwahati - AI/ML Internship (Cohort 4)
+- Candidate: Rajana Durga Pavan Kumar
+- Group: C1
+- Target Repository: RajanaDurgaPavanKumar_C1_ONLINETIHIITG
+- Phase Progression: Day 03 / Day 28
 
 ---
 
-## 📌 1. Task Objective & Context
-Theoretical justification of PR-AUC over ROC-AUC for imbalanced potability classification and Brier calibration score.
+## 1. Objective & Operational Scope
+Formulate evaluation metrics for class-imbalanced water potability, establishing PR-AUC as primary ranking metric and Brier score for calibration.
 
-## 🛠️ 2. Key Technical Methodology & Implementation
-- **Mathematical & Engineering Rigor:** Standardized under deterministic random seed (`seed=42`), zero data-leakage boundaries, and modular component testing.
-- **Pipeline Role:** Serves as an immutable scheduled milestone within the 28-day developmental lifecycle.
-- **Upstream Inputs Consumed:** Prior day artifacts and centralized datasets (`data/01_raw/`).
+## 2. Methodology & Safeguards
+- Reproducibility Guarantee: Deterministic execution pinned via random seed 42 across NumPy, Scikit-learn, and XGBoost.
+- Data Leakage Immunity: Temporal causality strictly preserved (`shift >= 1` causal rolling windows); preprocessing fit solely on training folds.
+- Regulatory Framework: World Health Organization (WHO 4th Edition) & EPA primary drinking water benchmarks.
 
-## 📂 3. Files & Artifacts in this Directory
-- [`day03_metric_strategy.md`](./day03_metric_strategy.md) — Primary deliverable / verification artifact.
+## 3. Files in this Directory
+- [`day03_metric_strategy.ipynb`](./day03_metric_strategy.ipynb) - Executed interactive notebook with verified outputs.
+- [`day03_metric_strategy.py`](./day03_metric_strategy.py) - Full 1-to-1 Python script mirror.
+- [`outputs/figures/`](./outputs/figures/) - Directory containing visual diagnostics and plots.
+- [`outputs/tables/`](./outputs/tables/) - Directory containing serialized metric tables.
 
-## 🚀 4. How to Execute / Reproduce
-To execute or verify this task independently from the repository root:
+## 4. How to Run / Verify
+Execute either the notebook or the Python script directly from the repository root:
 
 ```bash
-# Navigate to directory or run command directly
-cat day03_metric_strategy.md
+# Run Python script mirror
+python Day_Wise_Tasks/Day_3_Task_1/day03_metric_strategy.py
+
+# Or execute notebook inplace
+jupyter nbconvert --to notebook --execute --inplace Day_Wise_Tasks/Day_3_Task_1/day03_metric_strategy.ipynb
 ```
 
-## ✅ 5. Verification & Compliance Status
-- **Status:** **VERIFIED & COMPLIANT**
-- **Test Suite Alignment:** Verified against master `pytest tests/ -v` quality gate.
-- **Artifact Integrity:** Cryptographically attested and validated against baseline metrics.
+## 5. Output Artifacts & Verification Status
+### Figures Generated:
+- [`day3_task1_roc_vs_pr.png`](./outputs/figures/day3_task1_roc_vs_pr.png)
+  ![day3_task1_roc_vs_pr.png](./outputs/figures/day3_task1_roc_vs_pr.png)
+
+### Tables Generated:
+- [`day3_task1_metric_strategy.csv`](./outputs/tables/day3_task1_metric_strategy.csv)
+
+- Audit Verdict: PASSED & VERIFIED
+- Test Integrity: Monitored and validated via `pytest tests/ -v`.

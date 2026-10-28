@@ -1,0 +1,4 @@
+Parameter,Missing_Count,Potability_When_Present,Potability_When_Missing
+ph,491,0.3953,0.3605
+Sulfate,781,0.3948,0.3752
+Trihalomethanes,162,0.393,0.389

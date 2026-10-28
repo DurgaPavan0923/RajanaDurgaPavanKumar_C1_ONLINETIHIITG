@@ -9,11 +9,11 @@ import streamlit as st
 # Configure dashboard page
 st.set_page_config(
     page_title="Water Environmental Monitor & Potability AI",
-    page_icon="🌊",
+    page_icon="",
     layout="wide",
 )
 
-st.title("🌊 Underwater Environmental Monitoring & Water Potability AI")
+st.title(" Underwater Environmental Monitoring & Water Potability AI")
 st.markdown(
     "**Acyntra AIML Project Cadre** | Real-time Sensor Telemetry, Anomaly Detection & Potability Risk Assessment"
 )
@@ -25,7 +25,7 @@ track_choice = st.sidebar.radio(
 )
 
 if track_choice == "Track B: Water Potability (Tabular)":
-    st.header("💧 Track B: Physicochemical Potability Assessment & Outlier Detection")
+    st.header(" Track B: Physicochemical Potability Assessment & Outlier Detection")
 
     data_file = Path("data/01_raw/water_potability.csv")
     if data_file.exists():
@@ -91,12 +91,12 @@ if track_choice == "Track B: Water Potability (Tabular)":
                 with res_col1:
                     if who_violations:
                         st.error(
-                            f"❌ WHO Regulatory Non-Compliant ({len(who_violations)} violations)"
+                            f" WHO Regulatory Non-Compliant ({len(who_violations)} violations)"
                         )
                         for v in who_violations:
                             st.write(f"- {v}")
                     else:
-                        st.success("✅ Fully Compliant with WHO Standards")
+                        st.success(" Fully Compliant with WHO Standards")
 
                 with res_col2:
                     model_path = Path("models/production/water_potability_pipeline_v1.joblib")
@@ -113,7 +113,7 @@ if track_choice == "Track B: Water Potability (Tabular)":
         st.error(f"Dataset not found at {data_file}. Verify data/01_raw directory.")
 
 else:
-    st.header("🌊 Track A: Underwater Environmental Continuous Stream Monitoring")
+    st.header(" Track A: Underwater Environmental Continuous Stream Monitoring")
     stream_file = Path("data/01_raw/underwater_sensor_stream.csv")
     if stream_file.exists():
         df_stream = pd.read_csv(stream_file)

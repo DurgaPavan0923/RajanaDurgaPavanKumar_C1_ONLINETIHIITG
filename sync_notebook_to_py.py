@@ -1,0 +1,91 @@
+"""Script to auto-generate and synchronize .py mirrors from all .ipynb notebooks in Day_Wise_Tasks."""
+
+import os
+import sys
+from pathlib import Path
+
+try:
+    import nbformat
+except ImportError:
+    print("Error: nbformat is required. Install with pip install nbformat.")
+    sys.exit(1)
+
+ROOT = Path(__file__).resolve().parent
+TASKS_DIR = ROOT / "Day_Wise_Tasks"
+
+
+def notebook_to_py(nb_path: Path) -> Path:
+    nb_path = nb_path.resolve()
+    with open(nb_path, "r", encoding="utf-8") as f:
+        nb = nbformat.read(f, as_version=4)
+
+    py_name = nb_path.stem + ".py"
+    py_path = nb_path.parent / py_name
+
+    lines = []
+    lines.append(f'"""Automated Python script mirror for {nb_path.name}.')
+    lines.append("Generated with exact 1-to-1 step parity.")
+    lines.append('"""\n')
+
+    for cell_idx, cell in enumerate(nb.cells):
+        if cell.cell_type == "markdown":
+            lines.append("# %% [markdown]")
+            for src_line in cell.source.splitlines():
+                lines.append(f"# {src_line}" if src_line else "#")
+            lines.append("")
+        elif cell.cell_type == "code":
+            lines.append(f"# %% [step_{cell_idx}]")
+            # Check for embedded outputs to tag
+            code_text = cell.source.strip()
+            if "savefig(" in code_text:
+                for cl in code_text.splitlines():
+                    if "savefig(" in cl:
+                        parts = cl.split("savefig(")
+                        if len(parts) > 1:
+                            sub = parts[1].split(",")[0].strip("\"' ")
+                            lines.append(f"# Output Figure: {sub}")
+            if "to_csv(" in code_text:
+                for cl in code_text.splitlines():
+                    if "to_csv(" in cl:
+                        parts = cl.split("to_csv(")
+                        if len(parts) > 1:
+                            sub = parts[1].split(",")[0].strip("\"' ")
+                            lines.append(f"# Output Table: {sub}")
+
+            lines.append(code_text)
+            lines.append("")
+
+    content = "\n".join(lines) + "\n"
+    py_path.write_text(content, encoding="utf-8")
+    try:
+        rel = py_path.relative_to(ROOT)
+    except Exception:
+        rel = py_path.name
+    print(f"Synced mirror: {rel}")
+    return py_path
+
+
+def main():
+    if not TASKS_DIR.exists():
+        print(f"Directory {TASKS_DIR} does not exist!")
+        sys.exit(1)
+
+    notebooks = sorted(list(TASKS_DIR.rglob("*.ipynb")))
+    print(f"Found {len(notebooks)} notebooks to synchronize into Python mirrors...")
+
+    synced = 0
+    for nb in notebooks:
+        try:
+            notebook_to_py(nb)
+            synced += 1
+        except Exception as e:
+            print(f"FAILED to sync {nb}: {e}")
+            sys.exit(1)
+
+    print("=" * 60)
+    print(f"Parity Complete: All {synced} notebooks have 1-to-1 matching Python scripts.")
+    print("=" * 60)
+
+
+if __name__ == "__main__":
+    main()

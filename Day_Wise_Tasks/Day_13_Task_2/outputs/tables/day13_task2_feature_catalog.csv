@@ -1,0 +1,5 @@
+Name,Category,Formula,Unit,VIF,Importance_Score
+ph_lag_1,Temporal_Lags,ph[t-1],pH,2.1,0.0822
+Solids_roll_mean_6,Rolling_Statistics,mean(Solids[t-6:t-1]),ppm,3.4,0.5273
+sulfate_solids_ratio,Domain_Ratios,Sulfate / Solids,ratio,1.8,0.2306
+ph_who_delta,Domain_Ratios,|ph - 7.0|,delta_pH,1.2,0.1599

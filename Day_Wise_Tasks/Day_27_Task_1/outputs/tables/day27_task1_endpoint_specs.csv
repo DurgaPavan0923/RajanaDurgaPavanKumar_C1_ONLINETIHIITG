@@ -1,0 +1,4 @@
+Route,Method,Purpose
+/api/ping,GET,Cold-Start Probe & Health Check
+/api/predict,POST,Physicochemical Potability Prediction
+/docs,GET,OpenAPI Interactive Swagger UI

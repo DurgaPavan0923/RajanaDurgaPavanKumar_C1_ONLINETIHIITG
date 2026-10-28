@@ -1,0 +1,7 @@
+Package,Version
+Python,3.14.7
+NumPy,2.5.4
+Pandas,3.0.6
+Scikit-Learn,1.9.1
+XGBoost,3.4.1
+SciPy,1.18.1

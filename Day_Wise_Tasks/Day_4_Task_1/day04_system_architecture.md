@@ -1,4 +1,4 @@
-# 🌊 Day 04: System Architecture & Pipeline Design
+# Day 04: System Architecture & Pipeline Design
 - **Date:** 23 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Deliverable:** Dual-track pipeline architecture, DAG contracts, and component interface definitions.

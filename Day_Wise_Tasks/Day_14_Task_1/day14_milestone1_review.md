@@ -1,4 +1,4 @@
-# 🌊 Day 14: Milestone 1 Review — Data Ingestion, Quality & Features
+# Day 14: Milestone 1 Review — Data Ingestion, Quality & Features
 - **Date:** 02 Sep 2026
 - **Phase:** Phase 2: Feature Engineering & Preprocessing Sign-off
 - **Deliverable:** Formal audit sign-off covering Data Quality, Preprocessing, and Causal Feature Generation.

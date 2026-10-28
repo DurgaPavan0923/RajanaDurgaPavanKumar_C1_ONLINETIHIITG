@@ -1,0 +1,2 @@
+Model,Contamination,N_Estimators,Flagged_Anomalies,Min_Score
+Isolation Forest,0.02,100,15,-0.2724

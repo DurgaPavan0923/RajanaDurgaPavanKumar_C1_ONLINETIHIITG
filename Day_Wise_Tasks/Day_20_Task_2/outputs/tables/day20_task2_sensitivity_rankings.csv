@@ -1,0 +1,10 @@
+Ablated_Feature,Ablated_PR_AUC,Delta_PR_AUC,Sensitivity_Index,Rank,Calibration_Tier
+ph,0.5482,-0.0469,100.0,1,Tier_1_Critical
+Sulfate,0.551,-0.0441,94.0,2,Tier_1_Critical
+Chloramines,0.5623,-0.0328,69.9,3,Tier_1_Critical
+Hardness,0.5745,-0.0206,43.9,4,Tier_2_Standard
+Solids,0.578,-0.0171,36.5,5,Tier_2_Standard
+Conductivity,0.5841,-0.011,23.5,6,Tier_2_Standard
+Organic_carbon,0.5872,-0.0079,16.8,7,Tier_2_Standard
+Trihalomethanes,0.589,-0.0061,13.0,8,Tier_2_Standard
+Turbidity,0.5912,-0.0039,8.3,9,Tier_2_Standard

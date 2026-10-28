@@ -1,0 +1,10 @@
+Ablated_Feature,Ablated_PR_AUC,Delta_PR_AUC
+ph,0.5482,-0.0469
+Sulfate,0.551,-0.0441
+Chloramines,0.5623,-0.0328
+Hardness,0.5745,-0.0206
+Solids,0.578,-0.0171
+Conductivity,0.5841,-0.011
+Organic_carbon,0.5872,-0.0079
+Trihalomethanes,0.589,-0.0061
+Turbidity,0.5912,-0.0039

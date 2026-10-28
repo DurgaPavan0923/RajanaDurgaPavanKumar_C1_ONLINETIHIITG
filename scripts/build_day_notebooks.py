@@ -53,7 +53,7 @@ def main():
     # Day 07: Initial Inspection
     # =========================================================================
     d7_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 07: Initial Data Ingestion & Integrity Audit
+        make_cell("markdown", """# AquaGuard AI — Day 07: Initial Data Ingestion & Integrity Audit
 - **Date:** 26 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Objective:** Ingest raw environmental and potability datasets, verify cryptographic SHA-256 hashes, and audit initial schema statistics.
@@ -119,7 +119,7 @@ save_artifact(summary, "artifacts/day07/raw_summary.json")
 print("Raw data summary saved to artifacts/day07/raw_summary.json")
 display_df = df_temporal.head()
 display_df"""),
-        make_cell("markdown", """## 📌 Day 07 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 07 Execution Findings & Sign-Off
 - **Key Finding:** Both raw files verified against cryptographic checksums. Zero duplicate rows in temporal stream.
 - **Artifacts Saved:** `artifacts/day07/raw_summary.json`.
 - **Handoff:** Ready for Day 08 temporal data quality audit and sampling regularity analysis.""")
@@ -130,7 +130,7 @@ display_df"""),
     # Day 08: Temporal Data Quality
     # =========================================================================
     d8_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 08: Temporal Data Quality, Jitter & Gaps
+        make_cell("markdown", """# AquaGuard AI — Day 08: Temporal Data Quality, Jitter & Gaps
 - **Date:** 27 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Objective:** Audit temporal sampling regularity, detect gaps and distribution drift, and establish frozen cleaning rules.
@@ -196,7 +196,7 @@ We save the formal rules to `artifacts/day08/rules.yaml` to govern Day 11 prepro
 
 save_artifact(rules, "artifacts/day08/rules.yaml")
 print("Cleaning rules saved to artifacts/day08/rules.yaml")"""),
-        make_cell("markdown", """## 📌 Day 08 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 08 Execution Findings & Sign-Off
 - **Key Finding:** Stream is strictly monotonic with ~3600s mean interval. Gaps are bounded.
 - **Artifacts Saved:** `artifacts/day08/sensor_quality_table.csv`, `artifacts/day08/rules.yaml`.
 - **Handoff:** Ready for Day 09 chronological train/val/test split definition.""")
@@ -207,7 +207,7 @@ print("Cleaning rules saved to artifacts/day08/rules.yaml")"""),
     # Day 09: Temporal Split Definition
     # =========================================================================
     d9_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 09: Temporal Split Definition & Quarantined Lockbox
+        make_cell("markdown", """# AquaGuard AI — Day 09: Temporal Split Definition & Quarantined Lockbox
 - **Date:** 28 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Objective:** Partition telemetry stream into 70% Train, 15% Validation, and 15% Test Lockbox. Quarantine Test set.
@@ -281,7 +281,7 @@ save_artifact(split_meta, "artifacts/day09/split_metadata.json")
 save_artifact(split_indices, "artifacts/day09/split.json")
 print("Split metadata saved to artifacts/day09/split_metadata.json")
 print("Partition summary:", split_meta)"""),
-        make_cell("markdown", """## 📌 Day 09 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 09 Execution Findings & Sign-Off
 - **Key Finding:** Strict walk-forward temporal order preserved. Test partition is officially sealed.
 - **Artifacts Saved:** `artifacts/day09/split_metadata.json`, `artifacts/day09/split.json`.
 - **Handoff:** Ready for Day 10 Environmental EDA (conducted on Train partition only).""")
@@ -292,7 +292,7 @@ print("Partition summary:", split_meta)"""),
     # Day 10: Environmental EDA
     # =========================================================================
     d10_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 10: Environmental EDA & Cross-Sensor Correlations
+        make_cell("markdown", """# AquaGuard AI — Day 10: Environmental EDA & Cross-Sensor Correlations
 - **Date:** 29 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Objective:** Explore physical trends, distributions, and cross-sensor correlations on the training partition only.
@@ -377,7 +377,7 @@ Log domain hypotheses based on empirical observations to guide Day 13 feature en
 hypotheses.to_csv("artifacts/day10/hypotheses_table.csv", index=False)
 print("Hypotheses table saved to artifacts/day10/hypotheses_table.csv:")
 hypotheses"""),
-        make_cell("markdown", """## 📌 Day 10 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 10 Execution Findings & Sign-Off
 - **Key Finding:** Strong thermal-DO inverse coupling observed. Clear 24h periodicity present.
 - **Artifacts Saved:** `artifacts/day10/eda_correlation_matrix.png`, `artifacts/day10/hypotheses_table.csv`.
 - **Handoff:** Ready for Day 11 preprocessing pipeline composition and dataset v1 creation.""")
@@ -388,7 +388,7 @@ hypotheses"""),
     # Day 11: Preprocessing Pipeline
     # =========================================================================
     d11_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 11: Preprocessing Pipeline & Dataset V1
+        make_cell("markdown", """# AquaGuard AI — Day 11: Preprocessing Pipeline & Dataset V1
 - **Date:** 30 Aug 2026
 - **Phase:** Phase 2: Feature Engineering & Preprocessing
 - **Objective:** Compose leakage-proof cleaning, resampling, and scaling pipeline. Fit scalers strictly on Train partition.
@@ -461,7 +461,7 @@ Export cleaned and standardized partitions in Parquet format."""),
 save_parquet(clean_val, "data/processed/dataset_v1_val.parquet")
 save_parquet(clean_test, "data/processed/dataset_v1_test_lockbox.parquet")
 print("Dataset V1 saved to data/processed/")"""),
-        make_cell("markdown", """## 📌 Day 11 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 11 Execution Findings & Sign-Off
 - **Key Finding:** Resampling and domain clipping complete. Scalers fit exclusively on train.
 - **Artifacts Saved:** `data/processed/dataset_v1_*.parquet`, `artifacts/day11/preprocessor.joblib`.
 - **Handoff:** Ready for Day 12 automated leakage checks and Dataset V1 freeze.""")
@@ -472,7 +472,7 @@ print("Dataset V1 saved to data/processed/")"""),
     # Day 12: Dataset V1 Freeze Checks
     # =========================================================================
     d12_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 12: Dataset V1 Freeze & Leakage Verification
+        make_cell("markdown", """# AquaGuard AI — Day 12: Dataset V1 Freeze & Leakage Verification
 - **Date:** 31 Aug 2026
 - **Phase:** Phase 2: Feature Engineering & Preprocessing
 - **Objective:** Execute automated assertion test suite on Processed Dataset V1 and certify cryptographic freeze.
@@ -552,7 +552,7 @@ Compute SHA-256 hashes of all three partitions and issue formal freeze certifica
 save_artifact(certificate, "artifacts/day12/freeze_certificate.json")
 print("Freeze certificate issued at artifacts/day12/freeze_certificate.json:")
 print(certificate)"""),
-        make_cell("markdown", """## 📌 Day 12 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 12 Execution Findings & Sign-Off
 - **Key Finding:** 100% of leakage assertions passed. Dataset V1 frozen.
 - **Artifacts Saved:** `artifacts/day12/freeze_certificate.json`.
 - **Handoff:** Ready for Day 13 causal feature engineering.""")
@@ -563,7 +563,7 @@ print(certificate)"""),
     # Day 13: Feature Engineering
     # =========================================================================
     d13_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 13: Causal Feature Engineering
+        make_cell("markdown", """# AquaGuard AI — Day 13: Causal Feature Engineering
 - **Date:** 01 Sep 2026
 - **Phase:** Phase 2: Feature Engineering & Preprocessing
 - **Objective:** Generate strictly causal past lags, rolling window statistics, diurnal cycles, and physical interactions.
@@ -640,7 +640,7 @@ save_artifact(comparison, "artifacts/day13/raw_vs_engineered_comparison.json")
 print("Raw vs Engineered Dimensionality Report:", comparison)
 print("Sample of Feature Catalog:")
 df_catalog.head(10)"""),
-        make_cell("markdown", """## 📌 Day 13 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 13 Execution Findings & Sign-Off
 - **Key Finding:** Feature dimension expanded from 6 to 62 causal features without lookahead leakage.
 - **Artifacts Saved:** `data/processed/dataset_v2_features.parquet`, `artifacts/day13/feature_catalog.csv`.
 - **Handoff:** Ready for Phase 3: Modeling & Baselines (after Day 14 milestone review).""")
@@ -651,7 +651,7 @@ df_catalog.head(10)"""),
     # Day 15: Anomaly Baseline
     # =========================================================================
     d15_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 15: Anomaly Detection Baselines
+        make_cell("markdown", """# AquaGuard AI — Day 15: Anomaly Detection Baselines
 - **Date:** 03 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Establish statistical baselines (Z-score, IQR fences) and fit unsupervised Isolation Forest on continuous sensor streams.
@@ -710,7 +710,7 @@ comparison = {
 save_artifact(comparison, "artifacts/day15/anomaly_baseline_eval.json")
 print("Anomaly detection evaluation results:")
 for k, v in comparison.items():
-    print(f"  {k}: {v}")"""),
+    print(f" {k}: {v}")"""),
         make_cell("markdown", """## 2. Visualize Telemetry Stream Anomaly Highlights
 Overlay detected anomalies onto Dissolved Oxygen and Turbidity telemetry."""),
         make_cell("code", """anom_flags = iso_det.predict(X)
@@ -724,7 +724,7 @@ plot_anomalies(
     save_path="artifacts/day15/anomaly_overlay_plot.png"
 )
 print("Anomaly overlay plot saved to artifacts/day15/anomaly_overlay_plot.png")"""),
-        make_cell("markdown", """## 📌 Day 15 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 15 Execution Findings & Sign-Off
 - **Key Finding:** Isolation Forest flagged ~2% of extreme multi-dimensional deviations with high score stability.
 - **Artifacts Saved:** `artifacts/day15/anomaly_baseline_eval.json`, `artifacts/day15/anomaly_overlay_plot.png`.
 - **Handoff:** Ready for Day 16 multi-step time-series forecasting baselines.""")
@@ -735,7 +735,7 @@ print("Anomaly overlay plot saved to artifacts/day15/anomaly_overlay_plot.png")"
     # Day 16: Forecasting Baselines
     # =========================================================================
     d16_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 16: Multi-Step Forecasting Baselines
+        make_cell("markdown", """# AquaGuard AI — Day 16: Multi-Step Forecasting Baselines
 - **Date:** 04 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Benchmark Persistence Forecaster against Multi-Step Ridge Regression and Random Forest on chronological holdout.
@@ -804,7 +804,7 @@ results["MultiStep_RandomForest"] = compute_forecasting_metrics(Y_val.values, y_
 save_artifact(results, "artifacts/day16/forecasting_baselines.json")
 print("Forecasting Baseline Metrics:")
 for k, v in results.items():
-    print(f"  {k}: {v}")"""),
+    print(f" {k}: {v}")"""),
         make_cell("markdown", """## 3. Predicted vs Observed Trajectory Visuals
 Compare lead step T+1 predictions against actual observations on validation holdout."""),
         make_cell("code", """plot_predicted_vs_actual(
@@ -816,7 +816,7 @@ Compare lead step T+1 predictions against actual observations on validation hold
     save_path="artifacts/day16/forecast_vs_actual.png"
 )
 print("Forecast vs actual plot saved to artifacts/day16/forecast_vs_actual.png")"""),
-        make_cell("markdown", """## 📌 Day 16 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 16 Execution Findings & Sign-Off
 - **Key Finding:** Random Forest achieved lowest MAE, significantly outperforming Persistence.
 - **Artifacts Saved:** `artifacts/day16/forecasting_baselines.json`, `artifacts/day16/forecast_vs_actual.png`.
 - **Handoff:** Ready for Day 17 advanced model exploration and sequence optimization.""")
@@ -827,7 +827,7 @@ print("Forecast vs actual plot saved to artifacts/day16/forecast_vs_actual.png")
     # Day 17: Advanced Model
     # =========================================================================
     d17_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 17: Advanced Model Evaluation
+        make_cell("markdown", """# AquaGuard AI — Day 17: Advanced Model Evaluation
 - **Date:** 05 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Evaluate gradient boosted decision trees against baselines with validation curve tracking and architectural justification.
@@ -909,7 +909,7 @@ plt.close()
 
 save_artifact(xgb_metrics, "artifacts/day17/advanced_model_metrics.json")
 print("Validation curves saved to artifacts/day17/training_validation_curves.png")"""),
-        make_cell("markdown", """## 📌 Day 17 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 17 Execution Findings & Sign-Off
 - **Key Finding:** XGBoost achieved lowest validation MAE with smooth convergence on validation curves.
 - **Artifacts Saved:** `artifacts/day17/advanced_model_metrics.json`, `artifacts/day17/training_validation_curves.png`.
 - **Handoff:** Ready for Day 18 unified multi-method benchmark and comparison table.""")
@@ -920,7 +920,7 @@ print("Validation curves saved to artifacts/day17/training_validation_curves.png
     # Day 18: Method Comparison
     # =========================================================================
     d18_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 18: Unified Method Comparison
+        make_cell("markdown", """# AquaGuard AI — Day 18: Unified Method Comparison
 - **Date:** 06 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Consolidate evaluation metrics from Days 15, 16, and 17 into a unified comparison table including runtime latency.
@@ -1029,7 +1029,7 @@ plt.xticks(rotation=15)
 plt.savefig("artifacts/day18/leaderboard_comparison.png", dpi=300, bbox_inches="tight")
 plt.close()
 print("Leaderboard comparison figure saved to artifacts/day18/leaderboard_comparison.png")"""),
-        make_cell("markdown", """## 📌 Day 18 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 18 Execution Findings & Sign-Off
 - **Key Finding:** Multi-Step Random Forest and XGBoost confirmed as top candidates.
 - **Artifacts Saved:** `artifacts/day18/model_leaderboard.csv`, `artifacts/day18/leaderboard_comparison.png`.
 - **Handoff:** Ready for Day 19 hyperparameter tuning on validation data.""")
@@ -1040,7 +1040,7 @@ print("Leaderboard comparison figure saved to artifacts/day18/leaderboard_compar
     # Day 19: Hyperparameter Experiments
     # =========================================================================
     d19_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 19: Hyperparameter Optimization
+        make_cell("markdown", """# AquaGuard AI — Day 19: Hyperparameter Optimization
 - **Date:** 07 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Execute structured validation-only hyperparameter tuning, record every trial in experiment log, and save best config.
@@ -1125,7 +1125,7 @@ save_artifact(best_params, "artifacts/day19/best_config.json")
 
 print(f"Optimal Configuration: {best_params} with Validation MAE: {best_mae}")
 df_trials"""),
-        make_cell("markdown", """## 📌 Day 19 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 19 Execution Findings & Sign-Off
 - **Key Finding:** n_estimators=150, max_depth=8 identified as optimal trade-off point.
 - **Artifacts Saved:** `artifacts/day19/hparam_tuning_results.csv`, `artifacts/day19/best_config.json`, `experiments/experiment_log.csv`.
 - **Handoff:** Ready for Day 20 robustness and feature ablation analysis.""")
@@ -1136,7 +1136,7 @@ df_trials"""),
     # Day 20: Robustness Ablation
     # =========================================================================
     d20_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 20: Robustness Testing & Feature Ablation (LOFO)
+        make_cell("markdown", """# AquaGuard AI — Day 20: Robustness Testing & Feature Ablation (LOFO)
 - **Date:** 08 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation
 - **Objective:** Perform Leave-One-Feature-Out (LOFO) ablation, test sensor dropout fault-tolerance, and rank feature sensitivities.
@@ -1215,7 +1215,7 @@ Visualize impact on validation MAE when each feature group is ablated."""),
     save_path="artifacts/day20/ablation_tornado.png"
 )
 print("Ablation tornado plot saved to artifacts/day20/ablation_tornado.png")"""),
-        make_cell("markdown", """## 📌 Day 20 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 20 Execution Findings & Sign-Off
 - **Key Finding:** Autoregressive DO lags and Temperature coupling carry highest predictive leverage.
 - **Artifacts Saved:** `artifacts/day20/ablation_rankings.csv`, `artifacts/day20/ablation_tornado.png`.
 - **Handoff:** Ready for Phase 4: Production Model Freeze & Test Lockbox Verification (after Day 21 review).""")
@@ -1226,7 +1226,7 @@ print("Ablation tornado plot saved to artifacts/day20/ablation_tornado.png")""")
     # Day 22: Final Model Freeze
     # =========================================================================
     d22_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 22: Champion Model Packaging & Production Freeze
+        make_cell("markdown", """# AquaGuard AI — Day 22: Champion Model Packaging & Production Freeze
 - **Date:** 10 Sep 2026
 - **Phase:** Phase 4: Production Delivery & Verification
 - **Objective:** Train final model on combined Train+Val partitions, package frozen bundle, and calculate SHA-256 seal.
@@ -1308,7 +1308,7 @@ manifest = {
 save_artifact(manifest, "artifacts/day22/bundle_manifest.json")
 print("Bundle manifest created at artifacts/day22/bundle_manifest.json:")
 print(manifest)"""),
-        make_cell("markdown", """## 📌 Day 22 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 22 Execution Findings & Sign-Off
 - **Key Finding:** Production pipeline packaged and sealed with pure Scikit-Learn footprint (<450 MB).
 - **Artifacts Saved:** `artifacts/day22/production_bundle.joblib`, `artifacts/day22/bundle_manifest.json`.
 - **Handoff:** Ready for Day 23 single-pass unblinding of the held-out test lockbox.""")
@@ -1319,7 +1319,7 @@ print(manifest)"""),
     # Day 23: Final Validation Performance
     # =========================================================================
     d23_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 23: Single-Pass Held-Out Test Evaluation
+        make_cell("markdown", """# AquaGuard AI — Day 23: Single-Pass Held-Out Test Evaluation
 - **Date:** 11 Sep 2026
 - **Phase:** Phase 4: Production Delivery & Verification
 - **Objective:** Unblind the quarantined Test Lockbox partition for the first and only time; evaluate final production performance.
@@ -1379,7 +1379,7 @@ test_metrics["lockbox_sample_count"] = len(y_lock)
 save_artifact(test_metrics, "artifacts/day23/test_performance.json")
 print("Single-Pass Lockbox Test Metrics:")
 for k, v in test_metrics.items():
-    print(f"  {k}: {v}")"""),
+    print(f" {k}: {v}")"""),
         make_cell("markdown", """## 2. Precision-Recall & Calibration Diagnostics
 Verify probability reliability on unseen test samples."""),
         make_cell("code", """plot_pr_and_calibration(
@@ -1389,7 +1389,7 @@ Verify probability reliability on unseen test samples."""),
     save_path="artifacts/day23/test_pr_and_calibration.png"
 )
 print("Diagnostic curves saved to artifacts/day23/test_pr_and_calibration.png")"""),
-        make_cell("markdown", """## 📌 Day 23 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 23 Execution Findings & Sign-Off
 - **Key Finding:** Test PR-AUC = 0.5943, Brier = 0.2159. Unbiased results match established benchmarks.
 - **Artifacts Saved:** `artifacts/day23/test_performance.json`, `artifacts/day23/test_pr_and_calibration.png`.
 - **Handoff:** Ready for Day 25 error failure analysis (after Day 24 peer audit).""")
@@ -1400,7 +1400,7 @@ print("Diagnostic curves saved to artifacts/day23/test_pr_and_calibration.png")"
     # Day 25: Error Failure Analysis
     # =========================================================================
     d25_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 25: Error Diagnostics & Failure Modes
+        make_cell("markdown", """# AquaGuard AI — Day 25: Error Diagnostics & Failure Modes
 - **Date:** 13 Sep 2026
 - **Phase:** Phase 4: Production Delivery & Verification
 - **Objective:** Dissect false negative hazards (toxic water predicted potable), inspect worst-case samples, and catalog model limitations.
@@ -1479,7 +1479,7 @@ if importances is not None:
     print("Feature importance chart saved to artifacts/day25/feature_importances.png")"""),
         make_cell("markdown", """## 3. Generate Error Diagnostics Report
 Export formal limitation analysis to Markdown."""),
-        make_cell("code", """report = f\"\"\"# 🌊 AquaGuard AI — Error Analysis & Operational Limitations Report
+        make_cell("code", """report = f\"\"\"# AquaGuard AI — Error Analysis & Operational Limitations Report
 - **Date:** 13 Sep 2026
 - **Test Lockbox Evaluated:** {len(df_analysis)} samples
 
@@ -1497,7 +1497,7 @@ Export formal limitation analysis to Markdown."""),
 with open("artifacts/day25/error_analysis_report.md", "w", encoding="utf-8") as f:
     f.write(report)
 print("Error report generated at artifacts/day25/error_analysis_report.md")"""),
-        make_cell("markdown", """## 📌 Day 25 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 25 Execution Findings & Sign-Off
 - **Key Finding:** False negatives occur predominantly on single-parameter boundary excursions. WHO rule override deployed.
 - **Artifacts Saved:** `artifacts/day25/error_analysis_report.md`, `artifacts/day25/feature_importances.png`, `artifacts/day25/worst_cases.csv`.
 - **Handoff:** Ready for Day 26 end-to-end production inference demonstration.""")
@@ -1508,7 +1508,7 @@ print("Error report generated at artifacts/day25/error_analysis_report.md")"""),
     # Day 26: Inference Demo & Packaging
     # =========================================================================
     d26_cells = [
-        make_cell("markdown", """# 🌊 AquaGuard AI — Day 26: End-to-End Production Inference Demo
+        make_cell("markdown", """# AquaGuard AI — Day 26: End-to-End Production Inference Demo
 - **Date:** 14 Sep 2026
 - **Phase:** Phase 4: Production Delivery & Verification
 - **Objective:** Demonstrate end-to-end inference workflow using the frozen production pipeline artifact.
@@ -1617,7 +1617,7 @@ plt.grid(True, linestyle="--", alpha=0.6)
 plt.savefig("artifacts/day26/stream_simulation.png", dpi=300, bbox_inches="tight")
 plt.close()
 print("Stream simulation figure saved to artifacts/day26/stream_simulation.png")"""),
-        make_cell("markdown", """## 📌 Day 26 Execution Findings & Sign-Off
+        make_cell("markdown", """## Day 26 Execution Findings & Sign-Off
 - **Key Finding:** End-to-end inference executed with latency < 2.5ms. WHO safety rules active.
 - **Artifacts Saved:** `artifacts/day26/sample_inference_output.json`, `artifacts/day26/stream_simulation.png`.
 - **Handoff:** Ready for Day 27 deployment and documentation audit.""")

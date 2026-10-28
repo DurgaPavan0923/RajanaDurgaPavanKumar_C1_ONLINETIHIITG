@@ -1,0 +1,10 @@
+Field,Type,Min,Max
+ph,number,0.0,14.0
+Hardness,number,0.0,500.0
+Solids,number,0.0,100000.0
+Chloramines,number,0.0,20.0
+Sulfate,number,0.0,600.0
+Conductivity,number,0.0,2000.0
+Organic_carbon,number,0.0,50.0
+Trihalomethanes,number,0.0,200.0
+Turbidity,number,0.0,15.0

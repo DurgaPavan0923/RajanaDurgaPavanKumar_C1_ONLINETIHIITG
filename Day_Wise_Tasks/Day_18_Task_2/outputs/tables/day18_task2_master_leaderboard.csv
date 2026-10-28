@@ -1,0 +1,5 @@
+Rank,Model,Track,Primary_Metric,Metric_Name,Brier_Score,Latency_ms,Status
+1,Calibrated Random Forest,Track B,0.5951,PR-AUC,0.2154,2.89,CHAMPION
+2,Tuned XGBoost Regressor,Track A,0.2291,MAE,N/A,1.12,CHAMPION_FORECASTER
+3,Ridge Classifier,Track B,0.445,PR-AUC,0.241,0.15,BASELINE_BENCHMARK
+4,Naive Persistence,Track A,0.6421,MAE,N/A,0.01,BASELINE

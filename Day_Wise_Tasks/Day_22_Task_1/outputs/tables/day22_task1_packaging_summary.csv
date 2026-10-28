@@ -1,0 +1,2 @@
+Artifact,Format,Compression,Size_MB,Status
+water_potability_pipeline_v1.joblib,joblib,3,0.34,FROZEN_FOR_PRODUCTION

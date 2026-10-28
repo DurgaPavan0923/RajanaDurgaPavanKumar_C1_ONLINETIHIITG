@@ -1,0 +1,6 @@
+Test_Name,Result,Verdict
+Index Disjointness,PASS,COMPLIANT
+Temporal Ordering,PASS,COMPLIANT
+Scaler Isolation,PASS,COMPLIANT
+Target Stability,PASS,COMPLIANT
+Causal Windows,PASS,COMPLIANT

@@ -1,0 +1,3 @@
+Method,Lower_Limit,Upper_Limit,Anomalies_Flagged
+Z-Score (3.5 sigma),5.918,12.992,4
+IQR (1.5x),6.542,12.458,4

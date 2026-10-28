@@ -1,32 +1,44 @@
-# 🌊 Day 17 - Task 2: Learning Curve Diagnostics & Overfitting Audit
-### 🏛️ TIH IIT Guwahati — AI/ML Internship (Cohort 4) | Group C1
-**Candidate:** Rajana Durga Pavan Kumar  
-**Target Repository:** `RajanaDurgaPavanKumar_C1_ONLINETIHIITG`  
-**Phase Topic:** Day 17 — Advanced Gradient Boosted Forecaster (XGBoost)  
+# Day 17 - Task 2: Learning Curve Diagnostics & Overfitting Audit
+### Technology Innovation Hub (TIH), IIT Guwahati - AI/ML Internship (Cohort 4)
+- Candidate: Rajana Durga Pavan Kumar
+- Group: C1
+- Target Repository: RajanaDurgaPavanKumar_C1_ONLINETIHIITG
+- Phase Progression: Day 17 / Day 28
 
 ---
 
-## 📌 1. Task Objective & Context
-Training vs. validation loss convergence curves identifying optimal tree complexity.
+## 1. Objective & Operational Scope
+Generate and audit training versus validation learning curves across boosting iterations to diagnose potential overfitting and establish early-stopping criteria.
 
-## 🛠️ 2. Key Technical Methodology & Implementation
-- **Mathematical & Engineering Rigor:** Standardized under deterministic random seed (`seed=42`), zero data-leakage boundaries, and modular component testing.
-- **Pipeline Role:** Serves as an immutable scheduled milestone within the 28-day developmental lifecycle.
-- **Upstream Inputs Consumed:** Prior day artifacts and centralized datasets (`data/01_raw/`).
+## 2. Methodology & Safeguards
+- Reproducibility Guarantee: Deterministic execution pinned via random seed 42 across NumPy, Scikit-learn, and XGBoost.
+- Data Leakage Immunity: Temporal causality strictly preserved (`shift >= 1` causal rolling windows); preprocessing fit solely on training folds.
+- Regulatory Framework: World Health Organization (WHO 4th Edition) & EPA primary drinking water benchmarks.
 
-## 📂 3. Files & Artifacts in this Directory
-- [`advanced_model_metrics.json`](./advanced_model_metrics.json) — Primary deliverable / verification artifact.
-- [`training_validation_curves.png`](./training_validation_curves.png) — Primary deliverable / verification artifact.
+## 3. Files in this Directory
+- [`day17_learning_curves.ipynb`](./day17_learning_curves.ipynb) - Executed interactive notebook with verified outputs.
+- [`day17_learning_curves.py`](./day17_learning_curves.py) - Full 1-to-1 Python script mirror.
+- [`outputs/figures/`](./outputs/figures/) - Directory containing visual diagnostics and plots.
+- [`outputs/tables/`](./outputs/tables/) - Directory containing serialized metric tables.
 
-## 🚀 4. How to Execute / Reproduce
-To execute or verify this task independently from the repository root:
+## 4. How to Run / Verify
+Execute either the notebook or the Python script directly from the repository root:
 
 ```bash
-# Navigate to directory or run command directly
-cat advanced_model_metrics.json
+# Run Python script mirror
+python Day_Wise_Tasks/Day_17_Task_2/day17_learning_curves.py
+
+# Or execute notebook inplace
+jupyter nbconvert --to notebook --execute --inplace Day_Wise_Tasks/Day_17_Task_2/day17_learning_curves.ipynb
 ```
 
-## ✅ 5. Verification & Compliance Status
-- **Status:** **VERIFIED & COMPLIANT**
-- **Test Suite Alignment:** Verified against master `pytest tests/ -v` quality gate.
-- **Artifact Integrity:** Cryptographically attested and validated against baseline metrics.
+## 5. Output Artifacts & Verification Status
+### Figures Generated:
+- [`day17_task2_learning_curves.png`](./outputs/figures/day17_task2_learning_curves.png)
+  ![day17_task2_learning_curves.png](./outputs/figures/day17_task2_learning_curves.png)
+
+### Tables Generated:
+- [`day17_task2_learning_curves.csv`](./outputs/tables/day17_task2_learning_curves.csv)
+
+- Audit Verdict: PASSED & VERIFIED
+- Test Integrity: Monitored and validated via `pytest tests/ -v`.

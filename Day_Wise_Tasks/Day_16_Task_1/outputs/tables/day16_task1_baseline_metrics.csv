@@ -1,0 +1,4 @@
+Model,MAE_mg_L,Gain_vs_Baseline_Pct
+Persistence,0.6319,0.0
+Ridge Regression,0.2004,68.3
+Random Forest,0.2178,65.5

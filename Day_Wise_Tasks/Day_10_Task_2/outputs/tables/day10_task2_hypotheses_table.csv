@@ -1,0 +1,4 @@
+ID,Statement,Expected_Sign,Status
+H1,Dissolved oxygen is inversely correlated with water temperature due to Henry's Law of gas solubility.,Negative,CONFIRMED
+H2,Turbidity spikes are accompanied by localized dissolved oxygen drops due to organic suspended solids decomposition.,Negative,CONFIRMED
+H3,Conductivity correlates positively with dissolved mineral ions and hydrostatic pressure.,Positive,CONFIRMED

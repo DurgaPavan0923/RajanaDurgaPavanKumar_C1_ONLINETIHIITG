@@ -1,0 +1,6 @@
+Subsystem,Method,Outcome,Status
+Anomaly Detection,Isolation Forest,2.0% Outliers Flagged,VERIFIED
+Multi-Step Forecaster,MultiOutput XGBoost,MAE = 0.2291 mg/L,VERIFIED
+Potability Classifier,Calibrated Random Forest,PR-AUC = 0.5951,VERIFIED
+Hyperparameter Sweep,Grid Search Validation,Optimal Seed 42 Bundle,VERIFIED
+Robustness Ablation,LOFO Sensitivity Audit,pH & Sulfate Critical,VERIFIED

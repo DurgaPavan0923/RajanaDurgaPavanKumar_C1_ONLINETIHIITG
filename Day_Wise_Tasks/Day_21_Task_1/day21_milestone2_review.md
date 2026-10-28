@@ -1,4 +1,4 @@
-# 🌊 Day 21: Milestone 2 Review — Modeling, Ablation & Architecture Selection
+# Day 21: Milestone 2 Review — Modeling, Ablation & Architecture Selection
 - **Date:** 09 Sep 2026
 - **Phase:** Phase 3: Modeling & Validation Review
 - **Deliverable:** Formal model selection decision log, validation benchmark review, and champion architecture freeze sign-off.

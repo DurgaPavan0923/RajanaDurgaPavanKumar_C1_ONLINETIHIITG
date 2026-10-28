@@ -1,0 +1,4 @@
+Audit_Item,Observed_Diff,Threshold,Verdict
+Bitwise Probability Invariance,0.0,0.0,PASSED
+Random Seed Pinning,0.0,Seed 42 Pinned,PASSED
+Model Parameter Alignment,0.0,100% Identical,PASSED

@@ -1,0 +1,4 @@
+Path,Track,Method,Target
+/api/predict,Track B,POST,Potability Classification
+/api/ping,Shared,GET,Health Check & Cold-Start Probe
+/api/forecast,Track A,POST,Multi-Step Telemetry Forecaster
