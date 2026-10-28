@@ -11,7 +11,7 @@
 - **Candidate:** Rajana Durga Pavan Kumar
 - **Group:** C1
 - **Target Repository:** `RajanaDurgaPavanKumar_C1_ONLINETIHIITG`
-- **Assigned Mentor:** [MENTOR_NAME_PLACEHOLDER]
+- **Assigned Mentor:** [Sushil Meher](https://www.linkedin.com/in/nightcoder44332211/), Teaching Assistant at Indian Institute of Technology, Guwahati
 - **Programme Review Date:** 28 October 2026
 - **Live Production URL:** [https://water-potability-vert.vercel.app/](https://water-potability-vert.vercel.app/)
 - **API Health Probe:** [https://water-potability-vert.vercel.app/api/ping](https://water-potability-vert.vercel.app/api/ping)
@@ -215,8 +215,11 @@ python run_all.py
 
 ---
 
-## 8. Academic & Programmatic Attestation
+## 8. Academic & Programmatic Attestation & Acknowledgements
 
 This project was developed by **Rajana Durga Pavan Kumar** (Group C1) for the **AI/ML Internship (Cohort 4)** at the **Technology Innovation Hub (TIH), Indian Institute of Technology Guwahati**.
+
+### Acknowledgements
+Special thanks and professional acknowledgement to Assigned Mentor: [Sushil Meher](https://www.linkedin.com/in/nightcoder44332211/), Teaching Assistant at Indian Institute of Technology, Guwahati, for guidance, technical reviews, and mentorship throughout the 28-day engineering lifecycle.
 
 All experiments adhere to rigorous machine learning standards, mathematical reproducibility, zero data leakage constraints, and public health guidelines. Collaborator access is configured for review by mentor and `ONLINETIHIITG`.
