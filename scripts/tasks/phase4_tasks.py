@@ -81,6 +81,7 @@ print("Saved model packaging plot to:", fig_path.relative_to(ROOT))"""
     {"Artifact": model_path.name, "Format": "joblib", "Compression": 3, "Size_MB": round(sz_mb, 2), "Status": "FROZEN_FOR_PRODUCTION"}
 ])
 tbl_path = TBL_DIR / "day22_task1_packaging_summary.csv"
+display(df_pkg)
 df_pkg.to_csv(tbl_path, index=False)
 print("Saved packaging summary table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -171,6 +172,7 @@ print("Saved bundle compliance plot to:", fig_path.relative_to(ROOT))"""
                 "desc": "Export production bundle manifest table to CSV.",
                 "code": """df_man = pd.DataFrame([bundle_manifest])
 tbl_path = TBL_DIR / "day22_task2_bundle_manifest.csv"
+display(df_man)
 df_man.to_csv(tbl_path, index=False)
 print("Saved bundle manifest to:", tbl_path.relative_to(ROOT))"""
             },
@@ -273,6 +275,7 @@ print("Saved test confusion matrix plot to:", fig_path.relative_to(ROOT))"""
     {"Metric": "Accuracy", "Target_Goal": "> 0.65", "Final_Test_Result": round(test_acc, 4), "Status": "GOAL_ACHIEVED"}
 ])
 tbl_path = TBL_DIR / "day23_task1_test_performance.csv"
+display(df_test_metrics)
 df_test_metrics.to_csv(tbl_path, index=False)
 print("Saved test metrics table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -369,6 +372,7 @@ print("Saved calibration and PR plot to:", fig_path.relative_to(ROOT))"""
                 "desc": "Export calibration bin probabilities and empirical frequencies table to CSV.",
                 "code": """df_cal = pd.DataFrame({"Bin_Pred_Prob": np.round(prob_pred, 4), "Empirical_Fraction": np.round(prob_true, 4), "Bin_Residual": np.round(np.abs(prob_true - prob_pred), 4)})
 tbl_path = TBL_DIR / "day23_task2_calibration_bins.csv"
+display(df_cal)
 df_cal.to_csv(tbl_path, index=False)
 print("Saved calibration bins table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -461,6 +465,7 @@ print("Saved reproducibility plot to:", fig_path.relative_to(ROOT))"""
     {"Audit_Item": "Model Parameter Alignment", "Observed_Diff": 0.0, "Threshold": "100% Identical", "Verdict": "PASSED"}
 ])
 tbl_path = TBL_DIR / "day24_task1_reproducibility_audit.csv"
+display(df_rep)
 df_rep.to_csv(tbl_path, index=False)
 print("Saved reproducibility audit table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -548,7 +553,9 @@ print("Saved invariance plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Attestation Certificate Table Serialization",
                 "desc": "Export signed deterministic attestation table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day24_task2_attestation_certificate.csv"
-pd.DataFrame([attestation_certificate]).to_csv(tbl_path, index=False)
+df_attest = pd.DataFrame([attestation_certificate])
+display(df_attest)
+df_attest.to_csv(tbl_path, index=False)
 print("Saved attestation certificate to:", tbl_path.relative_to(ROOT))"""
             },
             {
@@ -646,6 +653,7 @@ print("Saved error breakdown plot to:", fig_path.relative_to(ROOT))"""
     {"Error_Type": "False Positive", "Count_Standard_0.5": int(fp_mask.sum()), "Count_Conservative_0.4": int(fp_mask.sum() + 15), "Health_Severity": "MODERATE"}
 ])
 tbl_path = TBL_DIR / "day25_task1_failure_modes.csv"
+display(df_err)
 df_err.to_csv(tbl_path, index=False)
 print("Saved failure modes table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -734,6 +742,7 @@ print("Saved feature importances plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Worst Cases Profile Table Serialization",
                 "desc": "Export worst-case profile samples table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day25_task2_worst_cases.csv"
+display(df_worst)
 df_worst.to_csv(tbl_path, index=False)
 print("Saved worst cases profile table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -834,6 +843,8 @@ print("Saved inference distribution plot to:", fig_path.relative_to(ROOT))"""
     "Decision": ["POTABLE" if p >= 0.5 else "NON_POTABLE" for p in batch_probs]
 })
 tbl_path = TBL_DIR / "day26_task1_inference_results.csv"
+display(df_inf_results.head(20))
+print("Shape:", df_inf_results.shape)
 df_inf_results.head(20).to_csv(tbl_path, index=False)
 print("Saved inference results table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -925,6 +936,7 @@ print("Saved latency profile plot to:", fig_path.relative_to(ROOT))"""
     {"Percentile": "P99", "Latency_ms": round(p99, 3), "Target_SLA_ms": 20.0, "Status": "PASS"}
 ])
 tbl_path = TBL_DIR / "day26_task2_latency_benchmark.csv"
+display(df_lat)
 df_lat.to_csv(tbl_path, index=False)
 print("Saved latency benchmark table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1017,6 +1029,7 @@ print("Saved deployment status plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Deployment Routing Table Export",
                 "desc": "Export API routes and security headers table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day27_task1_endpoint_specs.csv"
+display(df_ep)
 df_ep.to_csv(tbl_path, index=False)
 print("Saved endpoint specs table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1093,6 +1106,7 @@ print("Saved bundle breakdown plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Bundle Audit Table Serialization",
                 "desc": "Export serverless bundle audit table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day27_task2_bundle_audit.csv"
+display(df_comp)
 df_comp.to_csv(tbl_path, index=False)
 print("Saved bundle audit table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1195,6 +1209,7 @@ print("Saved presentation timeline plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Presentation Inventory Table Export",
                 "desc": "Export complete slide deck inventory table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day28_task1_presentation_inventory.csv"
+display(df_slides)
 df_slides.to_csv(tbl_path, index=False)
 print("Saved presentation inventory table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1284,6 +1299,7 @@ print("Saved final scorecard plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Executive Technical Report Table Export",
                 "desc": "Export finalized master scorecard table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day28_task2_final_scorecard.csv"
+display(df_master)
 df_master.to_csv(tbl_path, index=False)
 print("Saved final scorecard table to:", tbl_path.relative_to(ROOT))"""
             },

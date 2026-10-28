@@ -142,6 +142,7 @@ metrics_summary = [
 ]
 df_m = pd.DataFrame(metrics_summary)
 tbl_path = TBL_DIR / "day3_task1_metric_strategy.csv"
+print(df_m.to_string())
 df_m.to_csv(tbl_path, index=False)
 print("Saved metric strategy table to:", tbl_path.relative_to(ROOT))
 

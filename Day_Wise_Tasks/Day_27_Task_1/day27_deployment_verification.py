@@ -131,6 +131,7 @@ print("Saved deployment status plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day27_task1_endpoint_specs.csv"
+print(df_ep.to_string())
 df_ep.to_csv(tbl_path, index=False)
 print("Saved endpoint specs table to:", tbl_path.relative_to(ROOT))
 

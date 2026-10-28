@@ -118,7 +118,9 @@ print("Saved telemetry streams plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path)
 tbl_path = TBL_DIR / "day10_task1_telemetry_summary.csv"
-df_stream.describe().round(4).to_csv(tbl_path)
+df_telemetry_summary = df_stream.describe().round(4)
+print(df_telemetry_summary.to_string())
+df_telemetry_summary.to_csv(tbl_path)
 print("Saved summary table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]

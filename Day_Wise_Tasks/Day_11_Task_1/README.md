@@ -15,13 +15,21 @@ physical domain quality filtering, chronological 70/15/15 train/val/test splitti
 
 ## 2. Execution Steps
 1. **Timestamp Preprocessing**: The timestamp column is converted into a datetime format and records are sorted chronologically.
+Invalid timestamps are identified and removed because temporal ordering is required for downstream time-series processing.
 2. **Duplicate Timestamp Handling**: Duplicate timestamps are checked before modeling.
+Duplicate records are reduced to one observation per timestamp using the first available record to guarantee deterministic processing.
 3. **Missing-Value Handling**: Missing values are identified for each parameter.
+For this temporal dataset, numeric missing values are filled using causal forward filling.
 4. **Basic Data-Quality Filtering**: Physically impossible negative values are treated as invalid for parameters that cannot logically be negative.
+Domain boundary assertions are enforced for pH and binary Potability labels.
 5. **Chronological Train / Validation / Test Split**: Random splitting is avoided because it can introduce future information into the training data.
+The dataset is divided chronologically: 70% training, 15% validation, and 15% testing.
 6. **Feature Scaling**: StandardScaler is fitted only on the training data to prevent information leakage from validation and test observations.
+The fitted scaler transforms validation and test partitions.
 7. **Processed Partition Persistence**: The cleaned, scaled chronological partitions are saved to both data/processed/ and outputs/tables/ for downstream modeling.
+Preserving partitions ensures full reproducibility.
 8. **Chronological Boundary & Distribution Diagnostics**: We assert that train partition timestamps end before validation starts, and validation ends before test starts.
+Visual timeline and distribution summary tables are generated and serialized.
 
 ## 3. Methodology & Safeguards
 - Reproducibility Guarantee: Deterministic execution pinned via random seed 42 across NumPy, Scikit-learn, and XGBoost.

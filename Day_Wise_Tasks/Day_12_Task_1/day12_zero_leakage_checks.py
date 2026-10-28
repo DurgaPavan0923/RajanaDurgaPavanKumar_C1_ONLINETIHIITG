@@ -133,6 +133,7 @@ print("Saved leakage audit figure to:", fig_path.relative_to(ROOT))
 # Output: outputs/tables/tbl_path
 df_leakage = pd.DataFrame({"Test_Name": tests, "Result": ["PASS"]*len(tests), "Verdict": ["COMPLIANT"]*len(tests)})
 tbl_path = TBL_DIR / "day12_task1_leakage_audit.csv"
+print(df_leakage.to_string())
 df_leakage.to_csv(tbl_path, index=False)
 print("Saved leakage scorecard table to:", tbl_path.relative_to(ROOT))
 

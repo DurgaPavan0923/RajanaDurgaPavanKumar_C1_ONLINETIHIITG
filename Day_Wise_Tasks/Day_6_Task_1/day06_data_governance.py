@@ -137,6 +137,7 @@ print("Saved partition allocation figure to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day6_task1_governance_policies.csv"
+print(df_gov.to_string())
 df_gov.to_csv(tbl_path, index=False)
 print("Saved governance policies table to:", tbl_path.relative_to(ROOT))
 

@@ -128,6 +128,7 @@ print("Saved experiment progression plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day5_task2_experiment_registry.csv"
+print(df_registry.to_string())
 df_registry.to_csv(tbl_path, index=False)
 print("Saved experiment registry to:", tbl_path.relative_to(ROOT))
 

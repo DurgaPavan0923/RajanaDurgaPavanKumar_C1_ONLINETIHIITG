@@ -121,6 +121,7 @@ print("Saved milestone 1 progress plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day14_task1_milestone1_summary.csv"
+print(df_m1.to_string())
 df_m1.to_csv(tbl_path, index=False)
 print("Saved milestone review table to:", tbl_path.relative_to(ROOT))
 

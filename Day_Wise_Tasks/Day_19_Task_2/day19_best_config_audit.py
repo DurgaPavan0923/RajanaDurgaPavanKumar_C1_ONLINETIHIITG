@@ -137,6 +137,7 @@ df_best_summary = pd.DataFrame([
     {"Track": "Track A", "Model": "XGBoost", "N_Estimators": 100, "Max_Depth": 5, "Validation_Score": 0.2291}
 ])
 tbl_path = TBL_DIR / "day19_task2_best_config_summary.csv"
+print(df_best_summary.to_string())
 df_best_summary.to_csv(tbl_path, index=False)
 print("Saved best config summary to:", tbl_path.relative_to(ROOT))
 

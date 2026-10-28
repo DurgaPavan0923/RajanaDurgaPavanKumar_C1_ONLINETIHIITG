@@ -141,6 +141,7 @@ df_base_perf = pd.DataFrame([
     {"Model": "Random Forest", "MAE_mg_L": round(mae_rf, 4), "Gain_vs_Baseline_Pct": round((mae_persist - mae_rf)/mae_persist*100, 1)}
 ])
 tbl_path = TBL_DIR / "day16_task1_baseline_metrics.csv"
+print(df_base_perf.to_string())
 df_base_perf.to_csv(tbl_path, index=False)
 print("Saved baseline metrics table to:", tbl_path.relative_to(ROOT))
 

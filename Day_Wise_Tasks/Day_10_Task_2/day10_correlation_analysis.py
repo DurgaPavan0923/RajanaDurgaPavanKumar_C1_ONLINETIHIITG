@@ -130,6 +130,7 @@ print("Saved correlation heatmap to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day10_task2_hypotheses_table.csv"
+print(df_hypo.to_string())
 df_hypo.to_csv(tbl_path, index=False)
 print("Saved hypotheses table to:", tbl_path.relative_to(ROOT))
 

@@ -133,6 +133,7 @@ df_split_meta = pd.DataFrame([
     {"Partition": "Test_Lockbox", "Start_Index": cut2, "End_Index": n-1, "Count": len(test_df), "Start_Date": str(test_df["timestamp"].min()), "End_Date": str(test_df["timestamp"].max())}
 ])
 tbl_path = TBL_DIR / "day9_task1_split_metadata.csv"
+print(df_split_meta.to_string())
 df_split_meta.to_csv(tbl_path, index=False)
 print("Saved split metadata table to:", tbl_path.relative_to(ROOT))
 

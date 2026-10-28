@@ -138,6 +138,7 @@ print("Saved hyperparameter response surface to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day19_task1_hparam_tuning_results.csv"
+print(df_grid.to_string())
 df_grid.to_csv(tbl_path, index=False)
 print("Saved tuning results table to:", tbl_path.relative_to(ROOT))
 

@@ -138,6 +138,7 @@ df_curves = pd.DataFrame({
     "Generalization_Gap": np.round(gen_gaps, 4)
 })
 tbl_path = TBL_DIR / "day17_task2_learning_curves.csv"
+print(df_curves.to_string())
 df_curves.to_csv(tbl_path, index=False)
 print("Saved learning curves table to:", tbl_path.relative_to(ROOT))
 

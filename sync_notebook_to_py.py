@@ -77,6 +77,24 @@ def notebook_to_py(nb_path: Path) -> Path:
                             lines.append(f"# Output: outputs/tables/{sub}")
                             tbl_outputs_found += 1
 
+            # Translate display(df) to print(df.to_string()) for parity with notebook table rendering
+            import re
+            code_lines = []
+            for cl in code_text.splitlines():
+                m_disp = re.match(r"^(\s*)display\((.*)\)\s*$", cl)
+                if m_disp:
+                    indent = m_disp.group(1)
+                    arg = m_disp.group(2).strip()
+                    if arg.endswith(".head(20)"):
+                        code_lines.append(f"{indent}print({arg}.to_string())")
+                    elif re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", arg):
+                        code_lines.append(f"{indent}print({arg}.to_string())")
+                    else:
+                        code_lines.append(f"{indent}print({arg}.to_string() if hasattr({arg}, 'to_string') else {arg})")
+                else:
+                    code_lines.append(cl)
+            code_text = "\n".join(code_lines)
+
             lines.append(code_text)
             lines.append("")
 

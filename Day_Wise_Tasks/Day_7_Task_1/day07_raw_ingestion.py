@@ -123,6 +123,7 @@ print("Saved missingness plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path)
 tbl_path = TBL_DIR / "day7_task1_raw_schema_profile.csv"
+print(df_nulls.to_string())
 df_nulls.to_csv(tbl_path)
 print("Saved raw schema profile table to:", tbl_path.relative_to(ROOT))
 

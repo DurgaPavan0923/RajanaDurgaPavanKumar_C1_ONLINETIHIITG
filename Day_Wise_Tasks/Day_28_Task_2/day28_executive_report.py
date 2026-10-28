@@ -131,6 +131,7 @@ print("Saved final scorecard plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day28_task2_final_scorecard.csv"
+print(df_master.to_string())
 df_master.to_csv(tbl_path, index=False)
 print("Saved final scorecard table to:", tbl_path.relative_to(ROOT))
 

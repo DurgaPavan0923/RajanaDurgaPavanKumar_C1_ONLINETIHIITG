@@ -128,6 +128,7 @@ print("Saved LOFO ablation plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day20_task1_lofo_results.csv"
+print(df_lofo.to_string())
 df_lofo.to_csv(tbl_path, index=False)
 print("Saved LOFO results table to:", tbl_path.relative_to(ROOT))
 

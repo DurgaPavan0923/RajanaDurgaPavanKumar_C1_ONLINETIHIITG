@@ -70,6 +70,7 @@ print("Saved missingness plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Raw Schema Profile Table Serialization",
                 "desc": "Save compiled raw schema profile and missingness table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day7_task1_raw_schema_profile.csv"
+display(df_nulls)
 df_nulls.to_csv(tbl_path)
 print("Saved raw schema profile table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -154,6 +155,7 @@ print("Saved missingness co-occurrence figure to:", fig_path.relative_to(ROOT))"
     {"Parameter": "Trihalomethanes", "Missing_Count": 162, "Potability_When_Present": 0.393, "Potability_When_Missing": 0.389}
 ])
 tbl_path = TBL_DIR / "day7_task2_missingness_profile.csv"
+display(df_miss_profile)
 df_miss_profile.to_csv(tbl_path, index=False)
 print("Saved missingness profile table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -254,6 +256,7 @@ print("Saved sensor distributions plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Sensor Range Quality Table Export",
                 "desc": "Export sensor envelopes and empirical range statistics table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day8_task1_sensor_quality_table.csv"
+display(df_rel)
 df_rel.to_csv(tbl_path, index=False)
 print("Saved sensor quality table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -359,6 +362,7 @@ print("Saved validation rules plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Unified Quality Scorecard Export",
                 "desc": "Save compiled validation rules matrix and scorecard table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day8_task2_quality_scorecard.csv"
+display(df_card)
 df_card.to_csv(tbl_path, index=False)
 print("Saved quality scorecard table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -453,6 +457,7 @@ print("Saved split timeline figure to:", fig_path.relative_to(ROOT))"""
     {"Partition": "Test_Lockbox", "Start_Index": cut2, "End_Index": n-1, "Count": len(test_df), "Start_Date": str(test_df["timestamp"].min()), "End_Date": str(test_df["timestamp"].max())}
 ])
 tbl_path = TBL_DIR / "day9_task1_split_metadata.csv"
+display(df_split_meta)
 df_split_meta.to_csv(tbl_path, index=False)
 print("Saved split metadata table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -537,6 +542,7 @@ print("Saved lockbox isolation plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Lockbox Manifest Table Export",
                 "desc": "Export lockbox quarantine security manifest to CSV.",
                 "code": """tbl_path = TBL_DIR / "day9_task2_lockbox_manifest.csv"
+display(df_manifest)
 df_manifest.to_csv(tbl_path, index=False)
 print("Saved lockbox manifest to:", tbl_path.relative_to(ROOT))"""
             },
@@ -616,7 +622,9 @@ print("Saved telemetry streams plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Telemetry Summary Statistics Serialization",
                 "desc": "Serialize multi-channel descriptive statistics to CSV.",
                 "code": """tbl_path = TBL_DIR / "day10_task1_telemetry_summary.csv"
-df_stream.describe().round(4).to_csv(tbl_path)
+df_telemetry_summary = df_stream.describe().round(4)
+display(df_telemetry_summary)
+df_telemetry_summary.to_csv(tbl_path)
 print("Saved summary table to:", tbl_path.relative_to(ROOT))"""
             },
             {
@@ -704,6 +712,7 @@ print("Saved correlation heatmap to:", fig_path.relative_to(ROOT))"""
                 "title": "Hypotheses Table and Correlation Matrix Export",
                 "desc": "Save domain hypotheses and correlation matrix to CSV.",
                 "code": """tbl_path = TBL_DIR / "day10_task2_hypotheses_table.csv"
+display(df_hypo)
 df_hypo.to_csv(tbl_path, index=False)
 print("Saved hypotheses table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -791,6 +800,7 @@ print("Saved resampling comparison plot to:", fig_path.relative_to(ROOT))"""
     {"Channel": "temperature", "Raw_Mean": df_stream["temperature"].mean(), "Resampled_Mean": df_hourly_clean["temperature"].mean(), "Variance_Preserved_Pct": 92.4}
 ])
 tbl_path = TBL_DIR / "day11_task2_resampling_fidelity.csv"
+display(df_res_audit)
 df_res_audit.to_csv(tbl_path, index=False)
 print("Saved resampling fidelity table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -886,6 +896,7 @@ print("Saved leakage audit figure to:", fig_path.relative_to(ROOT))"""
                 "desc": "Serialize automated leakage test scorecard to CSV.",
                 "code": """df_leakage = pd.DataFrame({"Test_Name": tests, "Result": ["PASS"]*len(tests), "Verdict": ["COMPLIANT"]*len(tests)})
 tbl_path = TBL_DIR / "day12_task1_leakage_audit.csv"
+display(df_leakage)
 df_leakage.to_csv(tbl_path, index=False)
 print("Saved leakage scorecard table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -977,6 +988,7 @@ print("Saved freeze certificate plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Dataset Freeze Certificate Serialization",
                 "desc": "Serialize certified dataset freeze manifest table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day12_task2_freeze_certificate.csv"
+display(df_hashes)
 df_hashes.to_csv(tbl_path, index=False)
 print("Saved freeze certificate table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1064,6 +1076,7 @@ print("Saved feature dynamics figure to:", fig_path.relative_to(ROOT))"""
                 "code": """corr_target = df[["Solids_roll_mean_6", "sulfate_solids_ratio", "ph_who_delta", "chlor_trihalo_ratio"]].apply(lambda x: x.corr(df["Potability"]))
 df_feat_corr = pd.DataFrame({"Feature": corr_target.index, "Target_Correlation": corr_target.values.round(4)})
 tbl_path = TBL_DIR / "day13_task1_feature_correlations.csv"
+display(df_feat_corr)
 df_feat_corr.to_csv(tbl_path, index=False)
 print("Saved feature correlations table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1151,6 +1164,7 @@ print("Saved feature catalog breakdown to:", fig_path.relative_to(ROOT))"""
                 "title": "Feature Catalog Table Export",
                 "desc": "Export compiled feature catalog dictionary to CSV.",
                 "code": """tbl_path = TBL_DIR / "day13_task2_feature_catalog.csv"
+display(df_sample_cat)
 df_sample_cat.to_csv(tbl_path, index=False)
 print("Saved feature catalog table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1233,6 +1247,7 @@ print("Saved milestone 1 progress plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Milestone 1 Review Summary Table Serialization",
                 "desc": "Serialize Milestone 1 achievement summary table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day14_task1_milestone1_summary.csv"
+display(df_m1)
 df_m1.to_csv(tbl_path, index=False)
 print("Saved milestone review table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1316,6 +1331,7 @@ print("Saved gate sign-off plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Gate Sign-Off Table Serialization",
                 "desc": "Export sign-off gate audit criteria table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day14_task2_gate_signoff.csv"
+display(df_crit)
 df_crit.to_csv(tbl_path, index=False)
 print("Saved gate sign-off table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1336,4 +1352,3 @@ print("Day 14 Task 2 Quality Gate: PASSED. Handoff to Modeling Phase Authorized.
     return tasks
 
 print("Phase 2 task definitions loaded successfully.")
-

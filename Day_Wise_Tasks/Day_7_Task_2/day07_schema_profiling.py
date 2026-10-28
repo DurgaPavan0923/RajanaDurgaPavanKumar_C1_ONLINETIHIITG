@@ -126,6 +126,7 @@ df_miss_profile = pd.DataFrame([
     {"Parameter": "Trihalomethanes", "Missing_Count": 162, "Potability_When_Present": 0.393, "Potability_When_Missing": 0.389}
 ])
 tbl_path = TBL_DIR / "day7_task2_missingness_profile.csv"
+print(df_miss_profile.to_string())
 df_miss_profile.to_csv(tbl_path, index=False)
 print("Saved missingness profile table to:", tbl_path.relative_to(ROOT))
 

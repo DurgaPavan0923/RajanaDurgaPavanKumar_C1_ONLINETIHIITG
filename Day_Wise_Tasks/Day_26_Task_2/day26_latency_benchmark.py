@@ -133,6 +133,7 @@ df_lat = pd.DataFrame([
     {"Percentile": "P99", "Latency_ms": round(p99, 3), "Target_SLA_ms": 20.0, "Status": "PASS"}
 ])
 tbl_path = TBL_DIR / "day26_task2_latency_benchmark.csv"
+print(df_lat.to_string())
 df_lat.to_csv(tbl_path, index=False)
 print("Saved latency benchmark table to:", tbl_path.relative_to(ROOT))
 

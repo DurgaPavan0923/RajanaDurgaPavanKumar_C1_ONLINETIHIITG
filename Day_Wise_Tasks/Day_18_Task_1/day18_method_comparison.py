@@ -125,6 +125,7 @@ print("Saved method comparison figure to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day18_task1_benchmark_summary.csv"
+print(df_bench.to_string())
 df_bench.to_csv(tbl_path, index=False)
 print("Saved benchmark summary table to:", tbl_path.relative_to(ROOT))
 

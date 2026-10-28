@@ -144,6 +144,7 @@ df_xgb_metrics = pd.DataFrame({
     "Baseline_RF_MAE": np.round(horizon_maes, 4)
 })
 tbl_path = TBL_DIR / "day17_task1_xgboost_metrics.csv"
+print(df_xgb_metrics.to_string())
 df_xgb_metrics.to_csv(tbl_path, index=False)
 print("Saved XGBoost metrics table to:", tbl_path.relative_to(ROOT))
 

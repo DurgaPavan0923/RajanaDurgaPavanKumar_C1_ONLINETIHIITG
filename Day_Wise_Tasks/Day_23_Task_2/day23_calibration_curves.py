@@ -138,6 +138,7 @@ print("Saved calibration and PR plot to:", fig_path.relative_to(ROOT))
 # Output: outputs/tables/tbl_path
 df_cal = pd.DataFrame({"Bin_Pred_Prob": np.round(prob_pred, 4), "Empirical_Fraction": np.round(prob_true, 4), "Bin_Residual": np.round(np.abs(prob_true - prob_pred), 4)})
 tbl_path = TBL_DIR / "day23_task2_calibration_bins.csv"
+print(df_cal.to_string())
 df_cal.to_csv(tbl_path, index=False)
 print("Saved calibration bins table to:", tbl_path.relative_to(ROOT))
 

@@ -126,6 +126,7 @@ print("Saved feature dynamics figure to:", fig_path.relative_to(ROOT))
 corr_target = df[["Solids_roll_mean_6", "sulfate_solids_ratio", "ph_who_delta", "chlor_trihalo_ratio"]].apply(lambda x: x.corr(df["Potability"]))
 df_feat_corr = pd.DataFrame({"Feature": corr_target.index, "Target_Correlation": corr_target.values.round(4)})
 tbl_path = TBL_DIR / "day13_task1_feature_correlations.csv"
+print(df_feat_corr.to_string())
 df_feat_corr.to_csv(tbl_path, index=False)
 print("Saved feature correlations table to:", tbl_path.relative_to(ROOT))
 

@@ -141,6 +141,7 @@ df_test_metrics = pd.DataFrame([
     {"Metric": "Accuracy", "Target_Goal": "> 0.65", "Final_Test_Result": round(test_acc, 4), "Status": "GOAL_ACHIEVED"}
 ])
 tbl_path = TBL_DIR / "day23_task1_test_performance.csv"
+print(df_test_metrics.to_string())
 df_test_metrics.to_csv(tbl_path, index=False)
 print("Saved test metrics table to:", tbl_path.relative_to(ROOT))
 

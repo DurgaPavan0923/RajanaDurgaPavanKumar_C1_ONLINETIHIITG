@@ -129,7 +129,9 @@ print("Saved invariance plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day24_task2_attestation_certificate.csv"
-pd.DataFrame([attestation_certificate]).to_csv(tbl_path, index=False)
+df_attest = pd.DataFrame([attestation_certificate])
+print(df_attest.to_string())
+df_attest.to_csv(tbl_path, index=False)
 print("Saved attestation certificate to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]

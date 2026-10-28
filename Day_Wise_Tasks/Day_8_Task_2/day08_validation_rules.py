@@ -147,6 +147,7 @@ print("Saved validation rules plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day8_task2_quality_scorecard.csv"
+print(df_card.to_string())
 df_card.to_csv(tbl_path, index=False)
 print("Saved quality scorecard table to:", tbl_path.relative_to(ROOT))
 

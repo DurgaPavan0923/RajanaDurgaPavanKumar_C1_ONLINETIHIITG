@@ -118,6 +118,7 @@ print("Saved bundle breakdown plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day27_task2_bundle_audit.csv"
+print(df_comp.to_string())
 df_comp.to_csv(tbl_path, index=False)
 print("Saved bundle audit table to:", tbl_path.relative_to(ROOT))
 

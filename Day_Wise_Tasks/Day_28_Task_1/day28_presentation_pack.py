@@ -141,6 +141,7 @@ print("Saved presentation timeline plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day28_task1_presentation_inventory.csv"
+print(df_slides.to_string())
 df_slides.to_csv(tbl_path, index=False)
 print("Saved presentation inventory table to:", tbl_path.relative_to(ROOT))
 

@@ -126,6 +126,7 @@ df_anom_base = pd.DataFrame([
     {"Method": "IQR (1.5x)", "Lower_Limit": round(lower_bound, 3), "Upper_Limit": round(upper_bound, 3), "Anomalies_Flagged": int(iqr_anomalies.sum())}
 ])
 tbl_path = TBL_DIR / "day15_task1_anomaly_baselines.csv"
+print(df_anom_base.to_string())
 df_anom_base.to_csv(tbl_path, index=False)
 print("Saved anomaly baselines table to:", tbl_path.relative_to(ROOT))
 

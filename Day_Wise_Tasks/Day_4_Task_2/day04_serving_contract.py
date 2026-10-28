@@ -146,6 +146,7 @@ print("Saved schema ranges plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day4_task2_schema_contract.csv"
+print(df_props.to_string())
 df_props.to_csv(tbl_path, index=False)
 print("Saved schema contract table to:", tbl_path.relative_to(ROOT))
 

@@ -126,6 +126,7 @@ df_iso_res = pd.DataFrame([
     {"Model": "Isolation Forest", "Contamination": 0.02, "N_Estimators": 100, "Flagged_Anomalies": anom_count, "Min_Score": round(score_min, 4)}
 ])
 tbl_path = TBL_DIR / "day15_task2_isolation_forest_summary.csv"
+print(df_iso_res.to_string())
 df_iso_res.to_csv(tbl_path, index=False)
 print("Saved isolation forest summary to:", tbl_path.relative_to(ROOT))
 

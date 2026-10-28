@@ -96,6 +96,7 @@ print("Saved figure to:", fig_path.relative_to(ROOT))"""
                 "title": "Environment Audit Serialization",
                 "desc": "Serialize certified runtime specification table to CSV for reproducible reference.",
                 "code": """tbl_path = TBL_DIR / "day1_task1_env_specs.csv"
+display(df_pkgs)
 df_pkgs.to_csv(tbl_path, index=False)
 print("Saved specifications table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -202,6 +203,7 @@ print("Saved figure to:", fig_path.relative_to(ROOT))"""
                 "title": "Workspace Audit Metrics Serialization",
                 "desc": "Save workspace hierarchy summary and subsystem metrics to CSV.",
                 "code": """tbl_path = TBL_DIR / "day1_task2_workspace_summary.csv"
+display(df_sizes)
 df_sizes.to_csv(tbl_path, index=False)
 print("Saved summary table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -288,7 +290,9 @@ print("Saved correlation figure to:", fig_path.relative_to(ROOT))"""
                 "title": "Domain Correlation Table Serialization",
                 "desc": "Serialize full cross-parameter correlation matrix to CSV.",
                 "code": """tbl_path = TBL_DIR / "day2_task1_correlation_matrix.csv"
-corr_mat.round(4).to_csv(tbl_path)
+df_corr_matrix = corr_mat.round(4)
+display(df_corr_matrix)
+df_corr_matrix.to_csv(tbl_path)
 print("Saved correlation table to:", tbl_path.relative_to(ROOT))"""
             },
             {
@@ -396,6 +400,7 @@ print("Saved compliance plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Regulatory Thresholds Specification Export",
                 "desc": "Save compiled compliance table and threshold limits to CSV.",
                 "code": """tbl_path = TBL_DIR / "day2_task2_regulatory_scorecard.csv"
+display(df_comp_rates)
 df_comp_rates.to_csv(tbl_path, index=False)
 print("Saved scorecard table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -499,6 +504,7 @@ print("Saved comparison curve to:", fig_path.relative_to(ROOT))"""
 ]
 df_m = pd.DataFrame(metrics_summary)
 tbl_path = TBL_DIR / "day3_task1_metric_strategy.csv"
+display(df_m)
 df_m.to_csv(tbl_path, index=False)
 print("Saved metric strategy table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -593,6 +599,7 @@ print("Saved horizon error growth figure to:", fig_path.relative_to(ROOT))"""
     "MDA_Pct": [mdas[h] for h in horizons]
 })
 tbl_path = TBL_DIR / "day3_task2_forecasting_loss_table.csv"
+display(df_loss)
 df_loss.to_csv(tbl_path, index=False)
 print("Saved loss benchmark table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -686,6 +693,7 @@ print("Saved latency budget plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Architecture Contract Table Export",
                 "desc": "Serialize dual-track architecture specifications table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day4_task1_architecture_specs.csv"
+display(df_endpoints)
 df_endpoints.to_csv(tbl_path, index=False)
 print("Saved architecture table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -790,6 +798,7 @@ print("Saved schema ranges plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Serving Contract Schema Table Serialization",
                 "desc": "Export schema properties and physical bounds table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day4_task2_schema_contract.csv"
+display(df_props)
 df_props.to_csv(tbl_path, index=False)
 print("Saved schema contract table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -888,6 +897,7 @@ print("Saved seed stability figure to:", fig_path.relative_to(ROOT))"""
                 "title": "Deterministic Governance Table Serialization",
                 "desc": "Export seed stability scorecard table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day5_task1_seed_governance.csv"
+display(df_seed_res)
 df_seed_res.to_csv(tbl_path, index=False)
 print("Saved seed governance table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -974,6 +984,7 @@ print("Saved experiment progression plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Registry Table Serialization",
                 "desc": "Save compiled experiment run registry table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day5_task2_experiment_registry.csv"
+display(df_registry)
 df_registry.to_csv(tbl_path, index=False)
 print("Saved experiment registry to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1072,6 +1083,7 @@ print("Saved partition allocation figure to:", fig_path.relative_to(ROOT))"""
                 "title": "Governance Policy Table Serialization",
                 "desc": "Export data governance policies and partition specs to CSV.",
                 "code": """tbl_path = TBL_DIR / "day6_task1_governance_policies.csv"
+display(df_gov)
 df_gov.to_csv(tbl_path, index=False)
 print("Saved governance policies table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1171,6 +1183,7 @@ print("Saved checksum profile figure to:", fig_path.relative_to(ROOT))"""
                 "title": "Checksum Certificate Table Serialization",
                 "desc": "Serialize certified cryptographic manifest table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day6_task2_checksum_manifest.csv"
+display(df_digests)
 df_digests.to_csv(tbl_path, index=False)
 print("Saved checksum manifest table to:", tbl_path.relative_to(ROOT))"""
             },

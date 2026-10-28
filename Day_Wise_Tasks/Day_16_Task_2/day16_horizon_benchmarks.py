@@ -140,6 +140,7 @@ df_h_decomp = pd.DataFrame({
     "MDA_Pct": mdas
 })
 tbl_path = TBL_DIR / "day16_task2_horizon_metrics.csv"
+print(df_h_decomp.to_string())
 df_h_decomp.to_csv(tbl_path, index=False)
 print("Saved horizon decomposition table to:", tbl_path.relative_to(ROOT))
 

@@ -121,6 +121,7 @@ print("Saved ablation tornado figure to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day20_task2_sensitivity_rankings.csv"
+print(df_ranked.to_string())
 df_ranked.to_csv(tbl_path, index=False)
 print("Saved sensitivity rankings table to:", tbl_path.relative_to(ROOT))
 

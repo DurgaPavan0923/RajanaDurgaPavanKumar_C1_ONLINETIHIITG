@@ -134,6 +134,7 @@ df_pkg = pd.DataFrame([
     {"Artifact": model_path.name, "Format": "joblib", "Compression": 3, "Size_MB": round(sz_mb, 2), "Status": "FROZEN_FOR_PRODUCTION"}
 ])
 tbl_path = TBL_DIR / "day22_task1_packaging_summary.csv"
+print(df_pkg.to_string())
 df_pkg.to_csv(tbl_path, index=False)
 print("Saved packaging summary table to:", tbl_path.relative_to(ROOT))
 

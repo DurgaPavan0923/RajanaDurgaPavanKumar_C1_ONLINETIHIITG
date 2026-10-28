@@ -147,6 +147,7 @@ print("Saved figure to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day1_task2_workspace_summary.csv"
+print(df_sizes.to_string())
 df_sizes.to_csv(tbl_path, index=False)
 print("Saved summary table to:", tbl_path.relative_to(ROOT))
 

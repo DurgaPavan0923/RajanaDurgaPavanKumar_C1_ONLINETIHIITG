@@ -132,6 +132,7 @@ print("Saved bundle compliance plot to:", fig_path.relative_to(ROOT))
 # Output: outputs/tables/tbl_path
 df_man = pd.DataFrame([bundle_manifest])
 tbl_path = TBL_DIR / "day22_task2_bundle_manifest.csv"
+print(df_man.to_string())
 df_man.to_csv(tbl_path, index=False)
 print("Saved bundle manifest to:", tbl_path.relative_to(ROOT))
 

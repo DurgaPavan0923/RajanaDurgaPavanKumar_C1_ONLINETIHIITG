@@ -118,6 +118,7 @@ print("Saved sign-off gate plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day21_task2_signoff_gate.csv"
+print(df_gate.to_string())
 df_gate.to_csv(tbl_path, index=False)
 print("Saved architecture sign-off table to:", tbl_path.relative_to(ROOT))
 

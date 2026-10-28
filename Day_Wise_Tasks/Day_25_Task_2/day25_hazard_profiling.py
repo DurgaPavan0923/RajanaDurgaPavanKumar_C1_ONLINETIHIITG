@@ -130,6 +130,7 @@ print("Saved feature importances plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day25_task2_worst_cases.csv"
+print(df_worst.to_string())
 df_worst.to_csv(tbl_path, index=False)
 print("Saved worst cases profile table to:", tbl_path.relative_to(ROOT))
 

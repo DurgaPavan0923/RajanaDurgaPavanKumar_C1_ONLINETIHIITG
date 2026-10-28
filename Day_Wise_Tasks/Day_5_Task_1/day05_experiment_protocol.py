@@ -137,6 +137,7 @@ print("Saved seed stability figure to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day5_task1_seed_governance.csv"
+print(df_seed_res.to_string())
 df_seed_res.to_csv(tbl_path, index=False)
 print("Saved seed governance table to:", tbl_path.relative_to(ROOT))
 

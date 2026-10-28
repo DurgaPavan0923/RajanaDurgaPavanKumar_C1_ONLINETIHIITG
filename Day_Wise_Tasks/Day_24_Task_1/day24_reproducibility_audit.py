@@ -131,6 +131,7 @@ df_rep = pd.DataFrame([
     {"Audit_Item": "Model Parameter Alignment", "Observed_Diff": 0.0, "Threshold": "100% Identical", "Verdict": "PASSED"}
 ])
 tbl_path = TBL_DIR / "day24_task1_reproducibility_audit.csv"
+print(df_rep.to_string())
 df_rep.to_csv(tbl_path, index=False)
 print("Saved reproducibility audit table to:", tbl_path.relative_to(ROOT))
 

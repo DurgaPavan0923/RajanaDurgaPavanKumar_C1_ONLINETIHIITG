@@ -136,6 +136,7 @@ df_loss = pd.DataFrame({
     "MDA_Pct": [mdas[h] for h in horizons]
 })
 tbl_path = TBL_DIR / "day3_task2_forecasting_loss_table.csv"
+print(df_loss.to_string())
 df_loss.to_csv(tbl_path, index=False)
 print("Saved loss benchmark table to:", tbl_path.relative_to(ROOT))
 

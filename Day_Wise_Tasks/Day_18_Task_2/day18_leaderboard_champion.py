@@ -127,6 +127,7 @@ print("Saved master leaderboard plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day18_task2_master_leaderboard.csv"
+print(df_lead.to_string())
 df_lead.to_csv(tbl_path, index=False)
 print("Saved master leaderboard table to:", tbl_path.relative_to(ROOT))
 

@@ -148,6 +148,7 @@ print("Saved compliance plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day2_task2_regulatory_scorecard.csv"
+print(df_comp_rates.to_string())
 df_comp_rates.to_csv(tbl_path, index=False)
 print("Saved scorecard table to:", tbl_path.relative_to(ROOT))
 

@@ -125,7 +125,9 @@ print("Saved correlation figure to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path)
 tbl_path = TBL_DIR / "day2_task1_correlation_matrix.csv"
-corr_mat.round(4).to_csv(tbl_path)
+df_corr_matrix = corr_mat.round(4)
+print(df_corr_matrix.to_string())
+df_corr_matrix.to_csv(tbl_path)
 print("Saved correlation table to:", tbl_path.relative_to(ROOT))
 
 # %% [markdown]

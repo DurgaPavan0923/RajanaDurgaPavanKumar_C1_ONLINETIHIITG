@@ -137,6 +137,7 @@ df_err = pd.DataFrame([
     {"Error_Type": "False Positive", "Count_Standard_0.5": int(fp_mask.sum()), "Count_Conservative_0.4": int(fp_mask.sum() + 15), "Health_Severity": "MODERATE"}
 ])
 tbl_path = TBL_DIR / "day25_task1_failure_modes.csv"
+print(df_err.to_string())
 df_err.to_csv(tbl_path, index=False)
 print("Saved failure modes table to:", tbl_path.relative_to(ROOT))
 

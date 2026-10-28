@@ -136,6 +136,7 @@ print("Saved freeze certificate plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day12_task2_freeze_certificate.csv"
+print(df_hashes.to_string())
 df_hashes.to_csv(tbl_path, index=False)
 print("Saved freeze certificate table to:", tbl_path.relative_to(ROOT))
 

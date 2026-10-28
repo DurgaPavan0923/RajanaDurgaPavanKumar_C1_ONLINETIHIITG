@@ -129,6 +129,7 @@ print("Saved feature catalog breakdown to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day13_task2_feature_catalog.csv"
+print(df_sample_cat.to_string())
 df_sample_cat.to_csv(tbl_path, index=False)
 print("Saved feature catalog table to:", tbl_path.relative_to(ROOT))
 

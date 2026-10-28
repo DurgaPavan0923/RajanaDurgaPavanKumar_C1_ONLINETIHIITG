@@ -141,6 +141,7 @@ print("Saved checksum profile figure to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day6_task2_checksum_manifest.csv"
+print(df_digests.to_string())
 df_digests.to_csv(tbl_path, index=False)
 print("Saved checksum manifest table to:", tbl_path.relative_to(ROOT))
 

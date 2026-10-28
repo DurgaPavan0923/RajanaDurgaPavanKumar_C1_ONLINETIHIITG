@@ -138,6 +138,7 @@ print("Saved sensor distributions plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day8_task1_sensor_quality_table.csv"
+print(df_rel.to_string())
 df_rel.to_csv(tbl_path, index=False)
 print("Saved sensor quality table to:", tbl_path.relative_to(ROOT))
 

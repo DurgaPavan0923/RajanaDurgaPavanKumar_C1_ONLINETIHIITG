@@ -126,6 +126,7 @@ df_res_audit = pd.DataFrame([
     {"Channel": "temperature", "Raw_Mean": df_stream["temperature"].mean(), "Resampled_Mean": df_hourly_clean["temperature"].mean(), "Variance_Preserved_Pct": 92.4}
 ])
 tbl_path = TBL_DIR / "day11_task2_resampling_fidelity.csv"
+print(df_res_audit.to_string())
 df_res_audit.to_csv(tbl_path, index=False)
 print("Saved resampling fidelity table to:", tbl_path.relative_to(ROOT))
 

@@ -139,6 +139,8 @@ df_inf_results = pd.DataFrame({
     "Decision": ["POTABLE" if p >= 0.5 else "NON_POTABLE" for p in batch_probs]
 })
 tbl_path = TBL_DIR / "day26_task1_inference_results.csv"
+print(df_inf_results.head(20).to_string())
+print("Shape:", df_inf_results.shape)
 df_inf_results.head(20).to_csv(tbl_path, index=False)
 print("Saved inference results table to:", tbl_path.relative_to(ROOT))
 

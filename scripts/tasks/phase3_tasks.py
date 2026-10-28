@@ -73,6 +73,7 @@ print("Saved anomaly plot to:", fig_path.relative_to(ROOT))"""
     {"Method": "IQR (1.5x)", "Lower_Limit": round(lower_bound, 3), "Upper_Limit": round(upper_bound, 3), "Anomalies_Flagged": int(iqr_anomalies.sum())}
 ])
 tbl_path = TBL_DIR / "day15_task1_anomaly_baselines.csv"
+display(df_anom_base)
 df_anom_base.to_csv(tbl_path, index=False)
 print("Saved anomaly baselines table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -157,6 +158,7 @@ print("Saved isolation forest plot to:", fig_path.relative_to(ROOT))"""
     {"Model": "Isolation Forest", "Contamination": 0.02, "N_Estimators": 100, "Flagged_Anomalies": anom_count, "Min_Score": round(score_min, 4)}
 ])
 tbl_path = TBL_DIR / "day15_task2_isolation_forest_summary.csv"
+display(df_iso_res)
 df_iso_res.to_csv(tbl_path, index=False)
 print("Saved isolation forest summary to:", tbl_path.relative_to(ROOT))"""
             },
@@ -259,6 +261,7 @@ print("Saved forecasting baselines figure to:", fig_path.relative_to(ROOT))"""
     {"Model": "Random Forest", "MAE_mg_L": round(mae_rf, 4), "Gain_vs_Baseline_Pct": round((mae_persist - mae_rf)/mae_persist*100, 1)}
 ])
 tbl_path = TBL_DIR / "day16_task1_baseline_metrics.csv"
+display(df_base_perf)
 df_base_perf.to_csv(tbl_path, index=False)
 print("Saved baseline metrics table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -357,6 +360,7 @@ print("Saved horizon error growth figure to:", fig_path.relative_to(ROOT))"""
     "MDA_Pct": mdas
 })
 tbl_path = TBL_DIR / "day16_task2_horizon_metrics.csv"
+display(df_h_decomp)
 df_h_decomp.to_csv(tbl_path, index=False)
 print("Saved horizon decomposition table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -462,6 +466,7 @@ print("Saved XGBoost trajectory plot to:", fig_path.relative_to(ROOT))"""
     "Baseline_RF_MAE": np.round(horizon_maes, 4)
 })
 tbl_path = TBL_DIR / "day17_task1_xgboost_metrics.csv"
+display(df_xgb_metrics)
 df_xgb_metrics.to_csv(tbl_path, index=False)
 print("Saved XGBoost metrics table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -558,6 +563,7 @@ print("Saved learning curves plot to:", fig_path.relative_to(ROOT))"""
     "Generalization_Gap": np.round(gen_gaps, 4)
 })
 tbl_path = TBL_DIR / "day17_task2_learning_curves.csv"
+display(df_curves)
 df_curves.to_csv(tbl_path, index=False)
 print("Saved learning curves table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -644,6 +650,7 @@ print("Saved method comparison figure to:", fig_path.relative_to(ROOT))"""
                 "title": "Cross-Method Benchmark Table Serialization",
                 "desc": "Export compiled benchmark comparison table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day18_task1_benchmark_summary.csv"
+display(df_bench)
 df_bench.to_csv(tbl_path, index=False)
 print("Saved benchmark summary table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -730,6 +737,7 @@ print("Saved master leaderboard plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Master Leaderboard Table Serialization",
                 "desc": "Export master model leaderboard to CSV.",
                 "code": """tbl_path = TBL_DIR / "day18_task2_master_leaderboard.csv"
+display(df_lead)
 df_lead.to_csv(tbl_path, index=False)
 print("Saved master leaderboard table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -829,6 +837,7 @@ print("Saved hyperparameter response surface to:", fig_path.relative_to(ROOT))""
                 "title": "Grid Search Results Table Export",
                 "desc": "Serialize full grid search sweep table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day19_task1_hparam_tuning_results.csv"
+display(df_grid)
 df_grid.to_csv(tbl_path, index=False)
 print("Saved tuning results table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -924,6 +933,7 @@ print("Saved CV stability plot to:", fig_path.relative_to(ROOT))"""
     {"Track": "Track A", "Model": "XGBoost", "N_Estimators": 100, "Max_Depth": 5, "Validation_Score": 0.2291}
 ])
 tbl_path = TBL_DIR / "day19_task2_best_config_summary.csv"
+display(df_best_summary)
 df_best_summary.to_csv(tbl_path, index=False)
 print("Saved best config summary to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1013,6 +1023,7 @@ print("Saved LOFO ablation plot to:", fig_path.relative_to(ROOT))"""
                 "title": "LOFO Ablation Table Serialization",
                 "desc": "Export LOFO ablation results table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day20_task1_lofo_results.csv"
+display(df_lofo)
 df_lofo.to_csv(tbl_path, index=False)
 print("Saved LOFO results table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1092,6 +1103,7 @@ print("Saved ablation tornado figure to:", fig_path.relative_to(ROOT))"""
                 "title": "Sensitivity Rankings Table Export",
                 "desc": "Export authoritative feature sensitivity rankings table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day20_task2_sensitivity_rankings.csv"
+display(df_ranked)
 df_ranked.to_csv(tbl_path, index=False)
 print("Saved sensitivity rankings table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1168,6 +1180,7 @@ print("Saved milestone 2 progress plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Milestone 2 Review Table Serialization",
                 "desc": "Export Milestone 2 technical achievements table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day21_task1_milestone2_summary.csv"
+display(df_m2)
 df_m2.to_csv(tbl_path, index=False)
 print("Saved milestone 2 review table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1244,6 +1257,7 @@ print("Saved sign-off gate plot to:", fig_path.relative_to(ROOT))"""
                 "title": "Architecture Sign-Off Table Serialization",
                 "desc": "Export architecture sign-off checklist table to CSV.",
                 "code": """tbl_path = TBL_DIR / "day21_task2_signoff_gate.csv"
+display(df_gate)
 df_gate.to_csv(tbl_path, index=False)
 print("Saved architecture sign-off table to:", tbl_path.relative_to(ROOT))"""
             },
@@ -1264,4 +1278,3 @@ print("Day 21 Task 2 Quality Gate: PASSED. Model Packaging Phase Authorized.")""
     return tasks
 
 print("Phase 3 complete.")
-

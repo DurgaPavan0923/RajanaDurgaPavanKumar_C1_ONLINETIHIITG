@@ -46,7 +46,7 @@ df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
 df = df.sort_values("timestamp").reset_index(drop=True)
 print("Dataset shape:", df.shape)
 print("Columns:", df.columns.tolist())
-display(df.head())
+print(df.head().to_string() if hasattr(df.head(), 'to_string') else df.head())
 
 # %% [markdown]
 # ## 1. Timestamp Preprocessing
@@ -83,10 +83,10 @@ print("Shape after duplicate handling:", df.shape)
 # %% [step_7]
 numeric_columns = df.select_dtypes(include=np.number).columns.tolist()
 print("Missing values before handling:")
-display(df[numeric_columns].isna().sum())
+print(df[numeric_columns].isna().sum().to_string() if hasattr(df[numeric_columns].isna().sum(), 'to_string') else df[numeric_columns].isna().sum())
 df[numeric_columns] = df[numeric_columns].ffill()
 print("Missing values after forward filling:")
-display(df[numeric_columns].isna().sum())
+print(df[numeric_columns].isna().sum().to_string() if hasattr(df[numeric_columns].isna().sum(), 'to_string') else df[numeric_columns].isna().sum())
 
 # %% [markdown]
 # ## 4. Basic Data-Quality Filtering
@@ -162,6 +162,8 @@ output_dir.mkdir(parents=True, exist_ok=True)
 train_scaled.to_csv(output_dir / "train_v1.csv", index=False)
 val_scaled.to_csv(output_dir / "validation_v1.csv", index=False)
 test_scaled.to_csv(output_dir / "test_v1.csv", index=False)
+print(train_scaled.head(20).to_string())
+print("Shape:", train_scaled.shape)
 train_scaled.to_csv(TBL_DIR / "day11_task1_train_v1.csv", index=False)
 val_scaled.to_csv(TBL_DIR / "day11_task1_validation_v1.csv", index=False)
 test_scaled.to_csv(TBL_DIR / "day11_task1_test_v1.csv", index=False)
@@ -183,7 +185,7 @@ print("\nChronological checks:")
 print("Train ends before validation:", train_scaled["timestamp"].max() <= val_scaled["timestamp"].min())
 print("Validation ends before test:", val_scaled["timestamp"].max() <= test_scaled["timestamp"].min())
 print("Train feature means approximately 0:")
-display(train_scaled[feature_columns].mean().round(3))
+print(train_scaled[feature_columns].mean().round(3).to_string() if hasattr(train_scaled[feature_columns].mean().round(3), 'to_string') else train_scaled[feature_columns].mean().round(3))
 
 fig, ax = plt.subplots(figsize=(8, 3.5))
 ax.scatter(train_scaled["timestamp"], [1]*len(train_scaled), s=3, color="#1f77b4", label=f"Train ({len(train_scaled)})")
@@ -204,7 +206,7 @@ df_summary = pd.DataFrame([
     {"Partition": "Validation", "Samples": len(val_scaled), "Start": str(val_scaled["timestamp"].min()), "End": str(val_scaled["timestamp"].max())},
     {"Partition": "Test", "Samples": len(test_scaled), "Start": str(test_scaled["timestamp"].min()), "End": str(test_scaled["timestamp"].max())}
 ])
-display(df_summary)
+print(df_summary.to_string())
 tbl_p = TBL_DIR / "day11_preprocessed_summary.csv"
 df_summary.to_csv(tbl_p, index=False)
 print("Saved figure to:", fig_p.relative_to(ROOT))

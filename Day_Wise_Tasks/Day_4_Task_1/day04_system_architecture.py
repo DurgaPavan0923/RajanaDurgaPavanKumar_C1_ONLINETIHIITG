@@ -131,6 +131,7 @@ print("Saved latency budget plot to:", fig_path.relative_to(ROOT))
 # %% [step_15]
 # Output: outputs/tables/tbl_path
 tbl_path = TBL_DIR / "day4_task1_architecture_specs.csv"
+print(df_endpoints.to_string())
 df_endpoints.to_csv(tbl_path, index=False)
 print("Saved architecture table to:", tbl_path.relative_to(ROOT))
 
