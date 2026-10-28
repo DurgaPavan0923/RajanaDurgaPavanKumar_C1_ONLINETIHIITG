@@ -1,4 +1,4 @@
-# 🌊 AquaGuard AI: Legacy-to-Daywise Migration Map & Invariance Report
+# AquaGuard AI: Legacy-to-Daywise Migration Map & Invariance Report
 
 This document certifies the systematic refactoring of the AquaGuard AI codebase from 3 monolithic legacy research notebooks into a modular, production-grade 28-day intern schedule architecture.
 

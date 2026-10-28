@@ -1,4 +1,4 @@
-# 🛠️ Fixes & Resolution Log (`FIXES.md`)
+# Fixes & Resolution Log (`FIXES.md`)
 
 This log documents all technical adjustments, root causes, surgical fixes, and verification outcomes applied during the end-to-end execution and safety hardening pipeline.
 

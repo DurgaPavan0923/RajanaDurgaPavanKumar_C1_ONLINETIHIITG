@@ -48,6 +48,7 @@ data/04_lockbox/*
 # Temporary Logs & Execution Artifacts
 *.log
 outputs/logs/*.log
+artifacts/
 
 # Secrets, Tokens & Local Environment Variables
 .env

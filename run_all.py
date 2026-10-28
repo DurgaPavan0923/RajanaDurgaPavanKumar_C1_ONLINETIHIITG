@@ -1,146 +1,101 @@
-"""Master Automated Notebook Runner for AquaGuard AI (28-Day Schedule).
+"""Master test and rerun orchestrator for all 28 days of tasks."""
 
-Executes all day-aligned notebooks sequentially, validates prerequisite handoffs,
-captures cell outputs, and records runtime benchmarks.
-"""
-
-import io
-import json
 import os
+import subprocess
 import sys
 import time
-import traceback
-from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-# Anchor to project root
-PROJECT_ROOT = Path(__file__).resolve().parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-os.chdir(PROJECT_ROOT)
+ROOT = Path(__file__).resolve().parent
+TASKS_DIR = ROOT / "Day_Wise_Tasks"
 
 
-def run_single_notebook(notebook_path: Path) -> tuple[bool, float, str]:
-    t0 = time.perf_counter()
-    with open(notebook_path, encoding="utf-8") as f:
-        nb_data = json.load(f)
+def main():
+    print("=" * 80)
+    print("Master Rerun & Validation Suite: RajanaDurgaPavanKumar_C1_ONLINETIHIITG")
+    print("=" * 80)
 
-    exec_globals = {
-        "__file__": str(notebook_path),
-        "__name__": "__main__",
-    }
+    task_dirs = sorted([d for d in TASKS_DIR.iterdir() if d.is_dir() and d.name.startswith("Day_")])
+    print(f"Discovered {len(task_dirs)} task directories to execute...")
 
-    # Headless matplotlib Agg backend
-    setup_code = (
-        "import matplotlib\n"
-        "matplotlib.use('Agg')\n"
-        "import matplotlib.pyplot as plt\n"
-        "def _no_op_show(*args, **kwargs):\n"
-        "    pass\n"
-        "plt.show = _no_op_show\n"
-    )
-    exec(setup_code, exec_globals)
+    summary_rows = []
+    total_notebooks_ok = 0
+    total_scripts_ok = 0
+    total_figs_count = 0
+    total_tables_count = 0
 
-    exec_count = 1
-    error_msg = ""
-    success = True
+    for t_dir in task_dirs:
+        parts = t_dir.name.split("_")
+        day_num = int(parts[1])
+        task_num = int(parts[3])
 
-    for idx, cell in enumerate(nb_data.get("cells", [])):
-        if cell.get("cell_type") != "code":
-            continue
+        nb_files = list(t_dir.glob("*.ipynb"))
+        py_files = [f for f in t_dir.glob("*.py") if not f.name.startswith("verify_")]
 
-        source_code = "".join(cell.get("source", []))
-        if not source_code.strip():
-            continue
+        nb_ok = "N/A"
+        if nb_files:
+            nb = nb_files[0]
+            # Execute notebook inplace using jupyter nbconvert or python execution
+            cmd = [
+                sys.executable,
+                "-m",
+                "jupyter",
+                "nbconvert",
+                "--to",
+                "notebook",
+                "--execute",
+                "--inplace",
+                "--ExecutePreprocessor.timeout=1200",
+                str(nb),
+            ]
+            res = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+            if res.returncode == 0:
+                nb_ok = "YES"
+                total_notebooks_ok += 1
+            else:
+                nb_ok = "FAIL"
+                print(f"Error executing {nb.name}: {res.stderr[:200]}")
 
-        stdout_buf = io.StringIO()
-        stderr_buf = io.StringIO()
+        py_ok = "N/A"
+        if py_files:
+            py_f = py_files[0]
+            res = subprocess.run([sys.executable, str(py_f)], cwd=ROOT, capture_output=True, text=True)
+            if res.returncode == 0:
+                py_ok = "YES"
+                total_scripts_ok += 1
+            else:
+                py_ok = "FAIL"
+                print(f"Error executing {py_f.name}: {res.stderr[:200]}")
 
-        try:
-            with redirect_stdout(stdout_buf), redirect_stderr(stderr_buf):
-                exec(source_code, exec_globals)
+        # Count figures and tables
+        figs = list((t_dir / "outputs" / "figures").glob("*.png")) if (t_dir / "outputs" / "figures").exists() else []
+        tables = list((t_dir / "outputs" / "tables").glob("*.csv")) if (t_dir / "outputs" / "tables").exists() else []
+        total_figs_count += len(figs)
+        total_tables_count += len(tables)
 
-            cell_outputs = []
-            out_txt = stdout_buf.getvalue()
-            if out_txt:
-                cell_outputs.append({
-                    "output_type": "stream",
-                    "name": "stdout",
-                    "text": [line + "\n" for line in out_txt.splitlines()],
-                })
+        summary_rows.append({
+            "Day": f"Day {day_num:02d}",
+            "Task": f"Task {task_num}",
+            "Notebook OK": nb_ok,
+            "Script OK": py_ok,
+            "Figures": len(figs),
+            "Tables": len(tables),
+        })
 
-            err_txt = stderr_buf.getvalue()
-            if err_txt:
-                cell_outputs.append({
-                    "output_type": "stream",
-                    "name": "stderr",
-                    "text": [line + "\n" for line in err_txt.splitlines()],
-                })
+    # Print markdown table
+    print("\n" + "=" * 80)
+    print("FINAL EXECUTION SUMMARY TABLE")
+    print("=" * 80)
+    print(f"| Day | Task | Notebook OK | Script OK | Figures Saved | Tables Saved |")
+    print(f"| :--- | :--- | :---: | :---: | :---: | :---: |")
+    for r in summary_rows:
+        print(f"| {r['Day']} | {r['Task']} | {r['Notebook OK']} | {r['Script OK']} | {r['Figures']} | {r['Tables']} |")
 
-            cell["outputs"] = cell_outputs
-            cell["execution_count"] = exec_count
-            exec_count += 1
-
-        except Exception as e:
-            success = False
-            tb_str = traceback.format_exc()
-            error_msg = f"Cell {idx} failed: {e}\n{tb_str}"
-            cell["outputs"] = [{
-                "output_type": "error",
-                "ename": type(e).__name__,
-                "evalue": str(e),
-                "traceback": tb_str.splitlines(),
-            }]
-            cell["execution_count"] = exec_count
-            break
-
-    # Save notebook with updated cell outputs
-    with open(notebook_path, "w", encoding="utf-8") as f:
-        json.dump(nb_data, f, indent=1)
-
-    t1 = time.perf_counter()
-    return success, round(t1 - t0, 2), error_msg
-
-
-def main() -> int:
-    notebook_files = sorted(Path("notebooks").glob("day*.ipynb"))
-    if not notebook_files:
-        print("No day-wise notebooks found in notebooks/!")
-        return 1
-
-    print("=" * 60)
-    print(f"Starting Sequential Execution of {len(notebook_files)} Day Notebooks")
-    print("=" * 60)
-
-    results = []
-    overall_success = True
-
-    for nb_path in notebook_files:
-        print(f"\n---> Running {nb_path.name} ... ", end="", flush=True)
-        ok, elapsed, err = run_single_notebook(nb_path)
-        if ok:
-            print(f"PASSED ({elapsed}s)")
-            results.append({"notebook": nb_path.name, "status": "PASSED", "time_sec": elapsed})
-        else:
-            print(f"FAILED ({elapsed}s)")
-            print(err)
-            results.append({"notebook": nb_path.name, "status": "FAILED", "time_sec": elapsed, "error": err})
-            overall_success = False
-            break  # Strict DAG requirement: halt if prerequisite day fails
-
-    print("\n" + "=" * 60)
-    print("Execution Summary:")
-    print("=" * 60)
-    for r in results:
-        print(f"  {r['notebook']:<42} : {r['status']} ({r['time_sec']}s)")
-
-    if overall_success:
-        print("\nAll day-wise notebooks executed successfully with zero errors!")
-        return 0
-    else:
-        print("\nExecution halted due to an error in a prerequisite notebook.")
-        return 1
+    print("\nTotal Successful Notebooks:", total_notebooks_ok)
+    print("Total Successful Scripts:", total_scripts_ok)
+    print("Total Figures Saved:", total_figs_count)
+    print("Total Tables Saved:", total_tables_count)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

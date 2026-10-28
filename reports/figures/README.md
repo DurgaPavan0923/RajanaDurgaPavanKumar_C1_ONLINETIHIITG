@@ -1,4 +1,4 @@
-# 📊 AquaGuard AI: Reports & Deliverables Figure Catalog
+# AquaGuard AI: Reports & Deliverables Figure Catalog
 
 All figures generated across the 28-day internship schedule are consolidated below with direct links, associated intern schedule days, and technical descriptions.
 

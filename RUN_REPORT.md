@@ -1,4 +1,4 @@
-# 📋 End-to-End Execution & Verification Report (`RUN_REPORT.md`)
+# End-to-End Execution & Verification Report (`RUN_REPORT.md`)
 
 This report provides a formal audit of all scripts, CLI entrypoints, notebook suites, and test frameworks executed in the automated pipeline run.
 
