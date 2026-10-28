@@ -8,7 +8,7 @@ Audit & Upgrade v2.1.0:
 - Dynamic slider gradient tracks, live pulse on change, and WHO limit indicators.
 - 600ms Auto-Remediate tween animation to safe WHO guideline midpoints.
 - Toast notification system with SVG status icons and auto-dismiss.
-- Instant ticking live UTC clock on mount without lag.
+- Instant ticking live IST clock on mount without lag.
 - Continuous Telemetry Stream tab with moving window chart and pulsing dot.
 - Batch Laboratory tab with drag-and-drop, table skeleton loader, status pills, and formula defense.
 - Benchmark tab with PR-AUC progress bars, confusion matrix heatmap, and verified metrics.
@@ -1245,7 +1245,28 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     </div>
 
     <div class="header-controls">
-      <div class="live-clock" id="live-clock" aria-label="Current UTC timestamp">UTC --:--:--</div>
+      <div class="live-clock" id="live-clock" aria-label="Current time in Indian Standard Time" aria-live="off"></div>
+      <script>
+        (function() {
+          try {
+            const parts = new Intl.DateTimeFormat("en-IN", {
+              timeZone: "Asia/Kolkata",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              hour12: false,
+              hourCycle: "h23"
+            }).formatToParts(new Date());
+            const m = {};
+            parts.forEach(p => m[p.type] = p.value);
+            const el = document.getElementById("live-clock");
+            if (el) el.innerText = `${m.year}-${m.month}-${m.day} ${m.hour}:${m.minute}:${m.second} IST`;
+          } catch (e) {}
+        })();
+      </script>
       
       <div class="system-status" id="system-status-badge" role="status">
         <div class="status-dot" id="system-status-dot"></div>
@@ -2103,15 +2124,36 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
     }
 
     // ------------------------------------------------------------------------
-    // Live Health Probe & Clock
+    // Live Health Probe & Clock (Indian Standard Time: Asia/Kolkata, UTC+05:30)
     // ------------------------------------------------------------------------
+    function formatIST(date = new Date()) {
+      const parts = new Intl.DateTimeFormat('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        hourCycle: 'h23'
+      }).formatToParts(date);
+      const m = {};
+      parts.forEach(p => m[p.type] = p.value);
+      return `${m.year}-${m.month}-${m.day} ${m.hour}:${m.minute}:${m.second} IST`;
+    }
+
     function updateClock() {
-      const d = new Date();
       const clock = document.getElementById('live-clock');
       if (clock) {
-        const iso = d.toISOString().slice(0, 19).replace('T', ' ');
-        clock.innerText = iso + ' UTC';
+        clock.innerText = formatIST();
       }
+    }
+
+    function scheduleClockTick() {
+      updateClock();
+      const delay = 1000 - (Date.now() % 1000);
+      setTimeout(scheduleClockTick, delay);
     }
 
     async function checkHealthProbe() {
@@ -3177,10 +3219,9 @@ HTML_DASHBOARD = r"""<!DOCTYPE html>
 
     window.addEventListener('DOMContentLoaded', () => {
       initTheme();
-      updateClock();
+      scheduleClockTick();
       animateCountUp('kpi-pr-auc', 0.5951, 4, '');
       animateCountUp('kpi-latency-val', 2.89, 2, ' ms');
-      setInterval(updateClock, 1000);
       checkHealthProbe();
       setInterval(checkHealthProbe, 30000);
 

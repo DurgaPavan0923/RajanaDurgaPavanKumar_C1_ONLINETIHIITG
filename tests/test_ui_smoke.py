@@ -80,3 +80,50 @@ def test_ui_author_and_mentor_attribution():
     assert "Sushil Meher" in HTML_DASHBOARD
     assert "Teaching Assistant" in HTML_DASHBOARD
     assert "Indian Institute of Technology" in HTML_DASHBOARD
+
+
+def test_ui_live_clock_ist_attributes_and_epoch_zero():
+    from datetime import datetime, timezone, timedelta
+    import shutil
+    import subprocess
+
+    # 1. Accessible attributes and no static placeholder
+    assert 'id="live-clock"' in HTML_DASHBOARD
+    assert 'aria-label="Current time in Indian Standard Time"' in HTML_DASHBOARD
+    assert 'aria-live="off"' in HTML_DASHBOARD
+    assert "UTC --:--:--" not in HTML_DASHBOARD
+    assert "Asia/Kolkata" in HTML_DASHBOARD
+    assert "formatIST" in HTML_DASHBOARD
+    assert "IST" in HTML_DASHBOARD
+
+    # 2. Python reference calculation for Epoch 0 in Asia/Kolkata (UTC+05:30)
+    ist_tz = timezone(timedelta(hours=5, minutes=30))
+    epoch_0_dt = datetime.fromtimestamp(0, tz=timezone.utc).astimezone(ist_tz)
+    expected_epoch_0 = epoch_0_dt.strftime("%Y-%m-%d %H:%M:%S IST")
+    assert expected_epoch_0 == "1970-01-01 05:30:00 IST"
+
+    # 3. If node is available, execute the exact JS formatIST implementation on epoch 0
+    node = shutil.which("node")
+    if node:
+        js_code = """
+        function formatIST(date = new Date()) {
+          const parts = new Intl.DateTimeFormat('en-IN', {
+            timeZone: 'Asia/Kolkata',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+            hourCycle: 'h23'
+          }).formatToParts(date);
+          const m = {};
+          parts.forEach(p => m[p.type] = p.value);
+          return `${m.year}-${m.month}-${m.day} ${m.hour}:${m.minute}:${m.second} IST`;
+        }
+        console.log(formatIST(new Date(0)));
+        """
+        out = subprocess.check_output([node, "-e", js_code], text=True).strip()
+        assert out == "1970-01-01 05:30:00 IST"
+
