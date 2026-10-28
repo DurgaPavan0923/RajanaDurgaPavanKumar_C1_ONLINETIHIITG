@@ -64,7 +64,7 @@ flowchart TD
     subgraph Serving_Layer ["Production Deployment"]
         P1["FastAPI ASGI Microservice (<3ms Latency)"]
         P2["Vercel Serverless Edge Runtime"]
-        P3["Responsive Glassmorphic UI Dashboard"]
+        P3["Responsive Glassmorphic UI Dashboard (IST Clock, SVG Gauges)"]
     end
 
     D1 --> S1 & S2
@@ -150,6 +150,9 @@ AquaGuard AI enforces an absolute safety guarantee: **a sample cannot be classif
 ```
 RajanaDurgaPavanKumar_C1_ONLINETIHIITG/
 |-- README.md                                    # Main project documentation and index
+|-- audit_repo.py                                # File-by-file governance & inventory audit tool
+|-- cleanup.sh                                   # Automated workspace cleanup protocol (dry-run default)
+|-- cleanup.ps1                                  # Windows PowerShell cleanup protocol (dry-run default)
 |-- requirements.txt                             # Production dependencies
 |-- requirements-dev.txt                         # Development and testing dependencies
 |-- pyproject.toml                               # Build system, Ruff, and pytest configurations
@@ -159,6 +162,8 @@ RajanaDurgaPavanKumar_C1_ONLINETIHIITG/
 |   |-- favicon.svg                              # Vector favicon
 |   |-- robots.txt                               # Search engine crawling rules
 |   \-- og-image.png                             # 1200x630 OpenGraph social preview card
+|-- reports/                                     # Governance and experiment reports
+|   \-- AUDIT_INVENTORY.md                       # Comprehensive file-by-file inventory audit
 |-- src/                                         # Core modular Python package
 |   |-- data/                                    # Data ingestion, schema validation & auditing
 |   |-- features/                                # Feature engineering & causal lags
@@ -168,10 +173,10 @@ RajanaDurgaPavanKumar_C1_ONLINETIHIITG/
 |   \-- serving/                                 # Production FastAPI endpoint & web dashboard
 |       |-- api.py                               # FastAPI routes & OWASP security headers
 |       \-- web_ui.py                            # Self-contained glassmorphic HTML/JS dashboard
-|-- tests/                                       # 71 automated regression and smoke unit tests
+|-- tests/                                       # 72 automated regression and smoke unit tests
 |   |-- test_api.py                              # Endpoint status & validation tests
 |   |-- test_smoke_submission.py                 # Health and inference smoke tests
-|   |-- test_ui_smoke.py                         # UI tokens, tabs, sliders & accessibility tests
+|   |-- test_ui_smoke.py                         # UI tokens, tabs, sliders, IST clock & accessibility
 |   \-- test_refactor_edge_cases.py              # Zero-leakage, edge case & serialization tests
 \-- Day_Wise_Tasks/                              # 28 days of curriculum tasks (56 tasks total)
     |-- README.md                                # Master index of all 28 days
@@ -273,7 +278,7 @@ curl -X GET "https://water-potability-vert.vercel.app/api/ping"
 
 ## 9. Automated Testing & Quality Assurance
 
-The codebase is protected by 71 unit and regression tests executing across both tabular classification and timeseries pipelines:
+The codebase is protected by 72 unit and regression tests executing across both tabular classification and timeseries pipelines:
 
 ```bash
 # Run complete test suite with verbose output
@@ -281,12 +286,15 @@ pytest tests/ -v
 
 # Run linting checks with Ruff
 ruff check src/ tests/
+
+# Run repository inventory & governance audit
+python audit_repo.py
 ```
 
 ### Test Coverage Highlights
 - **Leakage Guards:** Strict split boundary validation ensuring no overlap between train, validation, and test sets.
 - **Causal Feature Verification:** Rolling window and lag features verify strict `shift >= 1` causality to prevent future lookahead.
-- **UI & Accessibility Verification:** Smoke tests confirm all 4 tabs, 9 sliders, circular SVG gauge, zero emojis, and zero static dates.
+- **UI & Accessibility Verification:** Smoke tests confirm all 4 tabs, 9 sliders, circular SVG gauge, live Indian Standard Time (IST) clock format (`Asia/Kolkata`), zero emojis, and zero static dates.
 - **OWASP Security Verification:** Response headers enforce CSP, `X-Content-Type-Options: nosniff`, and formula-injection defenses on CSV exports.
 
 ---
