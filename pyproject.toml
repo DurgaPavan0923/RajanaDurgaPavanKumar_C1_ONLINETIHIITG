@@ -47,6 +47,7 @@ ignore = ["E501", "N803", "N806", "E402", "B008", "A002", "W293", "W291", "UP017
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-v --strict-markers"
+pythonpath = ["."]
 
 [tool.vercel]
 entrypoint = "api.index:app"

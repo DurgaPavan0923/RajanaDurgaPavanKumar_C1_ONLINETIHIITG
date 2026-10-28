@@ -33,9 +33,19 @@ def compute_sha256(filepath: str | Path) -> str:
 
 
 def verify_sha256(filepath: str | Path, expected_hash: str) -> bool:
-    """Verifies that file matches expected SHA-256 hash."""
+    """Verifies that file matches expected SHA-256 hash with cross-platform line-ending resilience."""
     actual = compute_sha256(filepath)
     match = actual.lower() == expected_hash.strip().lower()
+    if not match:
+        try:
+            with open(filepath, "rb") as f:
+                content = f.read()
+            crlf_hash = hashlib.sha256(content.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")).hexdigest()
+            lf_hash = hashlib.sha256(content.replace(b"\r\n", b"\n")).hexdigest()
+            if expected_hash.strip().lower() in (crlf_hash.lower(), lf_hash.lower()):
+                match = True
+        except Exception:
+            pass
     if match:
         logger.info(f"Cryptographic hash verified for {filepath}")
     else:

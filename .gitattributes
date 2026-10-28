@@ -1,0 +1,2 @@
+# Ensure raw data CSV files retain consistent CRLF byte endings across git clones on all OS platforms
+data/01_raw/*.csv text eol=crlf
