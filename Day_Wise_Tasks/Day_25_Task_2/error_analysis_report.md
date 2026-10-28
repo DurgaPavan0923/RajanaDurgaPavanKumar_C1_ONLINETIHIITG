@@ -1,5 +1,4 @@
 # AquaGuard AI — Error Analysis & Operational Limitations Report
-- **Date:** 13 Sep 2026
 - **Test Lockbox Evaluated:** 656 samples
 
 ## 1. Hazard Audit (False Negatives)

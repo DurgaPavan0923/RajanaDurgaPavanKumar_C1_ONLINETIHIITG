@@ -1,5 +1,4 @@
 # Day 01: Project Setup, Workspace & Environment Verification
-- **Date:** 20 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Deliverable:** Reproducible Python 3.11+ workspace, pinned virtual environment, and Git repository structure.
 

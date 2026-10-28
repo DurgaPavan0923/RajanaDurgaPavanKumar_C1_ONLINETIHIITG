@@ -1,5 +1,4 @@
 # Day 06: Data Governance, Immutability & Lockbox Protocol
-- **Date:** 25 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Deliverable:** Data provenance attestations, cryptographic raw checksum seals, and Lockbox quarantine protocol.
 

@@ -4,7 +4,6 @@
 - **Group:** C1
 - **Repository:** `RajanaDurgaPavanKumar_C1_ONLINETIHIITG`
 - **Assigned Mentor:** [Sushil Meher](https://www.linkedin.com/in/nightcoder44332211/), Teaching Assistant at Indian Institute of Technology, Guwahati
-- **Review Meeting Date:** 28 October 2026
 - **Live Deployment Link:** https://water-potability-vert.vercel.app/
 
 ---

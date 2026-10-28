@@ -1,5 +1,4 @@
 # Day 05: Experiment Tracking & Logging Protocol
-- **Date:** 24 Aug 2026
 - **Phase:** Phase 1: Ingestion & Governance
 - **Deliverable:** Centralized experiment logging schema (`experiments/experiment_log.csv`), seed pinning protocol, and parameter tracking standards.
 
