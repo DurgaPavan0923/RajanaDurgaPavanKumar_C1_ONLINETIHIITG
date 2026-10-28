@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /api/predict-batch
+Sitemap: https://water-potability-vert.vercel.app/sitemap.xml
